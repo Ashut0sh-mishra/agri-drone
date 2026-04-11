@@ -42,6 +42,10 @@ yarn-error.log*
 .pnp
 .pnp.js
 
+# ──────────────────────────── Frontend Build ──────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+
 # ──────────────────────────── IDE / Editor ────────────────────────────────────
 .vscode/
 .idea/
@@ -155,3 +159,10 @@ RESEARCH_PAPER_FINAL_old.md
 # LLaVA evaluation log (not needed for reproduction)
 evaluate/results/llava_progress.log
 evaluate/results/llava_analysis.csv
+
+# Generated PDFs (except docs/)
+*.pdf
+!docs/*.pdf
+
+# Conversion scripts (temp)
+md_to_pdf.py

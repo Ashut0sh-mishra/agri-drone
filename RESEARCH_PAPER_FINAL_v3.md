@@ -1,21 +1,8 @@
-<!-- Editor's note — Changes from v2 to v3 (submission-ready draft)
-1. Rewrote for natural, human academic voice: varied sentence lengths, active voice ("We observed…", "We found…"), smooth transitions ("Importantly,", "Surprisingly,", "In practice,").
-2. Shortened Abstract to ≤250 words while retaining all key numbers and the null-result message.
-3. Replaced the full Section 3 (Materials and Methods) with a concise summary paragraph referencing Supplementary Material S1 for architecture, rule definitions, and implementation details.
-4. Moved the rule-engine scoring table, architecture layer descriptions, and the complete 21-class per-class Table A1 to a new Supplementary Material section at the end.
-5. Added Section 6.6 "Implications for Practice" (farmer/drone-service-provider focused, ~220 words).
-6. Deleted every mention of LLaVA throughout the paper.
-7. Cleaned the EML narrative to tell only the 0.70 YOLO / 0.30 rules story — removed references to "original" vs. "corrected" weights.
-8. Added the required sentence in Section 4.2 about adapting the PDT dataset.
-9. Trimmed keywords to ≤10 per Elsevier style.
-10. Minor tightening throughout for readability and flow.
--->
-
 # AgriDrone: A Systematic Ablation Study of Hybrid Deep-Learning Pipelines for Drone-Based Crop Disease Detection in Indian Wheat and Rice
 
-**Authors:** [Author names]
-**Affiliation:** [Institution]
-**Corresponding author:** [Email]
+**Authors:** Ashutosh Mishra
+**Affiliation:** Independent Researcher, India
+**Corresponding author:** mishra.ashuutosh@gmail.com
 **Submitted to:** *Smart Agricultural Technology* (Elsevier)
 
 ---
@@ -388,7 +375,7 @@ The bottom line: the rule engine never rescued a single incorrect YOLO predictio
 
 ## Data Availability
 
-The complete system—backend, frontend, model weights, evaluation scripts, and dataset splits—is available at the project repository. The PDT dataset is publicly available. All numerical results and confusion matrices are in `evaluate/results/`.
+The complete system—backend, frontend, model weights, evaluation scripts, and dataset splits—is available at [https://github.com/Ashut0sh-mishra/agri-drone](https://github.com/Ashut0sh-mishra/agri-drone). The PDT dataset is publicly available. All numerical results and confusion matrices are in `evaluate/results/`.
 
 **Reproducibility commands:**
 ```bash
