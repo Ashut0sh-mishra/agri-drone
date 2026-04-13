@@ -1,0 +1,146 @@
+{
+  "model": "EfficientNet-B0",
+  "parameters": 4034449,
+  "device": "cpu",
+  "config_a_efficientnet": {
+    "accuracy": 0.7615,
+    "macro_f1": 0.7621,
+    "mean_latency_ms": 16.5,
+    "per_class": {
+      "healthy_rice": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 45
+      },
+      "healthy_wheat": {
+        "precision": 0.7843,
+        "recall": 0.8889,
+        "f1": 0.8333,
+        "support": 45
+      },
+      "rice_bacterial_blight": {
+        "precision": 0.9,
+        "recall": 0.6,
+        "f1": 0.72,
+        "support": 45
+      },
+      "rice_blast": {
+        "precision": 0.6792,
+        "recall": 0.8,
+        "f1": 0.7347,
+        "support": 45
+      },
+      "rice_brown_spot": {
+        "precision": 1.0,
+        "recall": 0.7111,
+        "f1": 0.8312,
+        "support": 45
+      },
+      "rice_leaf_scald": {
+        "precision": 0.6615,
+        "recall": 0.9556,
+        "f1": 0.7818,
+        "support": 45
+      },
+      "rice_sheath_blight": {
+        "precision": 0.8431,
+        "recall": 0.9556,
+        "f1": 0.8958,
+        "support": 45
+      },
+      "wheat_aphid": {
+        "precision": 0.7407,
+        "recall": 0.4444,
+        "f1": 0.5556,
+        "support": 45
+      },
+      "wheat_black_rust": {
+        "precision": 0.6957,
+        "recall": 0.7111,
+        "f1": 0.7033,
+        "support": 45
+      },
+      "wheat_blast": {
+        "precision": 0.8163,
+        "recall": 0.8889,
+        "f1": 0.8511,
+        "support": 45
+      },
+      "wheat_brown_rust": {
+        "precision": 0.6957,
+        "recall": 0.7111,
+        "f1": 0.7033,
+        "support": 45
+      },
+      "wheat_fusarium_head_blight": {
+        "precision": 0.9737,
+        "recall": 0.8222,
+        "f1": 0.8916,
+        "support": 45
+      },
+      "wheat_leaf_blight": {
+        "precision": 0.4717,
+        "recall": 0.5556,
+        "f1": 0.5102,
+        "support": 45
+      },
+      "wheat_mite": {
+        "precision": 0.7419,
+        "recall": 0.5111,
+        "f1": 0.6053,
+        "support": 45
+      },
+      "wheat_powdery_mildew": {
+        "precision": 0.9231,
+        "recall": 0.8,
+        "f1": 0.8571,
+        "support": 45
+      },
+      "wheat_root_rot": {
+        "precision": 0.6552,
+        "recall": 0.8444,
+        "f1": 0.7379,
+        "support": 45
+      },
+      "wheat_septoria": {
+        "precision": 0.8222,
+        "recall": 0.8222,
+        "f1": 0.8222,
+        "support": 45
+      },
+      "wheat_smut": {
+        "precision": 0.7727,
+        "recall": 0.7556,
+        "f1": 0.764,
+        "support": 45
+      },
+      "wheat_stem_fly": {
+        "precision": 0.7941,
+        "recall": 0.7714,
+        "f1": 0.7826,
+        "support": 35
+      },
+      "wheat_tan_spot": {
+        "precision": 0.4211,
+        "recall": 0.5333,
+        "f1": 0.4706,
+        "support": 45
+      },
+      "wheat_yellow_rust": {
+        "precision": 1.0,
+        "recall": 0.9111,
+        "f1": 0.9535,
+        "support": 45
+      }
+    }
+  },
+  "yolo_comparison": {
+    "yolo_accuracy": 0.9615,
+    "yolo_macro_f1": 0.9618,
+    "effnet_accuracy": 0.7615,
+    "effnet_macro_f1": 0.7621,
+    "accuracy_delta": -0.2,
+    "f1_delta": -0.1997
+  }
+}
