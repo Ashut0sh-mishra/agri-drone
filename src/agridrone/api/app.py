@@ -1708,6 +1708,98 @@ def create_app() -> FastAPI:
         return {"logs": ["No training logs found. Run training to generate logs."], "file": "none"}
 
     # ============================================================
+    # Matrix progress (per_run.jsonl from Colab, read live)
+    # ============================================================
+    @app.get("/api/ml/matrix")
+    async def get_matrix_progress():
+        """Read the newest per_run.jsonl from a matrix run.
+
+        Scans local ``evaluate/results/v2/matrix/`` and, if present, common
+        Google Drive for Desktop mount points (so the UI can watch a Colab
+        run live without a separate sync step).
+        """
+        project_root = Path(__file__).resolve().parent.parent.parent.parent
+        search_roots = [
+            project_root / "evaluate" / "results" / "v2" / "matrix",
+        ]
+        # Google Drive for desktop (Windows): "G:/My Drive/agri-drone/results_v2/matrix"
+        drive_candidates = [
+            Path(r"G:/My Drive/agri-drone/results_v2/matrix"),
+            Path(r"H:/My Drive/agri-drone/results_v2/matrix"),
+            Path(os.path.expanduser("~/My Drive/agri-drone/results_v2/matrix")),
+            Path(os.path.expanduser("~/Google Drive/agri-drone/results_v2/matrix")),
+        ]
+        for d in drive_candidates:
+            try:
+                if d.is_dir():
+                    search_roots.append(d)
+            except Exception:
+                pass
+
+        newest_file: Path | None = None
+        newest_mtime = 0.0
+        for root in search_roots:
+            if not root.is_dir():
+                continue
+            try:
+                for run_dir in root.iterdir():
+                    if not run_dir.is_dir():
+                        continue
+                    jf = run_dir / "per_run.jsonl"
+                    if jf.is_file():
+                        mt = jf.stat().st_mtime
+                        if mt > newest_mtime:
+                            newest_mtime = mt
+                            newest_file = jf
+            except Exception:
+                continue
+
+        if newest_file is None:
+            return {
+                "found": False,
+                "message": ("No matrix per_run.jsonl found yet. The Colab run writes to "
+                            "Drive; mount Drive via 'Google Drive for desktop' or sync it "
+                            "locally to evaluate/results/v2/matrix/ to see live progress."),
+                "run_id": None,
+                "total": 0,
+                "ok": 0,
+                "failed": 0,
+                "skipped": 0,
+                "cells": [],
+            }
+
+        cells: list[dict] = []
+        try:
+            for line in newest_file.read_text(encoding="utf-8").splitlines():
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    cells.append(json.loads(line))
+                except Exception:
+                    continue
+        except Exception as e:
+            return {"found": False, "message": f"Read failed: {e}"}
+
+        status_counts = {"ok": 0, "failed": 0, "skipped": 0, "smoke": 0, "other": 0}
+        for c in cells:
+            s = c.get("status", "other")
+            status_counts[s] = status_counts.get(s, 0) + 1
+
+        run_id = cells[-1].get("run_id") if cells else newest_file.parent.name
+        return {
+            "found": True,
+            "run_id": run_id,
+            "file": str(newest_file),
+            "updated_at": datetime.fromtimestamp(newest_mtime).isoformat(),
+            "total": len(cells),
+            "ok": status_counts.get("ok", 0),
+            "failed": status_counts.get("failed", 0),
+            "skipped": status_counts.get("skipped", 0),
+            "cells": cells[-50:],  # last 50 rows
+        }
+
+    # ============================================================
     # Training Pipeline Status (Colab → UI bridge)
     # ============================================================
     _STATUS_DIR = Path(__file__).resolve().parent.parent.parent.parent / "outputs" / "training"
