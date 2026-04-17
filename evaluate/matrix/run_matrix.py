@@ -240,6 +240,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--tracker", choices=["none", "mlflow", "wandb"], default=None)
     parser.add_argument("--max-cells", type=int, default=0,
                         help="cap number of cells (0 = no cap); useful for CI")
+    parser.add_argument("--out-dir", type=Path, default=None,
+                        help="override cfg.output.root (e.g. a Colab Drive path)")
     args = parser.parse_args(argv)
 
     if args.smoke_test:
@@ -252,8 +254,11 @@ def main(argv: list[str] | None = None) -> int:
         cfg["tracker"] = args.tracker
 
     run_id = cfg["run_id"]
-    out_root = PROJECT_ROOT / cfg.get("output", {}).get("root",
-                                                       "evaluate/results/v2/matrix")
+    if args.out_dir is not None:
+        out_root = args.out_dir
+    else:
+        out_root = PROJECT_ROOT / cfg.get("output", {}).get("root",
+                                                           "evaluate/results/v2/matrix")
     out_dir = out_root / run_id
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "logs").mkdir(exist_ok=True)
