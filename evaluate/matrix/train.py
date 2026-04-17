@@ -37,6 +37,7 @@ BACKBONE_REGISTRY = {
     "efficientnet_b0":   {"family": "torchvision", "params": 4_034_449},
     "convnext_tiny":     {"family": "torchvision", "params": 28_589_128},
     "mobilenetv3_small": {"family": "torchvision", "params": 2_542_856},
+    "resnet50":          {"family": "torchvision", "params": 25_557_032},
     "vit_b_16":          {"family": "torchvision", "params": 86_567_656},
 }
 
@@ -514,6 +515,9 @@ def _build_torchvision_model(backbone: str, n_classes: int):
     elif backbone == "mobilenetv3_small":
         m = models.mobilenet_v3_small(weights="IMAGENET1K_V1")
         m.classifier[3] = nn.Linear(m.classifier[3].in_features, n_classes)
+    elif backbone == "resnet50":
+        m = models.resnet50(weights="IMAGENET1K_V2")
+        m.fc = nn.Linear(m.fc.in_features, n_classes)
     elif backbone == "vit_b_16":
         m = models.vit_b_16(weights="IMAGENET1K_V1")
         m.heads.head = nn.Linear(m.heads.head.in_features, n_classes)

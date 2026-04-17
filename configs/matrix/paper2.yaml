@@ -1,0 +1,91 @@
+# Paper-2 matrix — full 5-backbone reproducibility + cross-geography study.
+#
+# 5 backbones x 1 rule x 1 fraction x 3 datasets x 3 folds = 45 cells.
+# Extends large.yaml with SOTA baselines (ResNet-50, MobileNetV3-Small, ViT-B/16)
+# to answer Reviewer 2: "how do you know YOLOv8n-cls was a good choice?"
+#
+# Scope for the full paper (Path 2):
+#   - does the A/B/C rule-layer result hold across 5 backbones? (internal validity)
+#   - does PlantVillage-trained performance transfer to Bangladesh field imagery? (external validity)
+#   - what's the Pareto frontier of {accuracy, latency, params} for smallholder deployment?
+#
+# On a T4 this is ~12-18h; on A100 ~6h. Auto-resumes via per_run.jsonl.
+
+run_id: "paper2-5bb-3geo"
+
+axes:
+  backbone:
+    - yolov8n-cls        #  1.4M params, anchor (Path 1 baseline)
+    - mobilenetv3_small  #  2.5M params, edge/mobile reference
+    - efficientnet_b0    #  4.0M params, compound-scaled CNN
+    - resnet50           # 25.6M params, classic heavy baseline
+    - vit_b_16           # 86.6M params, Transformer reference
+
+  rule_engine:
+    - none
+
+  train_fraction:
+    - 1.0
+
+  dataset:
+    - plantvillage_subset     # global (US) baseline — curated, high-quality
+    - rice_leaf_bd_subset     # Bangladesh field-captured rice
+    - wheat_leaf_bd_subset    # Bangladesh field-captured wheat
+
+  cv:
+    n_folds: 3
+    seeds: [42, 43, 44]
+
+training_recipe:
+  pool_cap_per_class: 1500
+  epochs: 30
+  batch_size: 64
+  optimizer: adamw
+  lr: 0.00125
+  weight_decay: 1.0e-4
+  lr_schedule: cosine
+  warmup_epochs: 3
+  augmentation: standard_v1
+  early_stopping_patience: 8
+  input_size: 224
+  label_smoothing: 0.1
+
+datasets:
+  plantvillage_subset:
+    source: kaggle
+    kaggle_slug: "abdallahalidev/plantvillage-dataset"
+    kaggle_fallbacks:
+      - "emmarex/plantdisease"
+      - "arjuntejaswi/plant-village"
+      - "mohitsingh1804/plantvillage"
+
+  rice_leaf_bd_subset:
+    source: kaggle
+    kaggle_slug: "loki4514/rice-leaf-diseases-bangladesh"
+    kaggle_fallbacks:
+      - "shayanriyaz/riceleafs"
+      - "minhhuy2810/rice-diseases-image-dataset"
+      - "vbookshelf/rice-leaf-diseases"
+      - "nizorogbezuode/rice-leaf-images"
+      - "jay7080dev/rice-disease-image-dataset"
+
+  wheat_leaf_bd_subset:
+    source: kaggle
+    kaggle_slug: "rajkumar9999/wheat-leaf-disease-dataset-bangladesh"
+    kaggle_fallbacks:
+      - "olyadgetch/wheat-leaf-dataset"
+      - "sinadunk23/behzad-safari-jalal"
+      - "kushagranull/wheat-disease-detection"
+      - "tolgahayit/wheatdiseasedetection"
+      - "shadabhussain/augmented-wheat-images"
+
+tracker: none
+
+output:
+  root: evaluate/results/v2/matrix
+  compress_predictions: true
+
+execution:
+  resume: true
+  fail_fast: false
+  max_parallel_cells: 1
