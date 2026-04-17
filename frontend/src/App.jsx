@@ -13,10 +13,13 @@ import MLDashboard from './components/MLDashboard'
 import TrainingLogs from './components/TrainingLogs'
 import ReportsPage from './components/ReportsPage'
 import ColabPipeline from './components/ColabPipeline'
+import DatasetCollector from './components/DatasetCollector'
 import AnalysisProgress from './components/AnalysisProgress'
 import CameraCapture from './components/CameraCapture'
 import YouTubeFrames from './components/YouTubeFrames'
-import { runDetection, pollLlavaResult, checkHealth, findAPI, getApiUrl } from './services/api'
+import BatchResults from './components/BatchResults'
+import VideoResults from './components/VideoResults'
+import { runDetection, pollLlavaResult, checkHealth, findAPI, getApiUrl, runBatchDetection, runVideoDetection } from './services/api'
 import { convertToJpeg, SAMPLE_IMAGES } from './services/imageUtils'
 
 export default function App() {
@@ -40,6 +43,14 @@ export default function App() {
   const [multiFiles, setMultiFiles] = useState([])       // Array of { file, preview, result, error, loading }
   const [multiMode, setMultiMode] = useState(false)
   const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0 })
+  const [batchResults, setBatchResults] = useState(null)  // Server batch response { results, summary }
+  const [batchProcessing, setBatchProcessing] = useState(false)
+
+  /* ── Video state ── */
+  const [videoFile, setVideoFile] = useState(null)
+  const [videoMode, setVideoMode] = useState(false)
+  const [videoResults, setVideoResults] = useState(null)  // { frames, summary }
+  const [videoProcessing, setVideoProcessing] = useState(false)
 
   /* ── Camera state ── */
   const [showCamera, setShowCamera] = useState(false)
@@ -87,6 +98,10 @@ export default function App() {
   /* ── Multi-file handling ── */
   const handleMultiFileSelect = async (files) => {
     setMultiMode(true)
+    setVideoMode(false)
+    setVideoFile(null)
+    setVideoResults(null)
+    setBatchResults(null)
     setSelectedFile(null)
     setImagePreview(null)
     setResult(null)
@@ -103,6 +118,20 @@ export default function App() {
       })
     )
     setMultiFiles(entries)
+  }
+
+  /* ── Video file handling ── */
+  const handleVideoSelect = (file) => {
+    setVideoMode(true)
+    setVideoFile(file)
+    setVideoResults(null)
+    setMultiMode(false)
+    setMultiFiles([])
+    setBatchResults(null)
+    setSelectedFile(null)
+    setImagePreview(null)
+    setResult(null)
+    setError(null)
   }
 
   /* ── Camera capture handler ── */
@@ -150,13 +179,17 @@ export default function App() {
     e.preventDefault()
     setPageDragging(false)
     if (activePage !== 'upload') return
-    const files = Array.from(e.dataTransfer.files).filter(
+    const allFiles = Array.from(e.dataTransfer.files)
+    const videos = allFiles.filter(f => f.type.startsWith('video/') || /\.(mp4|avi|mov|webm|mkv)$/i.test(f.name))
+    const images = allFiles.filter(
       f => f.type.startsWith('image/') || /\.(heic|heif|bmp|webp)$/i.test(f.name)
     )
-    if (files.length > 1) {
-      handleMultiFileSelect(files)
-    } else if (files.length === 1) {
-      handleFileSelect(files[0])
+    if (videos.length > 0) {
+      handleVideoSelect(videos[0])
+    } else if (images.length > 1) {
+      handleMultiFileSelect(images)
+    } else if (images.length === 1) {
+      handleFileSelect(images[0])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePage])
@@ -238,49 +271,79 @@ export default function App() {
     }
   }
 
-  /* ── Batch scan all multi-images ── */
+  /* ── Batch scan all multi-images (server-side batch API) ── */
   const handleScanAll = async () => {
     if (multiFiles.length === 0) return
+    setBatchProcessing(true)
     setLoading(true)
     setError(null)
-    setBatchProgress({ current: 0, total: multiFiles.length })
+    setUploadProgress(0)
+    setDownloadProgress(0)
 
-    const updated = [...multiFiles]
-    for (let i = 0; i < updated.length; i++) {
-      updated[i] = { ...updated[i], loading: true }
-      setMultiFiles([...updated])
-      setBatchProgress({ current: i + 1, total: updated.length })
+    try {
+      const files = multiFiles.map(e => e.file)
+      const res = await runBatchDetection(files, {
+        confidence_threshold: 0.5,
+        crop_type: selectedCrop,
+        area_acres: areaAcres,
+        growth_stage: growthStage,
+        onProgress: (p) => {
+          if (p.type === 'upload') setUploadProgress(p.progress)
+          if (p.type === 'download') setDownloadProgress(p.progress)
+        },
+      })
+      setBatchResults(res)
 
-      try {
-        const res = await runDetection(updated[i].file, {
-          confidence_threshold: 0.5,
-          include_image: true,
-          crop_type: selectedCrop,
-          use_llava: false,
-          area_acres: areaAcres,
-          growth_stage: growthStage,
-        })
-        updated[i] = { ...updated[i], result: res, loading: false, error: null }
-
-        // Add to scan history
-        const scanEntry = {
-          id: Date.now() + i,
-          time: new Date(),
-          detections: res.detections?.length || 0,
-          health: computeHealth(res),
-          result: res,
-          imagePreview: updated[i].preview,
-          filename: updated[i].file.name,
+      // Add all to scan history
+      for (const r of (res.results || [])) {
+        if (!r.rejected) {
+          const scanEntry = {
+            id: Date.now() + r.index,
+            time: new Date(),
+            detections: r.num_detections || 0,
+            health: r.health_score || 50,
+            result: r,
+            imagePreview: r.annotated_image || r.original_image,
+            filename: r.filename,
+          }
+          setScanHistory(prev => [...prev, scanEntry])
         }
-        setScanHistory((prev) => [...prev, scanEntry])
-      } catch (err) {
-        updated[i] = { ...updated[i], result: null, loading: false, error: err.message }
       }
-      setMultiFiles([...updated])
+    } catch (err) {
+      setError(err.message || 'Batch detection failed')
+    } finally {
+      setBatchProcessing(false)
+      setLoading(false)
     }
+  }
 
-    setLoading(false)
-    setBatchProgress({ current: 0, total: 0 })
+  /* ── Run video detection ── */
+  const handleVideoDetection = async () => {
+    if (!videoFile) return
+    setVideoProcessing(true)
+    setLoading(true)
+    setError(null)
+    setUploadProgress(0)
+    setDownloadProgress(0)
+
+    try {
+      const res = await runVideoDetection(videoFile, {
+        confidence_threshold: 0.5,
+        crop_type: selectedCrop,
+        frame_interval: 30,
+        max_frames: 20,
+        onProgress: (p) => {
+          if (p.type === 'upload') setUploadProgress(p.progress)
+          if (p.type === 'download') setDownloadProgress(p.progress)
+        },
+      })
+      setVideoResults(res)
+    } catch (err) {
+      setError(err.message || 'Video detection failed')
+    } finally {
+      setVideoProcessing(false)
+      setLoading(false)
+    }
   }
 
   function computeHealth(res) {
@@ -360,7 +423,7 @@ export default function App() {
   const renderUpload = () => (
     <div className="space-y-6">
       {/* ── Scan History strip (always visible when there are scans) ── */}
-      {scanHistory.length > 0 && (
+      {scanHistory.length > 0 && !batchResults && !videoResults && (
         <ScanHistory
           scans={scanHistory}
           activeIndex={activeScanIndex}
@@ -369,16 +432,66 @@ export default function App() {
             setResult(scanHistory[i].result)
             setImagePreview(scanHistory[i].imagePreview)
             setMultiMode(false)
+            setVideoMode(false)
+            setBatchResults(null)
+            setVideoResults(null)
           }}
         />
       )}
 
-      {!result && !multiMode ? (
+      {/* ── Batch Results View ── */}
+      {batchResults ? (
+        <BatchResults
+          results={batchResults.results}
+          summary={batchResults.summary}
+          onBack={() => {
+            setBatchResults(null)
+            setMultiMode(false)
+            setMultiFiles([])
+            setError(null)
+          }}
+          onViewDetail={(item) => {
+            // View full detail of a batch item by simulating a single-image result structure
+            setResult({
+              rejected: item.rejected,
+              is_plant: !item.rejected,
+              structured: null,
+              detections: item.detections || [],
+              image: item.original_image,
+              annotated_image: item.annotated_image,
+              classifier_result: { top5: item.classifier_top5 || [] },
+              reasoning: item.treatment ? { treatment: item.treatment, evidence: item.evidence } : null,
+              ensemble: {
+                ensemble_health_score: item.health_score,
+                ensemble_risk_level: item.risk_level,
+                models_used: ['Classifier', 'YOLO Detection'],
+              },
+              filename: item.filename,
+            })
+            setImagePreview(item.annotated_image || item.original_image)
+            setBatchResults(null)
+            setMultiMode(false)
+          }}
+        />
+      ) : videoResults ? (
+        /* ── Video Results View ── */
+        <VideoResults
+          frames={videoResults.frames}
+          summary={videoResults.summary}
+          onBack={() => {
+            setVideoResults(null)
+            setVideoMode(false)
+            setVideoFile(null)
+            setError(null)
+          }}
+        />
+      ) : !result && !multiMode && !videoMode ? (
         /* ── Pre-upload: drop zone ── */
         <>
           <UploadBox
             onFileSelect={handleFileSelect}
             onMultiFileSelect={handleMultiFileSelect}
+            onVideoSelect={handleVideoSelect}
             onCameraClick={() => setShowCamera(true)}
             selectedCrop={selectedCrop}
             setSelectedCrop={setSelectedCrop}
@@ -435,7 +548,7 @@ export default function App() {
             <div className="space-y-6">
               <div className="text-center py-4">
                 <p className="text-sm" style={{ color: 'var(--text-faint)' }}>
-                  Select a crop type and upload a field image to begin analysis
+                  Upload images, batch photos, or video to begin analysis
                 </p>
               </div>
 
@@ -469,12 +582,69 @@ export default function App() {
             </div>
           )}
         </>
+      ) : videoMode ? (
+        /* ── Video mode: file selected, waiting to process ── */
+        <>
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => { setVideoMode(false); setVideoFile(null); setError(null) }}
+              className="px-4 py-2 rounded-lg text-xs font-semibold"
+              style={{ border: '1px solid var(--border)', color: 'var(--accent)' }}
+            >
+              ← Back
+            </button>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'color-mix(in srgb, var(--accent) 10%, transparent)' }}>
+                <span className="text-xl">🎥</span>
+              </div>
+              <div>
+                <p className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{videoFile?.name}</p>
+                <p className="text-xs" style={{ color: 'var(--text-faint)' }}>
+                  {((videoFile?.size || 0) / 1024 / 1024).toFixed(1)} MB &middot; {selectedCrop.toUpperCase()}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleVideoDetection}
+              disabled={videoProcessing || !apiHealthy}
+              className="px-6 py-2.5 rounded-lg text-white text-sm font-bold disabled:opacity-40"
+              style={{ background: 'var(--accent)' }}
+            >
+              {videoProcessing ? 'Processing...' : 'Analyze Video'}
+            </button>
+          </div>
+
+          {videoProcessing && (
+            <div className="w-full max-w-lg mx-auto">
+              <AnalysisProgress
+                uploadProgress={uploadProgress}
+                downloadProgress={downloadProgress}
+                useLlava={false}
+              />
+            </div>
+          )}
+
+          {!videoProcessing && (
+            <div className="rounded-xl p-8 text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+              <span className="text-5xl mb-4 block">🎬</span>
+              <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+                Video ready for analysis
+              </p>
+              <p className="text-xs mt-2" style={{ color: 'var(--text-faint)' }}>
+                Frames will be extracted at ~1/sec intervals and each analyzed for diseases.
+                <br />Annotated frames with bounding boxes will show exactly what was detected.
+              </p>
+            </div>
+          )}
+
+          {error && <p className="text-xs text-center" style={{ color: 'var(--danger)' }}>{error}</p>}
+        </>
       ) : multiMode ? (
         /* ── Multi-image mode ── */
         <>
           <div className="flex items-center justify-between">
             <button
-              onClick={() => { setMultiMode(false); setMultiFiles([]); setError(null) }}
+              onClick={() => { setMultiMode(false); setMultiFiles([]); setBatchResults(null); setError(null) }}
               className="px-4 py-2 rounded-lg text-xs font-semibold"
               style={{ border: '1px solid var(--border)', color: 'var(--accent)' }}
             >
@@ -485,80 +655,47 @@ export default function App() {
             </p>
             <button
               onClick={handleScanAll}
-              disabled={loading || !apiHealthy || multiFiles.every(f => f.result)}
-              className="px-6 py-2 rounded-lg text-white text-sm font-bold disabled:opacity-40"
+              disabled={batchProcessing || !apiHealthy}
+              className="px-6 py-2.5 rounded-lg text-white text-sm font-bold disabled:opacity-40"
               style={{ background: 'var(--accent)' }}
             >
-              {loading ? `Scanning ${batchProgress.current}/${batchProgress.total}...` : 'Scan All'}
+              {batchProcessing ? 'Analyzing All...' : 'Analyze All'}
             </button>
           </div>
 
-          {/* Batch progress bar */}
-          {loading && batchProgress.total > 0 && (
-            <div className="w-full rounded-full h-2 overflow-hidden" style={{ background: 'var(--border)' }}>
-              <div
-                className="h-full rounded-full transition-all duration-300"
-                style={{
-                  width: `${(batchProgress.current / batchProgress.total) * 100}%`,
-                  background: 'var(--accent)',
-                }}
+          {/* Upload progress */}
+          {batchProcessing && (
+            <div className="w-full max-w-lg mx-auto">
+              <AnalysisProgress
+                uploadProgress={uploadProgress}
+                downloadProgress={downloadProgress}
+                useLlava={false}
               />
             </div>
           )}
 
-          {/* Image grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {multiFiles.map((entry, i) => (
-              <div key={i} className="rounded-lg overflow-hidden" style={{ border: '1px solid var(--border)', background: 'var(--bg-card)' }}>
-                <div className="relative" style={{ aspectRatio: '1' }}>
-                  <img src={entry.preview} alt={entry.file.name} className="w-full h-full object-cover" />
-                  {entry.loading && (
-                    <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.5)' }}>
-                      <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          {/* Preview grid */}
+          {!batchProcessing && (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+              {multiFiles.map((entry, i) => (
+                <div key={i} className="rounded-lg overflow-hidden" style={{ border: '1px solid var(--border)', background: 'var(--bg-card)' }}>
+                  <div className="relative aspect-square">
+                    <img src={entry.preview} alt={entry.file.name} className="w-full h-full object-cover" />
+                    <div className="absolute top-1 left-1 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
+                      style={{ background: 'rgba(0,0,0,0.6)' }}>
+                      {i + 1}
                     </div>
-                  )}
-                  {entry.result && (
-                    <div className="absolute top-1 right-1 px-2 py-0.5 rounded text-[10px] font-bold text-white"
-                      style={{ background: entry.result.detections?.[0]?.class_name?.includes('healthy') ? '#22c55e' : '#ef4444' }}>
-                      {(entry.result.detections?.[0]?.class_name || 'healthy').replace(/_/g, ' ')}
-                    </div>
-                  )}
+                  </div>
+                  <div className="p-2">
+                    <p className="text-[10px] truncate" style={{ color: 'var(--text-muted)' }}>{entry.file.name}</p>
+                    <p className="text-[9px]" style={{ color: 'var(--text-faint)' }}>{(entry.file.size / 1024).toFixed(0)} KB</p>
+                  </div>
                 </div>
-                <div className="p-2">
-                  <p className="text-[10px] truncate" style={{ color: 'var(--text-muted)' }}>{entry.file.name}</p>
-                  {entry.error && <p className="text-[10px]" style={{ color: '#ef4444' }}>{entry.error}</p>}
-                  {entry.result && (
-                    <p className="text-[10px] font-semibold" style={{ color: 'var(--text-primary)' }}>
-                      {(entry.result.detections?.[0]?.confidence * 100)?.toFixed(0) || '?'}% confidence
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Click on a multi-result to view details */}
-          {multiFiles.some(f => f.result) && (
-            <div className="text-center">
-              <p className="text-xs mb-2" style={{ color: 'var(--text-faint)' }}>Click an image to view detailed results</p>
-              <div className="flex flex-wrap justify-center gap-2">
-                {multiFiles.filter(f => f.result).map((entry, i) => (
-                  <button
-                    key={i}
-                    onClick={() => {
-                      setResult(entry.result)
-                      setImagePreview(entry.preview)
-                      setMultiMode(false)
-                    }}
-                    className="px-3 py-1 rounded text-xs font-semibold"
-                    style={{ border: '1px solid var(--border)', color: 'var(--text-primary)' }}
-                  >
-                    {entry.file.name.slice(0, 20)}
-                  </button>
-                ))}
-              </div>
+              ))}
             </div>
           )}
+
+          {error && <p className="text-xs text-center" style={{ color: 'var(--danger)' }}>{error}</p>}
         </>
       ) : (
         /* ── Post-upload: results ── */
@@ -573,6 +710,10 @@ export default function App() {
                 setActiveScanIndex(null)
                 setMultiMode(false)
                 setMultiFiles([])
+                setVideoMode(false)
+                setVideoFile(null)
+                setVideoResults(null)
+                setBatchResults(null)
               }}
               className="px-6 py-2 rounded-lg text-sm font-semibold transition"
               style={{ border: '1px solid var(--border)', color: 'var(--accent)' }}
@@ -629,7 +770,7 @@ export default function App() {
       case 'mldashboard':  return <MLDashboard />
       case 'logs':         return <TrainingLogs />
       case 'pipeline':     return <ColabPipeline />
-      case 'dataset':      return renderDataset()
+      case 'dataset':      return <DatasetCollector />
       case 'livesessions': return <LiveSessions />
       case 'qrconnect':    return <QRConnect />
       case 'activity':     return <ActivityFeed />
@@ -671,8 +812,8 @@ export default function App() {
           <div className="rounded-2xl border-4 border-dashed p-12 text-center"
             style={{ borderColor: 'var(--accent)', background: 'rgba(0,0,0,0.4)' }}
           >
-            <p className="text-2xl font-bold text-white mb-2">Drop images anywhere</p>
-            <p className="text-sm text-white/70">JPG, PNG, WebP, HEIC, BMP, GIF</p>
+            <p className="text-2xl font-bold text-white mb-2">Drop images or video anywhere</p>
+            <p className="text-sm text-white/70">Images: JPG, PNG, WebP, HEIC &middot; Video: MP4, AVI, MOV</p>
           </div>
         </div>
       )}

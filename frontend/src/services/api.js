@@ -214,4 +214,114 @@ export const getTrainingArtifacts = async () => {
   return response.data
 }
 
+// ─── Dataset Collector ───
+
+export const getDatasetStats = async () => {
+  const response = await api.get('/api/dataset/stats')
+  return response.data
+}
+
+export const uploadDatasetImages = async (className, files, onProgress = null) => {
+  const form = new FormData()
+  form.append('class_name', className)
+  for (const f of files) form.append('files', f)
+  const response = await api.post('/api/dataset/upload', form, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    onUploadProgress: (e) => {
+      if (onProgress && e.total) {
+        onProgress(Math.round((e.loaded * 100) / e.total))
+      }
+    },
+  })
+  return response.data
+}
+
+export const deleteDatasetClass = async (className) => {
+  const response = await api.delete(`/api/dataset/class/${encodeURIComponent(className)}`)
+  return response.data
+}
+
 export default api
+
+// ─── Batch Detection ───
+
+/**
+ * Run batch detection on multiple images in a single request
+ * @param {File[]} imageFiles - Array of image files
+ * @param {Object} options - Detection options
+ * @param {Function} options.onProgress - Progress callback
+ * @returns {Promise} Batch results with summary
+ */
+export const runBatchDetection = async (imageFiles, options = {}) => {
+  const {
+    confidence_threshold = 0.3,
+    crop_type = 'wheat',
+    area_acres = 1,
+    growth_stage = 'unknown',
+    onProgress = null,
+  } = options
+
+  const formData = new FormData()
+  imageFiles.forEach((file) => formData.append('files', file))
+  formData.append('confidence_threshold', confidence_threshold)
+  formData.append('crop_type', crop_type)
+  formData.append('area_acres', area_acres)
+  formData.append('growth_stage', growth_stage)
+
+  const response = await api.post('/detect/batch', formData, {
+    timeout: 300000, // 5 min for large batches
+    onUploadProgress: (progressEvent) => {
+      if (onProgress) {
+        const pct = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+        onProgress({ type: 'upload', progress: pct })
+      }
+    },
+    onDownloadProgress: (progressEvent) => {
+      if (onProgress) {
+        const pct = Math.round((progressEvent.loaded * 100) / (progressEvent.total || progressEvent.loaded))
+        onProgress({ type: 'download', progress: pct })
+      }
+    },
+  })
+  return response.data
+}
+
+/**
+ * Run detection on a video file
+ * @param {File} videoFile - The video file
+ * @param {Object} options - Options
+ * @returns {Promise} Frame-by-frame results with summary
+ */
+export const runVideoDetection = async (videoFile, options = {}) => {
+  const {
+    confidence_threshold = 0.3,
+    crop_type = 'wheat',
+    frame_interval = 30,
+    max_frames = 20,
+    onProgress = null,
+  } = options
+
+  const formData = new FormData()
+  formData.append('file', videoFile)
+  formData.append('confidence_threshold', confidence_threshold)
+  formData.append('crop_type', crop_type)
+  formData.append('frame_interval', frame_interval)
+  formData.append('max_frames', max_frames)
+
+  const response = await api.post('/detect/video', formData, {
+    timeout: 600000, // 10 min for video
+    onUploadProgress: (progressEvent) => {
+      if (onProgress) {
+        const pct = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+        onProgress({ type: 'upload', progress: pct })
+      }
+    },
+    onDownloadProgress: (progressEvent) => {
+      if (onProgress) {
+        const pct = Math.round((progressEvent.loaded * 100) / (progressEvent.total || progressEvent.loaded))
+        onProgress({ type: 'download', progress: pct })
+      }
+    },
+  })
+  return response.data
+}
