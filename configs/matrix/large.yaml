@@ -4,15 +4,16 @@
 # Targets ~24 h on A100. On T4, expect ~48-72 h and ViT/ConvNeXt cells will
 # likely OOM — use `quick.yaml` for T4-sized runs.
 #
-# Datasets (all public, no HF token required):
-#   plantvillage_subset  — abdallahalidev/plantvillage-dataset
-#   rice_leaf_subset     — minhhuy2810/rice-diseases-image-dataset
-#   wheat_leaf_subset    — olyadgetch/wheat-leaf-dataset
+# Datasets (all public, no HF token required). Rice + Wheat intentionally
+# use Bangladesh-origin field captures for local-generalization claims:
+#   plantvillage_subset       — abdallahalidev/plantvillage-dataset (global baseline)
+#   rice_leaf_bd_subset       — loki4514/rice-leaf-diseases-bangladesh
+#   wheat_leaf_bd_subset      — rajkumar9999/wheat-leaf-disease-dataset-bangladesh
 #
 # The Kaggle CLI auto-downloads on first use (requires ~/.kaggle/kaggle.json
 # which cell 3 of 01_run_matrix.ipynb handles).
 
-run_id: "large-pv-rice-wheat"
+run_id: "large-pv-ricebd-wheatbd"
 
 axes:
   backbone:
@@ -29,8 +30,8 @@ axes:
 
   dataset:
     - plantvillage_subset
-    - rice_leaf_subset
-    - wheat_leaf_subset
+    - rice_leaf_bd_subset
+    - wheat_leaf_bd_subset
 
   cv:
     n_folds: 3
@@ -51,18 +52,41 @@ training_recipe:
   input_size: 224
   label_smoothing: 0.1
 
-# Kaggle loaders. All three are public and download via the kaggle CLI
+# Kaggle loaders. All public; auto-download via the kaggle CLI
 # (installed by requirements.txt, auth via ~/.kaggle/kaggle.json).
+#
+# Each dataset tries ``kaggle_slug`` first, then every ``kaggle_fallbacks``
+# entry in order. This makes the pipeline resilient to takedowns and lets
+# the same logical "rice_leaf_bd_subset" be sourced from mirrors uploaded
+# anywhere in the world (Bangladesh, India, US, EU).
 datasets:
   plantvillage_subset:
     source: kaggle
     kaggle_slug: "abdallahalidev/plantvillage-dataset"
-  rice_leaf_subset:
+    kaggle_fallbacks:
+      - "emmarex/plantdisease"
+      - "arjuntejaswi/plant-village"
+      - "mohitsingh1804/plantvillage"
+
+  rice_leaf_bd_subset:
     source: kaggle
-    kaggle_slug: "minhhuy2810/rice-diseases-image-dataset"
-  wheat_leaf_subset:
+    kaggle_slug: "loki4514/rice-leaf-diseases-bangladesh"
+    kaggle_fallbacks:
+      - "shayanriyaz/riceleafs"                    # USA mirror
+      - "minhhuy2810/rice-diseases-image-dataset"  # Vietnam
+      - "vbookshelf/rice-leaf-diseases"            # India
+      - "nizorogbezuode/rice-leaf-images"          # global
+      - "jay7080dev/rice-disease-image-dataset"    # India mirror
+
+  wheat_leaf_bd_subset:
     source: kaggle
-    kaggle_slug: "olyadgetch/wheat-leaf-dataset"
+    kaggle_slug: "rajkumar9999/wheat-leaf-disease-dataset-bangladesh"
+    kaggle_fallbacks:
+      - "olyadgetch/wheat-leaf-dataset"            # global
+      - "sinadunk23/behzad-safari-jalal"           # Iran/EU
+      - "kushagranull/wheat-disease-detection"     # India
+      - "tolgahayit/wheatdiseasedetection"         # Turkey/EU
+      - "shadabhussain/augmented-wheat-images"     # global
 
 tracker: none
 

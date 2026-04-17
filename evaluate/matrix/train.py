@@ -230,52 +230,87 @@ def _materialize_kaggle_dataset(dataset_name: str, spec: dict) -> Path:
     """Download a Kaggle dataset via the ``kaggle`` CLI and stage under
     ``datasets/externals/<dataset_name>/``. Returns the ImageFolder root
     (auto-detected under nested subfolders). Idempotent.
+
+    Supports multiple source slugs tried in order:
+    - ``kaggle_slug``        : primary slug
+    - ``kaggle_fallbacks``   : list of alternate slugs tried if primary fails
+    This lets one logical dataset (e.g. "rice_leaf_bd_subset") be sourced
+    from mirrors hosted by different uploaders anywhere in the world.
     """
     out_root = PROJECT_ROOT / "datasets" / "externals" / dataset_name
     existing = _find_imagefolder_root(out_root)
     if existing is not None:
         return existing
 
-    slug = spec.get("kaggle_slug")
-    if not slug:
+    slugs: list[str] = []
+    primary = spec.get("kaggle_slug")
+    if primary:
+        slugs.append(primary)
+    for s in spec.get("kaggle_fallbacks", []) or []:
+        if s and s not in slugs:
+            slugs.append(s)
+    if not slugs:
         raise RuntimeError(
             f"Dataset '{dataset_name}' missing 'kaggle_slug' in cfg.datasets"
         )
-    out_root.mkdir(parents=True, exist_ok=True)
-    print(f"  [kaggle] downloading {slug} -> {out_root}")
-    # Prefer CLI; fall back to python API.
-    try:
-        import subprocess
-        subprocess.check_call(
-            ["kaggle", "datasets", "download", "-d", slug,
-             "-p", str(out_root), "--unzip", "-q"],
-            timeout=3600,
-        )
-    except FileNotFoundError:
-        try:
-            from kaggle.api.kaggle_api_extended import KaggleApi  # type: ignore
-            api = KaggleApi()
-            api.authenticate()
-            api.dataset_download_files(slug, path=str(out_root), unzip=True, quiet=True)
-        except Exception as e2:  # noqa: BLE001
-            raise RuntimeError(
-                f"kaggle CLI not available and python API failed: {e2}"
-            )
-    except Exception as e:  # noqa: BLE001
-        raise RuntimeError(f"kaggle download failed for {slug}: {e}")
 
-    # Optional explicit subfolder override from spec
-    subfolder = spec.get("subfolder")
-    if subfolder:
-        cand = out_root / subfolder
-        if cand.is_dir():
-            return cand
-    root = _find_imagefolder_root(out_root)
-    if root is None:
-        raise RuntimeError(
-            f"No ImageFolder layout detected under {out_root} after Kaggle download"
-        )
-    return root
+    out_root.mkdir(parents=True, exist_ok=True)
+    last_err: str | None = None
+    for slug in slugs:
+        print(f"  [kaggle] downloading {slug} -> {out_root}")
+        try:
+            import subprocess
+            subprocess.check_call(
+                ["kaggle", "datasets", "download", "-d", slug,
+                 "-p", str(out_root), "--unzip", "-q"],
+                timeout=3600,
+            )
+        except FileNotFoundError:
+            try:
+                from kaggle.api.kaggle_api_extended import KaggleApi  # type: ignore
+                api = KaggleApi()
+                api.authenticate()
+                api.dataset_download_files(
+                    slug, path=str(out_root), unzip=True, quiet=True
+                )
+            except Exception as e2:  # noqa: BLE001
+                last_err = f"{slug}: python api failed: {e2}"
+                print(f"  [kaggle] fallback trigger: {last_err}")
+                continue
+        except Exception as e:  # noqa: BLE001
+            last_err = f"{slug}: {e}"
+            print(f"  [kaggle] fallback trigger: {last_err}")
+            continue
+
+        # Optional explicit subfolder override from spec
+        subfolder = spec.get("subfolder")
+        if subfolder:
+            cand = out_root / subfolder
+            if cand.is_dir():
+                return cand
+        root = _find_imagefolder_root(out_root)
+        if root is not None:
+            return root
+        last_err = f"{slug}: downloaded but no ImageFolder layout detected"
+        print(f"  [kaggle] fallback trigger: {last_err}")
+        # Clean out so next fallback can write fresh
+        try:
+            import shutil
+            for child in out_root.iterdir():
+                if child.is_dir():
+                    shutil.rmtree(child, ignore_errors=True)
+                else:
+                    try:
+                        child.unlink()
+                    except Exception:
+                        pass
+        except Exception:
+            pass
+
+    raise RuntimeError(
+        f"all kaggle sources failed for '{dataset_name}'; "
+        f"last error: {last_err}"
+    )
 
 
 def _resolve_dataset_root(dataset_name: str, cfg: dict) -> Path | None:
