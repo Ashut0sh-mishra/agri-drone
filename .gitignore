@@ -168,3 +168,9 @@ evaluate/results/llava_analysis.csv
 
 # Conversion scripts (temp)
 md_to_pdf.py
+
+# Secrets
+kaggle.json
+*.pem
+.env
+
