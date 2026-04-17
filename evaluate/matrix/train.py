@@ -180,33 +180,163 @@ def _materialize_hf_imagefolder(
     return out_root
 
 
+def _find_imagefolder_root(root: Path) -> Path | None:
+    """Walk up to 3 levels into ``root`` looking for an ImageFolder layout
+    (a directory containing >=2 subdirectories, each holding >=1 image).
+    """
+    if not root.is_dir():
+        return None
+    IMG_EXT = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
+
+    def _looks_like_imagefolder(d: Path) -> bool:
+        try:
+            subs = [p for p in d.iterdir() if p.is_dir()]
+        except Exception:
+            return False
+        if len(subs) < 2:
+            return False
+        hits = 0
+        for s in subs[:4]:
+            try:
+                for f in s.iterdir():
+                    if f.suffix.lower() in IMG_EXT:
+                        hits += 1
+                        break
+            except Exception:
+                continue
+        return hits >= 2
+
+    if _looks_like_imagefolder(root):
+        return root
+    # Depth-1 and depth-2 scan
+    try:
+        for d1 in root.iterdir():
+            if not d1.is_dir():
+                continue
+            if _looks_like_imagefolder(d1):
+                return d1
+            try:
+                for d2 in d1.iterdir():
+                    if d2.is_dir() and _looks_like_imagefolder(d2):
+                        return d2
+            except Exception:
+                continue
+    except Exception:
+        return None
+    return None
+
+
+def _materialize_kaggle_dataset(dataset_name: str, spec: dict) -> Path:
+    """Download a Kaggle dataset via the ``kaggle`` CLI and stage under
+    ``datasets/externals/<dataset_name>/``. Returns the ImageFolder root
+    (auto-detected under nested subfolders). Idempotent.
+    """
+    out_root = PROJECT_ROOT / "datasets" / "externals" / dataset_name
+    existing = _find_imagefolder_root(out_root)
+    if existing is not None:
+        return existing
+
+    slug = spec.get("kaggle_slug")
+    if not slug:
+        raise RuntimeError(
+            f"Dataset '{dataset_name}' missing 'kaggle_slug' in cfg.datasets"
+        )
+    out_root.mkdir(parents=True, exist_ok=True)
+    print(f"  [kaggle] downloading {slug} -> {out_root}")
+    # Prefer CLI; fall back to python API.
+    try:
+        import subprocess
+        subprocess.check_call(
+            ["kaggle", "datasets", "download", "-d", slug,
+             "-p", str(out_root), "--unzip", "-q"],
+            timeout=3600,
+        )
+    except FileNotFoundError:
+        try:
+            from kaggle.api.kaggle_api_extended import KaggleApi  # type: ignore
+            api = KaggleApi()
+            api.authenticate()
+            api.dataset_download_files(slug, path=str(out_root), unzip=True, quiet=True)
+        except Exception as e2:  # noqa: BLE001
+            raise RuntimeError(
+                f"kaggle CLI not available and python API failed: {e2}"
+            )
+    except Exception as e:  # noqa: BLE001
+        raise RuntimeError(f"kaggle download failed for {slug}: {e}")
+
+    # Optional explicit subfolder override from spec
+    subfolder = spec.get("subfolder")
+    if subfolder:
+        cand = out_root / subfolder
+        if cand.is_dir():
+            return cand
+    root = _find_imagefolder_root(out_root)
+    if root is None:
+        raise RuntimeError(
+            f"No ImageFolder layout detected under {out_root} after Kaggle download"
+        )
+    return root
+
+
 def _resolve_dataset_root(dataset_name: str, cfg: dict) -> Path | None:
     """Dispatch dataset resolution by name.
 
-    ``plantvillage_subset`` uses the existing Kaggle path. Anything else is
-    looked up under ``cfg['datasets'][<name>]``; if ``source == 'hf'`` it is
-    downloaded via the HuggingFace ``datasets`` library on first use.
+    Order:
+      1. If already staged on disk (datasets/externals/<name>/), use it.
+      2. Special-case ``plantvillage_subset`` via the legacy Kaggle path.
+      3. Otherwise, look up ``cfg['datasets'][<name>]``:
+         - ``source: kaggle`` -> auto-download via Kaggle CLI.
+         - ``source: hf``     -> materialize via HuggingFace datasets.
     """
+    # Legacy PV path
     if dataset_name == "plantvillage_subset":
-        return _resolve_plantvillage_root()
+        root = _resolve_plantvillage_root()
+        if root is not None:
+            return root
+        # Fall back to auto-download if spec present or use sane default.
+        spec = (cfg.get("datasets") or {}).get(dataset_name) or {
+            "source": "kaggle",
+            "kaggle_slug": "abdallahalidev/plantvillage-dataset",
+        }
+        if spec.get("source") == "kaggle":
+            try:
+                _materialize_kaggle_dataset(dataset_name, spec)
+            except Exception as e:  # noqa: BLE001
+                print(f"  [warn] Kaggle download failed for {dataset_name}: {e}")
+            root = _resolve_plantvillage_root()
+            if root is not None:
+                return root
+            # Last resort: any ImageFolder layout under the staged dir
+            return _find_imagefolder_root(
+                PROJECT_ROOT / "datasets" / "externals" / dataset_name
+            )
+        return None
 
-    # Already staged on disk?
+    # Already staged?
     local_candidates = [
         PROJECT_ROOT / "datasets" / "externals" / dataset_name,
         PROJECT_ROOT / "datasets" / "externals" / dataset_name.replace("_", "-"),
     ]
     for c in local_candidates:
-        if c.is_dir() and any(p.is_dir() for p in c.iterdir()):
-            return c
+        hit = _find_imagefolder_root(c)
+        if hit is not None:
+            return hit
 
     spec = (cfg.get("datasets") or {}).get(dataset_name)
     if not spec:
         return None
-    if spec.get("source") == "hf":
+    src = spec.get("source")
+    if src == "hf":
         try:
             return _materialize_hf_imagefolder(dataset_name, spec)
         except Exception as e:  # noqa: BLE001
             print(f"  [warn] HF materialization failed for {dataset_name}: {e}")
+            return None
+    if src == "kaggle":
+        try:
+            return _materialize_kaggle_dataset(dataset_name, spec)
+        except Exception as e:  # noqa: BLE001
+            print(f"  [warn] Kaggle download failed for {dataset_name}: {e}")
             return None
     return None
 
@@ -568,6 +698,8 @@ def train_and_eval(cell, cfg: dict) -> dict:
         "plantvillage_subset": "pv",
         "plantdoc_subset": "plantdoc",
         "inaturalist_plants": "inat",
+        "rice_leaf_subset": "rice",
+        "wheat_leaf_subset": "wheat",
     }.get(cell.dataset, cell.dataset.replace(" ", "_"))
     try:
         data_dir = _build_splits(src, cell.seed, cell.train_fraction,
