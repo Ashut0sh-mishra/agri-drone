@@ -21,7 +21,7 @@ is preserved byte-identical.
 - ``RESEARCH_PAPER_v4.md`` — v3 cloned, title/abstract reframed around the
   negative rule-engine result, §3.1 Data Provenance added, §5.4 PDT section
   rewritten honestly with three rescue variants tagged ``[TO BE RE-RUN]``,
-  author templated as ``{{AUTHOR_NAME}}``.
+  author filled in as Ashutosh Mishra (Independent Researcher, India).
 
 ### Step 3 — Experiment matrix
 - ``docs/results_schema.md`` — v2 JSONL + aggregate schema.

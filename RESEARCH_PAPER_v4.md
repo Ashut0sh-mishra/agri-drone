@@ -1,8 +1,9 @@
 # When Do Hand-Crafted Rules Help Modern CNNs for Crop Disease Classification? A Systematic Multi-Architecture, Multi-Regime Study on Indian Wheat and Rice
 
-**Authors:** {{AUTHOR_NAME}} (see `CITATION.cff`; replace before submission via `scripts/fill_paper_template.py` or a manual find/replace on `{{AUTHOR_NAME}}`.)
-**Affiliation:** {{AUTHOR_AFFILIATION}}
-**Corresponding author:** {{AUTHOR_EMAIL}}
+**Authors:** Ashutosh Mishra
+**Affiliation:** Independent Researcher, India
+**Corresponding author:** mishra.ashutosh@gmail.com  
+**ORCID:** [0009-0000-4764-8160](https://orcid.org/0009-0000-4764-8160)
 **Submitted to:** *Smart Agricultural Technology* (Elsevier)
 
 > **Status of this version (v4).** This paper supersedes `RESEARCH_PAPER_FINAL_v3.md` and reframes the study around a **negative result** (hand-crafted rules do not help a well-trained CNN on this data regime) and extends it with a systematic multi-architecture × multi-rule-engine × multi-regime matrix. Numbers that still need to be regenerated under the new experimental matrix are explicitly tagged `[TO BE RE-RUN]`. The original v3 results and narrative are preserved byte-for-byte in `RESEARCH_PAPER_FINAL_v3.md`; do not treat v3 as deprecated until v4 is complete.
