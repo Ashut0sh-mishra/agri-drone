@@ -318,11 +318,65 @@ def main(argv: list[str] | None = None) -> int:
     tracker = _make_tracker(cfg["tracker"])
 
     jsonl_path = out_dir / "per_run.jsonl"
-    n_written = 0
-    with jsonl_path.open("w", encoding="utf-8") as jf:
-        for cell in cells:
-            rec = _dry_run_record(cell, cfg) if args.dry_run else _real_run_record(cell, cfg)
+
+    # ----- Resume support -----------------------------------------------
+    # On restart (e.g. Colab disconnect), skip cells that already have an
+    # "ok" record in per_run.jsonl. Failed/skipped cells are retried.
+    done_slugs: set[str] = set()
+    if jsonl_path.exists():
+        try:
+            for line in jsonl_path.read_text(encoding="utf-8").splitlines():
+                if not line.strip():
+                    continue
+                try:
+                    rec = json.loads(line)
+                except Exception:
+                    continue
+                if rec.get("status") == "ok":
+                    c = Cell(
+                        backbone=rec.get("backbone", ""),
+                        rule_engine=rec.get("rule_engine", ""),
+                        train_fraction=float(rec.get("train_fraction", 0.0)),
+                        dataset=rec.get("dataset", ""),
+                        seed=int(rec.get("seed", 0)),
+                        fold=int(rec.get("fold", 0)),
+                    )
+                    done_slugs.add(c.slug())
+        except Exception as e:  # noqa: BLE001
+            print(f"  [warn] could not parse existing per_run.jsonl for resume: {e}")
+
+    todo = [c for c in cells if c.slug() not in done_slugs]
+    print(f"  [resume] total={len(cells)} done={len(done_slugs)} todo={len(todo)}")
+
+    n_written = len(done_slugs)
+    # Open in append mode so prior "ok" rows survive restarts.
+    with jsonl_path.open("a", encoding="utf-8") as jf:
+        for i, cell in enumerate(todo, 1):
+            print(f"  [cell {i}/{len(todo)}] {cell.slug()}")
+            if args.dry_run:
+                rec = _dry_run_record(cell, cfg)
+            else:
+                # Up to 2 retries on transient failures (OOM, HF download hiccup, etc.)
+                rec = None
+                last_err: str | None = None
+                for attempt in range(1, 4):
+                    rec = _real_run_record(cell, cfg)
+                    if rec.get("status") == "ok":
+                        break
+                    last_err = rec.get("notes", "")
+                    print(f"    [attempt {attempt}/3] status={rec.get('status')} notes={last_err}")
+                    if "import failed" in (last_err or ""):
+                        # Import errors won't resolve on retry; give up early.
+                        break
+                if rec is None:
+                    rec = {"run_id": cfg["run_id"], **cell.to_dict(), "status": "failed",
+                           "notes": "no record produced"}
             jf.write(json.dumps(rec) + "\n")
+            jf.flush()  # make progress visible on disk immediately
+            try:
+                os.fsync(jf.fileno())
+            except Exception:
+                pass
             tracker.log_cell(cell, rec.get("metrics") or {})
             n_written += 1
 
