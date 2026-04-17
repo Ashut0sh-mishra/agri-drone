@@ -1,0 +1,78 @@
+# Large matrix — PlantVillage + PlantDoc + iNaturalist-plants on Colab A100.
+#
+# 3 backbones x 1 rule x 2 fractions x 3 datasets x 3 folds = 54 cells.
+# Targets ~24 h on A100 (skip; run overnight). On T4, expect ~48-72 h and
+# ViT/ConvNeXt cells will likely OOM — use `quick.yaml` or `full.yaml` instead.
+#
+# Datasets:
+#   plantvillage_subset  — Kaggle abdallahalidev/plantvillage-dataset (already wired)
+#   plantdoc_subset      — HF repo, override via DATASETS__plantdoc_subset__hf_repo env
+#   inaturalist_plants   — HF repo, subset capped per class for feasibility
+
+run_id: "large-plantdoc-inat-a100"
+
+axes:
+  backbone:
+    - yolov8n-cls
+    - efficientnet_b0
+    - convnext_tiny
+
+  rule_engine:
+    - none
+
+  train_fraction:
+    - 1.0
+    - 0.25
+
+  dataset:
+    - plantvillage_subset
+    - plantdoc_subset
+    - inaturalist_plants
+
+  cv:
+    n_folds: 3
+    seeds: [42, 43, 44]
+
+training_recipe:
+  # Higher pool cap -> more images per class; tune down if Drive / disk is tight.
+  pool_cap_per_class: 1500
+  epochs: 30
+  batch_size: 64
+  optimizer: adamw
+  lr: 0.00125
+  weight_decay: 1.0e-4
+  lr_schedule: cosine
+  warmup_epochs: 3
+  augmentation: standard_v1
+  early_stopping_patience: 8
+  input_size: 224
+  label_smoothing: 0.1
+
+# HuggingFace loaders. Override at runtime with env vars if defaults change
+# (see evaluate/matrix/train.py::_resolve_hf_imagefolder).
+datasets:
+  plantdoc_subset:
+    source: hf
+    hf_repo: "sartajbhuvaji/plantdoc"
+    image_column: "image"
+    label_column: "label"
+    max_per_class: 1500
+  inaturalist_plants:
+    source: hf
+    hf_repo: "Multimodal-Fatima/iNaturalist_train"
+    image_column: "image"
+    label_column: "supercategory"   # filter to plants only inside the loader
+    filter_supercategory: "Plantae"
+    max_per_class: 800
+    max_classes: 200                # cap species count so matrix stays tractable
+
+tracker: none
+
+output:
+  root: evaluate/results/v2/matrix
+  compress_predictions: true
+
+execution:
+  resume: true
+  fail_fast: false
+  max_parallel_cells: 1

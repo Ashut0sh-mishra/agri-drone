@@ -67,16 +67,164 @@ def _resolve_plantvillage_root() -> Path | None:
     return None
 
 
+def _materialize_hf_imagefolder(
+    dataset_name: str,
+    spec: dict,
+) -> Path:
+    """Download a HuggingFace image-classification dataset and stage it
+    as an ImageFolder at ``datasets/externals/<dataset_name>/``.
+
+    Idempotent: if the folder already exists and is non-empty, returns it.
+    Requires ``datasets`` (``pip install datasets``) and, for gated repos,
+    an ``HF_TOKEN`` env var (or prior ``huggingface-cli login``).
+    """
+    out_root = PROJECT_ROOT / "datasets" / "externals" / dataset_name
+    if out_root.is_dir() and any(out_root.iterdir()):
+        return out_root
+
+    try:
+        from datasets import load_dataset  # type: ignore
+    except Exception as e:  # noqa: BLE001
+        raise RuntimeError(
+            f"Dataset '{dataset_name}' needs huggingface `datasets` installed: {e}. "
+            f"Run `pip install datasets` or add it to requirements.txt."
+        )
+
+    repo = spec.get("hf_repo")
+    if not repo:
+        raise RuntimeError(
+            f"Dataset '{dataset_name}' has no `hf_repo` in the config "
+            f"(see configs/matrix/large.yaml::datasets)."
+        )
+
+    image_col = spec.get("image_column", "image")
+    label_col = spec.get("label_column", "label")
+    max_per_class = int(spec.get("max_per_class", 1500))
+    max_classes = int(spec.get("max_classes", 0))  # 0 == no cap
+    filter_sup = spec.get("filter_supercategory")
+    split = spec.get("split", "train")
+    token = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACE_TOKEN")
+
+    print(f"  [hf] downloading {repo} (split={split}) -> {out_root}")
+    ds = load_dataset(repo, split=split, token=token, streaming=False)
+
+    # Optional filter (e.g. iNaturalist supercategory == Plantae).
+    if filter_sup and filter_sup in (ds.column_names if hasattr(ds, "column_names") else []):
+        ds = ds.filter(lambda r: r.get(filter_sup) == filter_sup, load_from_cache_file=True)
+    elif filter_sup:
+        # If the column storing the supercategory is passed as filter_sup directly.
+        for col_candidate in ("supercategory", "kingdom", "phylum"):
+            if col_candidate in ds.column_names:
+                target = filter_sup
+                ds = ds.filter(lambda r, c=col_candidate: r.get(c) == target,
+                               load_from_cache_file=True)
+                break
+
+    # Resolve label names (ClassLabel feature).
+    label_names = None
+    try:
+        feat = ds.features.get(label_col)
+        if feat is not None and hasattr(feat, "names"):
+            label_names = list(feat.names)
+    except Exception:
+        label_names = None
+
+    out_root.mkdir(parents=True, exist_ok=True)
+    per_class_count: dict[str, int] = {}
+    kept_classes: set[str] = set()
+    n_written = 0
+
+    for idx, row in enumerate(ds):
+        if label_col not in row or image_col not in row:
+            continue
+        raw_label = row[label_col]
+        if isinstance(raw_label, int) and label_names is not None:
+            label = label_names[raw_label]
+        else:
+            label = str(raw_label)
+        # Sanitize label to safe folder name.
+        safe_label = "".join(c if c.isalnum() or c in "-_" else "_" for c in label)[:80]
+        if not safe_label:
+            continue
+        if max_classes and safe_label not in kept_classes and len(kept_classes) >= max_classes:
+            continue
+        if per_class_count.get(safe_label, 0) >= max_per_class:
+            continue
+
+        img_obj = row[image_col]
+        cls_dir = out_root / safe_label
+        cls_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            # PIL Image -> JPEG
+            if hasattr(img_obj, "convert"):
+                pil = img_obj.convert("RGB")
+                pil.save(cls_dir / f"{safe_label}_{per_class_count.get(safe_label, 0):06d}.jpg",
+                         format="JPEG", quality=92)
+            elif isinstance(img_obj, dict) and "bytes" in img_obj:
+                (cls_dir / f"{safe_label}_{per_class_count.get(safe_label, 0):06d}.jpg").write_bytes(
+                    img_obj["bytes"]
+                )
+            else:
+                continue
+        except Exception:
+            continue
+        per_class_count[safe_label] = per_class_count.get(safe_label, 0) + 1
+        kept_classes.add(safe_label)
+        n_written += 1
+        if n_written % 1000 == 0:
+            print(f"    [hf] staged {n_written} images across {len(kept_classes)} classes")
+
+    print(f"  [hf] done: {n_written} images across {len(kept_classes)} classes -> {out_root}")
+    if n_written == 0:
+        raise RuntimeError(f"No images materialized for {repo}; check column names in config.")
+    return out_root
+
+
+def _resolve_dataset_root(dataset_name: str, cfg: dict) -> Path | None:
+    """Dispatch dataset resolution by name.
+
+    ``plantvillage_subset`` uses the existing Kaggle path. Anything else is
+    looked up under ``cfg['datasets'][<name>]``; if ``source == 'hf'`` it is
+    downloaded via the HuggingFace ``datasets`` library on first use.
+    """
+    if dataset_name == "plantvillage_subset":
+        return _resolve_plantvillage_root()
+
+    # Already staged on disk?
+    local_candidates = [
+        PROJECT_ROOT / "datasets" / "externals" / dataset_name,
+        PROJECT_ROOT / "datasets" / "externals" / dataset_name.replace("_", "-"),
+    ]
+    for c in local_candidates:
+        if c.is_dir() and any(p.is_dir() for p in c.iterdir()):
+            return c
+
+    spec = (cfg.get("datasets") or {}).get(dataset_name)
+    if not spec:
+        return None
+    if spec.get("source") == "hf":
+        try:
+            return _materialize_hf_imagefolder(dataset_name, spec)
+        except Exception as e:  # noqa: BLE001
+            print(f"  [warn] HF materialization failed for {dataset_name}: {e}")
+            return None
+    return None
+
+
 def _build_splits(src: Path, seed: int, train_fraction: float,
-                  pool_cap_per_class: int = 300) -> Path:
+                  pool_cap_per_class: int = 300,
+                  dataset_tag: str = "pv") -> Path:
     """Deterministic 80/10/10 split cached under ``datasets/_matrix_cache/``.
 
     To keep the Colab T4 quick-matrix run under ~1 h for 8 cells, the per-class
     pool is capped at ``pool_cap_per_class`` images before splitting. The test
     and val splits are sized from the full pool, then ``train_fraction`` scales
     only the training split (so the test set stays comparable across cells).
+
+    ``dataset_tag`` namespaces the cache so PlantVillage, PlantDoc and
+    iNaturalist splits don't collide (e.g. ``pv``, ``plantdoc``, ``inat``).
     """
-    key = (str(src), seed, float(train_fraction), pool_cap_per_class)
+    key = (str(src), seed, float(train_fraction), pool_cap_per_class, dataset_tag)
     cached = _SPLIT_CACHE.get(key)
     if cached is not None and cached.is_dir():
         return cached
@@ -84,7 +232,7 @@ def _build_splits(src: Path, seed: int, train_fraction: float,
     rng = random.Random(seed)
     split_root = (
         PROJECT_ROOT / "datasets" / "_matrix_cache"
-        / f"pv_seed{seed}_cap{pool_cap_per_class}_frac{train_fraction}"
+        / f"{dataset_tag}_seed{seed}_cap{pool_cap_per_class}_frac{train_fraction}"
     )
     if split_root.exists():
         shutil.rmtree(split_root, ignore_errors=True)
@@ -407,18 +555,24 @@ def train_and_eval(cell, cfg: dict) -> dict:
                        notes=f"torch not installed on this host: {e}")
 
     family = BACKBONE_REGISTRY[backbone]["family"]
-    src = _resolve_plantvillage_root()
+    src = _resolve_dataset_root(cell.dataset, cfg)
     if src is None:
         return _record(cell, cfg, status="skipped",
-                       notes=("PlantVillage color/ dir not found under "
-                              "datasets/externals/. Run notebook 1 data-source "
-                              "cell first (DATA_SOURCE=kaggle)."))
+                       notes=(f"dataset '{cell.dataset}' not available. "
+                              f"For plantvillage_subset run notebook 1 data-source cell. "
+                              f"For HF datasets set cfg['datasets'][...] and HF_TOKEN."))
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     pool_cap = int(cfg.get("training_recipe", {}).get("pool_cap_per_class", 300))
+    dataset_tag = {
+        "plantvillage_subset": "pv",
+        "plantdoc_subset": "plantdoc",
+        "inaturalist_plants": "inat",
+    }.get(cell.dataset, cell.dataset.replace(" ", "_"))
     try:
         data_dir = _build_splits(src, cell.seed, cell.train_fraction,
-                                 pool_cap_per_class=pool_cap)
+                                 pool_cap_per_class=pool_cap,
+                                 dataset_tag=dataset_tag)
         print(f"  [{cell.slug()}] training {backbone} ({family}) on {data_dir}")
         if family == "yolo":
             try:
