@@ -175,6 +175,17 @@ def _is_plant_image(image_bgr: np.ndarray) -> dict:
             f"coherence {green_coherence:.0%}) — accepting as plant"
         )
 
+    # ── D1b. Significant brown vegetation → likely a diseased plant ──
+    # Diseased leaves (rust, rot, blight) are mostly brown with very little green.
+    # Accept if brown vegetation covers a meaningful portion of the image.
+    elif brown_ratio > 0.10:
+        is_plant = True
+        reason = ""
+        logger.info(
+            f"Brown vegetation dominant (brown={brown_ratio:.1%}, green={green_ratio:.1%}) "
+            f"— likely diseased plant, accepting"
+        )
+
     # ── D2. No green blob — check if face/person without plant ──
     elif face_count > 0 and face_area_pct > 0.01:
         is_plant = False
@@ -212,10 +223,11 @@ def _is_plant_image(image_bgr: np.ndarray) -> dict:
     # Default is already reject (is_plant = False)
 
     # ── SPECTRAL VEGETATION GATE (hardened with RGRI + texture) ──
-    # Only applies if image passed via blob detection. If has_plant_region,
-    # do NOT let the spectral gate override — real plants can have odd spectral.
+    # Only applies if image passed via blob detection. If has_plant_region
+    # or brown_accepted, do NOT let the spectral gate override.
+    brown_accepted = is_plant and brown_ratio > 0.10
     spectral_info: dict = {}
-    if is_plant and not has_plant_region:
+    if is_plant and not has_plant_region and not brown_accepted:
         try:
             from ..core.spectral_features import extract_spectral_indices
             spectral = extract_spectral_indices(image_bgr)
@@ -357,8 +369,8 @@ def _image_hash(image: np.ndarray) -> str:
 
 
 # ── LLaVA Configuration ──
-_OLLAMA_URL = "http://localhost:11434"
-_LLAVA_MODEL = "llava"
+_OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
+_LLAVA_MODEL = os.environ.get("LLAVA_MODEL", "llava")
 
 _LLAVA_PROMPT = """You are an expert plant pathologist specializing in Indian and global wheat and rice diseases. Analyze this image carefully.
 
