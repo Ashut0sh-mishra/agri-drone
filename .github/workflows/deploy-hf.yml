@@ -11,9 +11,22 @@ on:
       - 'pyproject.toml'
       - 'requirements.lock.txt'
 
+# Least-privilege — only needs to read code and push to external HF repo
+permissions:
+  contents: read
+
+# Only one deploy at a time
+concurrency:
+  group: deploy-hf
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Only deploy from the main repo, never from forks
+    if: github.repository == 'Ashut0sh-mishra/agri-drone'
+    environment: production
     steps:
       - name: Checkout GitHub repo
         uses: actions/checkout@v4

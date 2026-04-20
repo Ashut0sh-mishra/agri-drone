@@ -1,0 +1,13 @@
+# Code Owners — these people MUST review PRs touching these paths
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default: maintainer reviews everything
+*                           @Ashut0sh-mishra
+
+# Critical paths — require maintainer review (no bypass)
+src/agridrone/api/          @Ashut0sh-mishra
+src/agridrone/core/         @Ashut0sh-mishra
+.github/workflows/          @Ashut0sh-mishra
+deploy/                     @Ashut0sh-mishra
+Dockerfile                  @Ashut0sh-mishra
+pyproject.toml              @Ashut0sh-mishra

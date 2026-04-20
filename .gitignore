@@ -172,5 +172,14 @@ md_to_pdf.py
 # Secrets
 kaggle.json
 *.pem
+*.key
+*.p12
+*.pfx
 .env
+.env.*
+!.env.example
+**/secrets/
+**/credentials/
+token.json
+service-account*.json
 
