@@ -1,3 +1,12 @@
+/**
+ * MLDashboard - Operator console for the active classifier model.
+ *
+ * Shows current model metrics (accuracy, F1 per class, confusion matrix
+ * samples), model-info metadata, training-image previews, and a "Reload
+ * Model" action. Data sourced from /api/ml/* endpoints.
+ *
+ * @component
+ */
 import React, { useState, useEffect, useRef } from 'react'
 import { getMLMetrics, getModelInfo, getTrainingImageUrl, reloadModel } from '../services/api'
 

@@ -1,3 +1,12 @@
+/**
+ * VoiceInterface - Mic-input + TTS-output shell for ChatPanel.
+ *
+ * Uses the Web Speech API for recognition, pipes the transcript to the
+ * backend chat endpoint, and speaks the response back via SpeechSynthesis.
+ * Supports per-language flag selection.
+ *
+ * @component
+ */
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { getApiUrl } from '../services/api'
 

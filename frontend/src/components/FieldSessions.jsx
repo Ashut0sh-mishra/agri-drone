@@ -1,3 +1,12 @@
+/**
+ * FieldSessions - Field-worker dashboard showing active phone sessions.
+ *
+ * Polls the phone-server for currently-connected devices, daily photo counts,
+ * and the most-recent detections. Used by farm supervisors to monitor
+ * on-the-ground scanning activity.
+ *
+ * @component
+ */
 import React, { useState, useEffect, useRef } from 'react'
 
 const PHONE_SERVER = import.meta.env.VITE_PHONE_SERVER || 'http://localhost:8765'

@@ -1,3 +1,12 @@
+/**
+ * AnalysisProgress - Multi-stage progress indicator for the image-analysis pipeline.
+ *
+ * Displays upload â†’ preprocess â†’ YOLO â†’ classify â†’ LLaVA â†’ reasoning stages with
+ * estimated durations and a completion spinner. Driven by the backend response
+ * timings exposed through the /detect endpoint.
+ *
+ * @component
+ */
 import React, { useState, useEffect, useRef } from 'react'
 
 const STAGES = [

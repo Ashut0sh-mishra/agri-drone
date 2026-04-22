@@ -1,3 +1,10 @@
+/**
+ * Sidebar - Left navigation shell with icon + label entries.
+ *
+ * Controls the active dashboard view (Upload, Reports, ML, Field, etc.).
+ *
+ * @component
+ */
 import React from 'react'
 
 const NAV_ITEMS = [

@@ -1,3 +1,12 @@
+/**
+ * DatasetCollector - Dashboard panel for browsing and uploading training datasets.
+ *
+ * Lists all datasets under data/ with per-class image counts and total size.
+ * Supports drag-and-drop upload (bulk ZIP or individual images) and per-class
+ * deletion.
+ *
+ * @component
+ */
 import React, { useState, useEffect, useRef } from 'react'
 import { getDatasetStats, uploadDatasetImages, deleteDatasetClass } from '../services/api'
 

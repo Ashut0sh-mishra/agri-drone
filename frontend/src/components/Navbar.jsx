@@ -1,3 +1,11 @@
+/**
+ * Navbar - Top navigation bar with clock and live backend-health indicator.
+ *
+ * Pings the API every few seconds to show online/offline status and
+ * displays the currently-detected API port.
+ *
+ * @component
+ */
 import React, { useState, useEffect } from 'react'
 import { findAPI, API_URL } from '../services/api'
 

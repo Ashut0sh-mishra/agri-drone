@@ -1,3 +1,15 @@
+/**
+ * CameraCapture - In-browser webcam / phone camera snapshot UI.
+ *
+ * Opens `getUserMedia`, streams to a hidden <video>, and on "Capture" freezes
+ * a frame into a File suitable for the /detect endpoint.
+ *
+ * Props:
+ *   onCapture(file: File) - invoked when the user takes the snapshot
+ *   onClose()             - invoked when the modal is dismissed
+ *
+ * @component
+ */
 import React, { useRef, useState, useCallback, useEffect } from 'react'
 import { captureVideoFrame } from '../services/imageUtils'
 

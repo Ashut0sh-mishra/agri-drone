@@ -1,3 +1,11 @@
+/**
+ * YouTubeFrames - Sample-frame grabber for remote YouTube field footage.
+ *
+ * Accepts a YouTube URL, extracts evenly-spaced frames server-side, and
+ * runs each through the detection pipeline for bulk analysis.
+ *
+ * @component
+ */
 import React, { useState } from 'react'
 import { runDetection, getApiUrl } from '../services/api'
 

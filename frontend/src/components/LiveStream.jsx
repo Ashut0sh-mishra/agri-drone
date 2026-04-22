@@ -1,3 +1,11 @@
+/**
+ * LiveStream - Live-video disease detection via the webcam.
+ *
+ * Captures frames at N Hz, POSTs each to /detect, and overlays colour-coded
+ * boxes (health / disease / weed) on a canvas aligned with the <video>.
+ *
+ * @component
+ */
 import React, { useRef, useState, useCallback, useEffect } from 'react'
 import { getApiUrl } from '../services/api'
 

@@ -1,3 +1,19 @@
+/**
+ * UploadBox - Drag-and-drop / file-picker entry point for image analysis.
+ *
+ * Accepts a single or multiple images, lets the user pick crop type, area
+ * (acres) and growth stage, and forwards selection to the parent via
+ * callbacks.
+ *
+ * Props:
+ *   onFileSelect(file)       - single-file analysis
+ *   onMultiFileSelect(files) - batch analysis
+ *   onCameraClick()          - open the CameraCapture modal
+ *   selectedCrop, setSelectedCrop, areaAcres, setAreaAcres,
+ *   growthStage, setGrowthStage, disabled
+ *
+ * @component
+ */
 import React, { useRef, useState } from 'react'
 
 const ACCEPTED_FORMATS = 'image/jpeg,image/jpg,image/png,image/gif,image/bmp,image/webp,image/heic,image/heif,image/*'

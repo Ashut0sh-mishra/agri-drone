@@ -1,3 +1,12 @@
+/**
+ * ColabPipeline - Dashboard view of a Google-Colab training pipeline.
+ *
+ * Polls /api/training/* endpoints to display the 4-stage pipeline
+ * (Setup â†’ Dataset Download â†’ Training â†’ Evaluation), live logs, and
+ * downloadable artifacts.
+ *
+ * @component
+ */
 import React, { useState, useEffect, useRef } from 'react'
 import { getTrainingStatus, getTrainingArtifacts, getTrainingLogs, getTrainingImageUrl } from '../services/api'
 

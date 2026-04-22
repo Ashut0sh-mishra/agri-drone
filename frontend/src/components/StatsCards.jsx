@@ -1,3 +1,14 @@
+/**
+ * StatsCards - Four-up summary tiles at the top of the dashboard.
+ *
+ * Shows total scans, diseases detected, healthy fields and average
+ * confidence.
+ *
+ * Props:
+ *   stats - { totalScans, diseasesDetected, healthyFields, avgConfidence }
+ *
+ * @component
+ */
 import React from 'react'
 
 export default function StatsCards({ stats }) {

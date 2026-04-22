@@ -1,3 +1,11 @@
+/**
+ * DetectionTable - Tabular listing of all YOLO detections in a scan.
+ *
+ * Props:
+ *   detections - array of { class_name, confidence, bbox, severity }
+ *
+ * @component
+ */
 import React from 'react'
 
 export default function DetectionTable({ detections }) {

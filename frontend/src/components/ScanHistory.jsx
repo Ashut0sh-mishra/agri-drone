@@ -1,3 +1,13 @@
+/**
+ * ScanHistory - Horizontal strip of recent scans for quick re-selection.
+ *
+ * Props:
+ *   scans       - array of past scan summaries
+ *   activeIndex - currently-selected scan
+ *   onSelect(i) - callback fired when a thumbnail is clicked
+ *
+ * @component
+ */
 import React from 'react'
 
 export default function ScanHistory({ scans, activeIndex, onSelect }) {

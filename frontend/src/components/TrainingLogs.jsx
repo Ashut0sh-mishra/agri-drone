@@ -1,3 +1,11 @@
+/**
+ * TrainingLogs - Live tail of training / inference log files.
+ *
+ * Auto-refreshes from /api/ml/logs and renders colour-coded log lines.
+ * Useful for monitoring long-running training jobs from the dashboard.
+ *
+ * @component
+ */
 import React, { useState, useEffect, useRef } from 'react'
 import { getTrainingLogs } from '../services/api'
 

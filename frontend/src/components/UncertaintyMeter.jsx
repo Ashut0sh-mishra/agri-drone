@@ -1,3 +1,16 @@
+/**
+ * UncertaintyMeter - Confidence bar with error bars and uncertainty colouring.
+ *
+ * Visualises the MC-Dropout output from the backend: mean confidence as the
+ * bar, Â±1.96Ïƒ as whiskers, and a badge indicating whether the prediction is
+ * flagged uncertain.
+ *
+ * Props:
+ *   uncertainty - { mean_confidence, std_confidence, confidence_interval,
+ *                   is_uncertain, uncertainty_reason, ... }
+ *
+ * @component
+ */
 import React from 'react'
 
 /**

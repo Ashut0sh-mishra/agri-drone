@@ -1,3 +1,11 @@
+/**
+ * ReportsPage - Historical detection archive with filters and export.
+ *
+ * Loads /api/reports/history, renders a paginated, risk-badge-coloured table,
+ * and supports bulk-clear as well as JSON / CSV export of individual scans.
+ *
+ * @component
+ */
 import React, { useState, useEffect } from 'react'
 import { getDetectionHistory, clearDetectionHistory } from '../services/api'
 

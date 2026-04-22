@@ -1,5 +1,22 @@
-"""
-app.py - FastAPI application and routes.
+"""FastAPI application factory and HTTP/WebSocket route definitions for AgriDrone.
+
+This module hosts the entire backend surface area of AgriDrone:
+
+  * Plant-image gatekeeper (Layer 1) — face / non-plant rejection
+  * Crop-type gate (Layer 2) — wheat / rice routing
+  * YOLOv8 classifier + rule engine pipeline
+  * Optional LLaVA multimodal validator (background task)
+  * Grad-CAM heatmap generation
+  * RAG-based research paper retrieval
+  * Structured output builder for the frontend
+  * Dataset / ML-metrics / activity-feed endpoints for the dashboard
+
+Key entry points:
+    create_app()  — build and configure the FastAPI instance
+    get_app()     — lazy-singleton accessor used by uvicorn (factory mode)
+
+Usage:
+    uvicorn agridrone.api.app:get_app --factory --host 127.0.0.1 --port 9000
 """
 import asyncio
 import base64
@@ -2677,6 +2694,15 @@ def create_app() -> FastAPI:
 _app_instance = None
 
 def get_app():
+    """Return the lazily-constructed FastAPI application singleton.
+
+    Used as the target of ``uvicorn ... --factory`` so that the app is
+    only built on worker startup (not at import time). Safe to call
+    repeatedly — the second and later calls return the same instance.
+
+    Returns:
+        FastAPI: The configured application.
+    """
     global _app_instance
     if _app_instance is None:
         _app_instance = create_app()
@@ -2685,6 +2711,21 @@ def get_app():
 # Module-level __getattr__ so `from agridrone.api.app import app` and
 # uvicorn agridrone.api.app:app both work without eager creation.
 def __getattr__(name):
+    """Expose ``app`` as a module-level attribute built on first access.
+
+    Enables both ``uvicorn agridrone.api.app:app`` and
+    ``from agridrone.api.app import app`` without creating the app at
+    import time.
+
+    Args:
+        name: Attribute being looked up on the module.
+
+    Returns:
+        The FastAPI instance if ``name == "app"``.
+
+    Raises:
+        AttributeError: For any other attribute name.
+    """
     if name == "app":
         return get_app()
     raise AttributeError(name)

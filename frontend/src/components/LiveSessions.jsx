@@ -1,3 +1,11 @@
+/**
+ * LiveSessions - Real-time map / list of active scanning sessions.
+ *
+ * Shows healthy / medium / disease zone counts per connected device,
+ * refreshing every few seconds from the phone-server.
+ *
+ * @component
+ */
 import React, { useState, useEffect, useRef } from 'react'
 
 const PHONE_SERVER = import.meta.env.VITE_PHONE_SERVER || 'http://localhost:8765'

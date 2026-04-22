@@ -1,3 +1,11 @@
+/**
+ * QRConnect - Pair-a-phone screen showing a scannable QR code.
+ *
+ * Renders a QR pointing to the phone-server URL and lists sessions as they
+ * connect. Used as the entry point for field workers joining a scan.
+ *
+ * @component
+ */
 import React, { useState, useEffect, useRef } from 'react'
 
 const PHONE_SERVER = import.meta.env.VITE_PHONE_SERVER || 'http://localhost:8765'

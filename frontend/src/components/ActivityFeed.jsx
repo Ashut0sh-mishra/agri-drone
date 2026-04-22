@@ -1,3 +1,11 @@
+/**
+ * ActivityFeed - Live stream of recent phone-client activity (connects, uploads, detections).
+ *
+ * Polls the backend's /api/activity/feed endpoint and renders a scrollable, icon-coded
+ * feed. Used on the Live Sessions / Field Sessions dashboards.
+ *
+ * @component
+ */
 import React, { useState, useEffect, useRef } from 'react'
 import { getActivityFeed } from '../services/api'
 

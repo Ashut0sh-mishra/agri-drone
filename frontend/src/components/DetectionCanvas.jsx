@@ -1,3 +1,15 @@
+/**
+ * DetectionCanvas - Image with YOLO bounding-boxes drawn on an overlay canvas.
+ *
+ * Renders the uploaded image beneath a <canvas> element and paints one
+ * colour-coded rectangle per detection with its class name and confidence.
+ *
+ * Props:
+ *   imageUrl   - src of the analysed image
+ *   detections - array of { bbox: [x1,y1,x2,y2], class_name, confidence }
+ *
+ * @component
+ */
 import React, { useRef, useEffect } from 'react'
 
 const COLORS = [

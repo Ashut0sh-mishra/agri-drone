@@ -1,3 +1,24 @@
+/**
+ * ResultViewer - Primary result panel shown after a successful /detect call.
+ *
+ * Renders:
+ *   * Image tabs (Original / Grad-CAM / Healthy reference)
+ *   * Health gauge + risk badge
+ *   * Diagnosis card (disease, confidence, LLM agreement)
+ *   * Confidence breakdown, reasoning chain, rejected diagnoses,
+ *     differential, AI validation, ensemble voting, temporal trends,
+ *     research papers and metadata.
+ *   * ChatPanel with diagnosis context
+ *
+ * Props:
+ *   result          - backend response (flat legacy fields + optional `structured`)
+ *   imagePreview    - object URL of the user-uploaded image
+ *   onDownloadJSON  - exporter callback
+ *   onDownloadCSV   - exporter callback
+ *   cropType        - 'wheat' | 'rice' | 'maize' (drives healthy reference image)
+ *
+ * @component
+ */
 import React, { useState } from 'react'
 import DetectionCanvas from './DetectionCanvas'
 import UncertaintyMeter from './UncertaintyMeter'

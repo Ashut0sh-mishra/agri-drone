@@ -1,3 +1,17 @@
+/**
+ * ChatPanel - Conversational assistant grounded in the current diagnosis.
+ *
+ * Sends the user's question plus the structured diagnosis context to the
+ * backend LLM endpoint. Also hosts the VoiceInterface for mic input and
+ * TTS playback.
+ *
+ * Props:
+ *   result    - structured result object from /detect
+ *   cropType  - 'wheat' | 'rice' | ...
+ *   startOpen - whether the panel is expanded initially
+ *
+ * @component
+ */
 import React, { useState, useRef, useEffect } from 'react'
 import { getApiUrl } from '../services/api'
 import VoiceInterface from './VoiceInterface'

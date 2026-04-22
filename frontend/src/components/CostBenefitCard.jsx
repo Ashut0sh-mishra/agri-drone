@@ -1,3 +1,14 @@
+/**
+ * CostBenefitCard - Economic advice card (treat / monitor / no-action).
+ *
+ * Displays the backend's cost-benefit estimate per acre: predicted yield
+ * loss, recommended action, spray cost, and expected ROI.
+ *
+ * Props:
+ *   estimate - { recommendation, yield_loss_pct, treatment_cost, net_benefit, ... }
+ *
+ * @component
+ */
 import React from 'react'
 
 /* ── Colour helpers ── */
