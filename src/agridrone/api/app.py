@@ -2196,6 +2196,14 @@ def create_app() -> FastAPI:
                 if not cls.is_dir():
                     continue
                 imgs = [p for p in cls.iterdir() if p.suffix.lower() in IMG_EXTS]
+                # Also support YOLO-style datasets where images live in a sub-folder
+                if not imgs:
+                    for sub in ("images", "Images", "JPEGImages"):
+                        sub_dir = cls / sub
+                        if sub_dir.is_dir():
+                            imgs = [p for p in sub_dir.iterdir() if p.suffix.lower() in IMG_EXTS]
+                            if imgs:
+                                break
                 if not imgs:
                     continue
                 n = len(imgs)
