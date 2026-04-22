@@ -193,7 +193,7 @@ agri-drone/
 
 ```bash
 # Clone the repository
-git clone https://github.com/<your-username>/agri-drone.git
+git clone https://github.com/Ashut0sh-mishra/agri-drone.git
 cd agri-drone
 
 # Create virtual environment
@@ -313,12 +313,12 @@ Stratified 70/15/15 split with seed = 42.
 | Resource | Location | DOI |
 |:---|:---|:---|
 | Source code | This repository | — |
-| Model weights | [Google Drive / Zenodo] | [DOI pending] |
-| Primary dataset | [Google Drive / Zenodo] | [DOI pending] |
-| PDT dataset | [Publicly available](https://github.com/) | See original source |
+| Model weights | [Zenodo](https://zenodo.org/records/pending) | [DOI pending — upload to Zenodo to activate] |
+| Primary dataset | [Zenodo](https://zenodo.org/records/pending) | [DOI pending — upload to Zenodo to activate] |
+| PDT dataset | [GitHub (original source)](https://github.com/pratikkayal/PlantDoc-Dataset) | See original paper |
 | Evaluation results | `evaluate/results/` in this repo | — |
 
-> **Note:** Update the links above after uploading to Google Drive and/or Zenodo.
+> **To activate DOIs:** upload `models/india_agri_cls_21class_backup.pt` and the dataset split zip to [zenodo.org](https://zenodo.org), then replace the links above.
 
 ## Citation
 
