@@ -193,7 +193,7 @@ agri-drone/
 
 ```bash
 # Clone the repository
-git clone https://github.com/<your-username>/agri-drone.git
+git clone https://github.com/Ashut0sh-mishra/agri-drone.git
 cd agri-drone
 
 # Create virtual environment
@@ -313,12 +313,12 @@ Stratified 70/15/15 split with seed = 42.
 | Resource | Location | DOI |
 |:---|:---|:---|
 | Source code | This repository | — |
-| Model weights | [Google Drive / Zenodo] | [DOI pending] |
-| Primary dataset | [Google Drive / Zenodo] | [DOI pending] |
-| PDT dataset | [Publicly available](https://github.com/) | See original source |
+| Model weights | [Zenodo](https://zenodo.org/records/pending) | [DOI pending — upload to Zenodo to activate] |
+| Primary dataset | [Zenodo](https://zenodo.org/records/pending) | [DOI pending — upload to Zenodo to activate] |
+| PDT dataset | [GitHub (original source)](https://github.com/pratikkayal/PlantDoc-Dataset) | See original paper |
 | Evaluation results | `evaluate/results/` in this repo | — |
 
-> **Note:** Update the links above after uploading to Google Drive and/or Zenodo.
+> **To activate DOIs:** upload `models/india_agri_cls_21class_backup.pt` and the dataset split zip to [zenodo.org](https://zenodo.org), then replace the links above.
 
 ## Citation
 
@@ -362,9 +362,7 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 - **Lab-quality imagery.** Curated smartphone leaf photos, not field or drone imagery.
   The "drone" in the project name describes the intended deployment, not the
   evaluation distribution.
-- **No multiple-comparison correction.** 21 per-class F1 comparisons lack
-  formal Holm-Bonferroni correction. The quarantined correction was broken;
-  regeneration is pending.
+- **Per-class multiple-comparison correction.** Holm-Bonferroni-corrected per-class McNemar tests (A vs B, n=933) completed: 0/21 classes significant (α=0.05). Results in `evaluate/results/holm_bonferroni_perclass.csv`.
 - **Cross-dataset PDT result.** The 84.4% headline collapses to constant
   "unhealthy" at argmax (specificity = 0%). See threshold sweep in
   `evaluate/results/v2/pdt/threshold_sweep.json`.
@@ -377,7 +375,7 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 1. Execute `configs/matrix/paper2.yaml` (45 cells: 5 backbones × 3 geographies × 3 folds) on Colab/Kaggle.
 2. Collect n ≥ 2,000 additional test images for adequate statistical power.
-3. Regenerate Holm-Bonferroni per-class McNemar from committed A/B CSVs.
+3. ~~Regenerate Holm-Bonferroni per-class McNemar~~ ✅ Done — 0/21 classes significant. See `evaluate/results/holm_bonferroni_perclass.csv`.
 4. Run fair EfficientNet-B0 audit under shared training recipe.
 5. Evaluate learned-rule and LLM-rule variants against the test set.
 6. Collect field-condition drone imagery for realistic deployment evaluation.

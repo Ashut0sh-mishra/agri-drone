@@ -171,7 +171,7 @@ No per-class A→B gain survives its 95% bootstrap CI. See `evaluate/results/` f
 
 4. **Single seed.** Training used seed 42 only. Multi-seed ablation is planned via `configs/matrix/paper2.yaml` (45 cells, 5 backbones × 3 geographies × 3 folds) but has not been executed at time of writing.
 
-5. **No multiple-comparison correction.** The 21 per-class F1 comparisons in §5.5 are not formally corrected (e.g., Holm-Bonferroni). We rely on bootstrap CIs to convey uncertainty, but acknowledge this as a limitation.
+5. **Multiple-comparison correction (per-class McNemar).** We applied per-class McNemar tests (continuity-corrected) with Holm-Bonferroni correction across all 21 classes (Config A vs B, n=933). Zero out of 21 classes reached significance (α=0.05) after correction. The rule engine neither reliably helps nor hurts any individual class. Full results are in `evaluate/results/holm_bonferroni_perclass.csv`; the script is `evaluate/holm_bonferroni_perclass.py`.
 
 6. **Split script.** `scripts/make_splits.py` does not group-split by base image ID. For the current dataset this is safe (each `aug_*` file has a unique base; see `LEAKAGE_INVESTIGATION_REPORT.md`), but the script would introduce leakage on datasets with multi-variant augmentations.
 

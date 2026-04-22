@@ -8,8 +8,17 @@ saves the best checkpoint, tests on Leaf Blast images, and patches
 phone_connect.py to use the new model.
 
 Usage:
+    # Standard (local data/raw/ only, CPU):
     python scripts/train_model.py
+
+    # Mega dataset mode (reads pre-built cls split from data/mega_cls/):
+    python scripts/train_model.py --mega
+
+    # GPU training:
+    python scripts/train_model.py --gpu 0
+    python scripts/train_model.py --mega --gpu 0 --epochs 100
 """
+import argparse
 import os
 import random
 import shutil
@@ -21,6 +30,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 RICE_DIR = PROJECT_ROOT / "data" / "raw" / "rice" / "Rice_Leaf_AUG"
 WHEAT_TRAIN_DIR = PROJECT_ROOT / "data" / "raw" / "wheat" / "data" / "train"
 TRAINING_DIR = PROJECT_ROOT / "data" / "training"
+MEGA_CLS_DIR = PROJECT_ROOT / "data" / "mega_cls"   # pre-built by Colab notebook
 
 IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".webp", ".tiff", ".tif"}
 
@@ -185,6 +195,49 @@ def train_model():
     return results
 
 
+def train_mega(device: str = "cpu", epochs: int = 50) -> object:
+    """Train YOLOv8n-cls on the mega dataset (data/mega_cls/ split)."""
+    from ultralytics import YOLO
+
+    if not MEGA_CLS_DIR.is_dir() or not (MEGA_CLS_DIR / "train").is_dir():
+        raise FileNotFoundError(
+            f"Mega dataset not found at {MEGA_CLS_DIR}\n"
+            "Run the Colab notebook notebooks/AgriDrone_Mega_Dataset_CLS_Training.ipynb "
+            "first, then copy the cls_dataset/ output here as data/mega_cls/"
+        )
+
+    n_classes = len([d for d in (MEGA_CLS_DIR / "train").iterdir() if d.is_dir()])
+    n_train   = sum(
+        len(list(d.iterdir()))
+        for d in (MEGA_CLS_DIR / "train").iterdir() if d.is_dir()
+    )
+    print(f"\nMega dataset: {n_classes} classes, {n_train:,} train images")
+    print(f"Device: {device}  Epochs: {epochs}")
+
+    model = YOLO("yolov8n-cls.pt")
+    use_amp = device != "cpu"  # AMP only on GPU
+
+    results = model.train(
+        data=str(MEGA_CLS_DIR),
+        epochs=epochs,
+        imgsz=224,
+        batch=32 if device != "cpu" else 16,
+        device=device,
+        project=str(PROJECT_ROOT / "outputs" / "training"),
+        name="india_agri_mega_v1",
+        seed=42,
+        patience=15,
+        workers=2 if device != "cpu" else 0,
+        cache="disk" if device != "cpu" else False,
+        amp=use_amp,
+        save=True,
+        plots=True,
+        augment=True,
+        exist_ok=True,
+    )
+    return results
+
+
 # =====================================================================
 #  PART 3 — SAVE MODEL
 # =====================================================================
@@ -278,14 +331,57 @@ def update_phone_connect():
 #  MAIN
 # =====================================================================
 def main():
+    parser = argparse.ArgumentParser(description="AgriDrone model trainer")
+    parser.add_argument(
+        "--mega", action="store_true",
+        help="Train on mega dataset (data/mega_cls/) instead of local data/raw/"
+    )
+    parser.add_argument(
+        "--gpu", type=str, default=None,
+        help="GPU device id (e.g. '0'). Defaults to CPU."
+    )
+    parser.add_argument(
+        "--epochs", type=int, default=50,
+        help="Number of training epochs (default: 50)"
+    )
+    args = parser.parse_args()
+    device = args.gpu if args.gpu is not None else "cpu"
+
     random.seed(42)
 
     print("=" * 65)
     print("  AGRI-DRONE MODEL TRAINER")
     print("  YOLOv8n-cls - India Wheat-Rice Disease Classifier")
+    if args.mega:
+        print("  MODE: MEGA DATASET")
+    print(f"  Device: {device}  Epochs: {args.epochs}")
     print("=" * 65)
 
-    # Part 1
+    if args.mega:
+        # ── Mega dataset mode ──────────────────────────────────────
+        print("\n" + "=" * 65)
+        print("  TRAINING ON MEGA DATASET  (data/mega_cls/)")
+        print("=" * 65)
+        train_mega(device=device, epochs=args.epochs)
+
+        # Save
+        src = PROJECT_ROOT / "outputs" / "training" / "india_agri_mega_v1" / "weights" / "best.pt"
+        dst_dir = PROJECT_ROOT / "models"
+        dst_dir.mkdir(parents=True, exist_ok=True)
+        dst = dst_dir / "india_agri_mega.pt"
+        if src.exists():
+            shutil.copy(src, dst)
+            print(f"\nMega model saved to {dst}")
+        else:
+            last = src.parent / "last.pt"
+            if last.exists():
+                shutil.copy(last, dst)
+                print(f"\nlast.pt saved to {dst} (best.pt not found)")
+            else:
+                print(f"\nWARNING: No weights found at {src.parent}")
+        return
+
+    # ── Standard mode ─────────────────────────────────────────────
     print("\n" + "=" * 65)
     print("  PART 1 - PREPARE DATA")
     print("=" * 65)
