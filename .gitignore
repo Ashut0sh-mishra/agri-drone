@@ -85,7 +85,7 @@ agridrone-models/*
 # ──────────────────────────── Datasets (large) ────────────────────────────────
 data/
 datasets/
-agridrone-data/
+agridrone-data/*
 !agridrone-data/README.md
 *.zip
 *.tar.gz
