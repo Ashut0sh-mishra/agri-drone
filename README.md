@@ -335,31 +335,45 @@ Stratified 70/15/15 split with seed = 42.
 
 ## Data Availability
 
-All raw and processed datasets (~25 GB) are hosted on HuggingFace Datasets:
+All datasets (75,010 images, 23.6 GB) are hosted on HuggingFace Datasets:
 
 **https://huggingface.co/datasets/ashu010/agridrone-data**
 
-| Resource | Location |
-|:---|:---|
-| Source code | This repository |
-| Datasets (25 GB) | `ashu010/agridrone-data` on HuggingFace |
-| Evaluation results | `evaluate/results/` in this repo |
-| PDT external benchmark | `externals/` on the same HF dataset (mirrored from [PlantDoc](https://github.com/pratikkayal/PlantDoc-Dataset)) |
+### Folder groups on HuggingFace
+
+| Group | Folders | Total files |
+|:---|:---|:---:|
+| Training splits | `train/` `val/` `test/` `train_orig/` `val_orig/` | 19,688 |
+| Wheat classes (11) | `wheat_aphid/` `wheat_blast/` `wheat_healthy/` `wheat_leaf_rust/` `wheat_smut/` `wheat_yellow_rust/` `fusarium_head_blight/` `leaf_blight/` `powdery_mildew/` `septoria/` `tan_spot/` | 3,600 |
+| Rice datasets (3) | `Rice_Leaf_AUG/` `rice-diseases-v2/` `rice-diseases-zoa8l/` | 16,764 |
+| External benchmarks | `PDT dataset/` `plantdoc/` `plantdoc-v3/` | 20,797 |
+| Raw detection | `data/` | 14,154 |
 
 ### Fetching the data
 
 ```bash
-# Essentials only (~5 GB, enough to reproduce the 21-class model)
-python scripts/fetch_data.py --only training
+# Training splits only — enough to reproduce the 21-class model
+python scripts/fetch_data.py --preset training
 
-# Raw wheat images (~6.3 GB)
-python scripts/fetch_data.py --only raw/wheat
+# Wheat or rice disease classes
+python scripts/fetch_data.py --preset wheat
+python scripts/fetch_data.py --preset rice
+
+# External benchmarks (PlantDoc + PDT)
+python scripts/fetch_data.py --preset external
 
 # Everything (~25 GB)
 python scripts/fetch_data.py
 ```
 
 Files land under `agridrone-data/` (gitignored). See [scripts/fetch_data.py](scripts/fetch_data.py).
+
+### Direct image URLs (for dashboards)
+
+Every image has a public URL — no auth:
+```
+https://huggingface.co/datasets/ashu010/agridrone-data/resolve/main/<folder>/<filename>
+```
 
 ## Citation
 

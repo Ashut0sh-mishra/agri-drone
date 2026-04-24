@@ -1,51 +1,125 @@
-# `agridrone-data/` — Dataset Download Target
+---
+license: mit
+language:
+- en
+tags:
+- agriculture
+- crop-disease
+- wheat
+- rice
+- computer-vision
+- plant-pathology
+pretty_name: AgriDrone Crop Disease Dataset
+size_categories:
+- 10K<n<100K
+---
 
-This folder is the **local landing zone** for training / evaluation datasets.
-Actual dataset files are **not stored in Git** — they live on HuggingFace.
+# AgriDrone — Crop Disease Detection Dataset
 
-> **HuggingFace Dataset:** <https://huggingface.co/datasets/ashu010/agridrone-data> (25 GB, public)
+Full dataset collection used for training the AgriDrone crop-disease
+detection system (21-class YOLOv8n-cls classifier, 15 wheat + 6 rice
+diseases). **75,010 images, 24 folders, 23.6 GB.**
 
-## How to populate this folder
+Code repo: <https://github.com/Ashut0sh-mishra/agri-drone>
 
-From the repository root:
+## Folder layout
+
+### Training splits (5 folders — used to train the model)
+
+| Folder | Files | Purpose |
+|---|---:|---|
+| `train/` | 10,144 | Main training split |
+| `val/` | 1,655 | Validation split |
+| `test/` | 1,655 | Test split (used for the Config A/B/C ablation) |
+| `train_orig/` | 4,987 | Original pre-augmentation training set |
+| `val_orig/` | 1,247 | Original pre-augmentation validation set |
+
+### Wheat disease classes (11 folders)
+
+| Folder | Files |
+|---|---:|
+| `wheat_aphid/` | 300 |
+| `wheat_blast/` | 300 |
+| `wheat_healthy/` | 600 |
+| `wheat_leaf_rust/` | 300 |
+| `wheat_smut/` | 300 |
+| `wheat_yellow_rust/` | 300 |
+| `fusarium_head_blight/` | 300 |
+| `leaf_blight/` | 300 |
+| `powdery_mildew/` | 300 |
+| `septoria/` | 300 |
+| `tan_spot/` | 300 |
+
+### Rice disease datasets (3 folders)
+
+| Folder | Files | Source |
+|---|---:|---|
+| `Rice_Leaf_AUG/` | 3,829 | Augmented rice leaf set |
+| `rice-diseases-v2/` | 10,346 | Roboflow rice disease v2 |
+| `rice-diseases-zoa8l/` | 2,589 | Roboflow rice disease (zoa8l) |
+
+### External benchmarks (3 folders)
+
+| Folder | Files | Description |
+|---|---:|---|
+| `PDT dataset/` | 19,049 | Plant Disease Treatment dataset |
+| `plantdoc/` | 196 | Original [PlantDoc](https://github.com/pratikkayal/PlantDoc-Dataset) benchmark |
+| `plantdoc-v3/` | 1,552 | PlantDoc v3 |
+
+### Raw detection set (1 folder)
+
+| Folder | Files | Description |
+|---|---:|---|
+| `data/` | 14,154 | Roboflow-sourced wheat detection dataset (bounding boxes) |
+
+## Usage
+
+### Python — download a subset
+
+```python
+from huggingface_hub import snapshot_download
+
+# Training splits only (enough to reproduce the 21-class model)
+path = snapshot_download(
+    repo_id="ashu010/agridrone-data",
+    repo_type="dataset",
+    allow_patterns=["train/**", "val/**", "test/**"],
+)
+```
+
+### CLI — use the fetch script
+
+From the GitHub repo:
 
 ```bash
-# Essentials only — training splits (~5 GB, enough to reproduce the 21-class model)
-python scripts/fetch_data.py --only training
-
-# Everything (~25 GB)
-python scripts/fetch_data.py
+python scripts/fetch_data.py --preset training   # train/val/test splits
+python scripts/fetch_data.py --preset wheat      # all 11 wheat classes
+python scripts/fetch_data.py --preset rice       # 3 rice datasets
+python scripts/fetch_data.py --preset external   # PlantDoc + PDT
+python scripts/fetch_data.py                     # everything (25 GB)
 ```
 
-See [`scripts/fetch_data.py`](../scripts/fetch_data.py) for flags.
+### Direct image URL (for dashboards / web apps)
 
-## Expected layout after full fetch
+Every image has a public resolve URL — no auth needed:
 
 ```
-agridrone-data/
-├── training/            # train/val/test splits (used by wheat_pipeline.py)
-├── raw/
-│   ├── wheat/           # raw wheat disease images
-│   ├── rice/            # raw rice disease images
-│   └── roboflow/        # Roboflow-sourced sets
-├── wheat_raw/           # pseudo-annotated raw
-├── wheat_annotated/     # pseudo-annotated labelled
-├── externals/
-│   ├── PDT_datasets/
-│   └── pdt_plant_disease/
-└── working/
-    ├── wheat-raw/
-    ├── wheat-clean/
-    └── wheat-split/
+https://huggingface.co/datasets/ashu010/agridrone-data/resolve/main/<folder>/<filename>
 ```
 
-## Why not in Git?
+Example:
 
-- GitHub repo cap: ~1 GB. Our datasets total **25 GB**.
-- HuggingFace Datasets gives us 300 GB free, with deduplicated pulls and
-  parallel downloads via `hf_transfer`.
-- Keeps `git clone` instant and the repo focused on source code.
+```html
+<img src="https://huggingface.co/datasets/ashu010/agridrone-data/resolve/main/wheat_aphid/wheat_aphid_0001.jpg">
+```
 
-The folder itself is gitignored (`data/` + `agridrone-data/` in `.gitignore`).
-This README is kept with a tiny `.gitkeep`-style allowlist so the folder
-exists in fresh clones.
+Use these URLs directly in the AgriDrone frontend dashboard for live data display.
+
+## License
+
+MIT for the curation layer. Individual source datasets retain their original
+licenses — see each folder for upstream attribution.
+
+## Citation
+
+See the AgriDrone repo: <https://github.com/Ashut0sh-mishra/agri-drone>
