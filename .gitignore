@@ -45,6 +45,8 @@ yarn-error.log*
 # ──────────────────────────── Frontend Build ──────────────────────────────────
 frontend/node_modules/
 frontend/dist/
+agri-drone-frontend/node_modules/
+agri-drone-frontend/dist/
 
 # ──────────────────────────── IDE / Editor ────────────────────────────────────
 .vscode/
@@ -77,10 +79,14 @@ Desktop.ini
 *.tflite
 *.pb
 models/
+agridrone-models/*
+!agridrone-models/README.md
 
 # ──────────────────────────── Datasets (large) ────────────────────────────────
 data/
 datasets/
+agridrone-data/
+!agridrone-data/README.md
 *.zip
 *.tar.gz
 *.tar
@@ -101,7 +107,7 @@ evaluate/noisy_dataset/
 # ...except the Colab walkthrough notebooks for Phase 2
 !notebooks/colab/*.ipynb
 # ...and the model training notebook
-!training/*.ipynb
+!agridrone-training/*.ipynb
 
 # ──────────────────────────── Testing / Coverage ──────────────────────────────
 .pytest_cache/

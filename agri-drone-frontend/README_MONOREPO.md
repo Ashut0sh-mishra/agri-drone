@@ -1,4 +1,4 @@
-# `web/` — React Frontend (Vite + Tailwind)
+# `agri-drone-frontend/` — React Frontend (Vite + Tailwind)
 
 The browser UI for AgriDrone. Consumes the FastAPI backend in
 `../src/agridrone/api/app.py`.
@@ -6,7 +6,7 @@ The browser UI for AgriDrone. Consumes the FastAPI backend in
 ## Quick start
 
 ```bash
-cd web
+cd agri-drone-frontend
 npm install
 npm run dev      # http://localhost:5173
 ```
@@ -24,7 +24,7 @@ The backend must also be running (see root [README.md](../README.md)).
 ## Structure
 
 ```
-web/
+agri-drone-frontend/
 ├── src/
 │   ├── App.jsx            # main SPA (see FILE MAP at top of file)
 │   ├── components/        # reusable UI components
@@ -38,7 +38,7 @@ web/
 
 ## Environment
 
-Create `web/.env.local` (never commit) with:
+Create `agri-drone-frontend/.env.local` (never commit) with:
 
 ```bash
 VITE_API_BASE_URL=http://localhost:9000
@@ -47,11 +47,11 @@ VITE_API_BASE_URL=http://localhost:9000
 ## Build
 
 ```bash
-npm run build    # outputs to web/dist/ (gitignored)
+npm run build    # outputs to agri-drone-frontend/dist/ (gitignored)
 npm run preview  # serve the production build locally
 ```
 
 ## Deploy
 
 - Vercel: connect this subfolder; `vercel.json` is already configured.
-- Any static host: deploy the contents of `web/dist/` after `npm run build`.
+- Any static host: deploy the contents of `agri-drone-frontend/dist/` after `npm run build`.

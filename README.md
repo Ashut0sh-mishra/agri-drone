@@ -186,15 +186,16 @@ This repository contains the full AgriDrone stack:
 
 ```
 agri-drone/
-├── src/agridrone/        # FastAPI backend (production API)
-├── web/                  # React + Vite frontend SPA
-├── training/             # Model training scripts + Colab notebook
-├── scripts/fetch_data.py # Download datasets from HuggingFace
-├── models/               # Model weight files (gitignored; fetch separately)
-├── configs/              # YAML configs for matrix runs + model hyperparams
-├── evaluate/             # Ablation, stats, EML, sensitivity scripts + results
-├── tests/                # Unit + integration tests
-└── docs/                 # Research paper, changelogs, implementation notes
+├── src/agridrone/           # FastAPI backend (production API)
+├── agri-drone-frontend/     # React + Vite frontend SPA
+├── agridrone-training/      # Model training scripts + Colab notebook
+├── agridrone-models/        # Model weights land here (gitignored; fetch separately)
+├── agridrone-data/          # Datasets land here (gitignored; see scripts/fetch_data.py)
+├── scripts/fetch_data.py    # Download datasets from HuggingFace
+├── configs/                 # YAML configs for matrix runs + model hyperparams
+├── evaluate/                # Ablation, stats, EML, sensitivity scripts + results
+├── tests/                   # Unit + integration tests
+└── docs/                    # Research paper, changelogs, implementation notes
 ```
 
 Datasets (25 GB) live on HuggingFace: [`ashu010/agridrone-data`](https://huggingface.co/datasets/ashu010/agridrone-data) — see [Data Availability](#data-availability).
@@ -358,7 +359,7 @@ python scripts/fetch_data.py --only raw/wheat
 python scripts/fetch_data.py
 ```
 
-Files land under `data/` (gitignored). See [scripts/fetch_data.py](scripts/fetch_data.py).
+Files land under `agridrone-data/` (gitignored). See [scripts/fetch_data.py](scripts/fetch_data.py).
 
 ## Citation
 

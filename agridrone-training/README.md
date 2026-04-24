@@ -1,4 +1,4 @@
-# `training/` — Model Training Scripts & Notebooks
+# `agridrone-training/` — Model Training Scripts & Notebooks
 
 Scripts and Jupyter notebooks used to train the 21-class YOLOv8n-cls
 crop-disease classifier that powers the AgriDrone API.
@@ -19,7 +19,7 @@ The dataset is hosted on HuggingFace (25 GB total). Pull only what you need:
 ```bash
 # From repo root
 python scripts/fetch_data.py --only training
-# -> downloads agridrone-data/training/ into ./data/training/
+# -> downloads agridrone-data/training/ into ./agridrone-data/training/
 ```
 
 See [scripts/fetch_data.py](../scripts/fetch_data.py) for other subsets.
@@ -37,7 +37,7 @@ See [scripts/fetch_data.py](../scripts/fetch_data.py) for other subsets.
 
 ```bash
 pip install ultralytics
-python wheat_pipeline.py --data ../data/training --epochs 50
+python wheat_pipeline.py --data ../agridrone-data/training --epochs 50
 ```
 
 ## Credentials note
