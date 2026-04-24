@@ -11,8 +11,6 @@ extend-exclude = [
     "data",
     "datasets",
     "models",
-    "dashboard/node_modules",
-    "frontend/node_modules",
     "**/__pycache__",
     "**/.venv",
     "evaluate/llava_cache",

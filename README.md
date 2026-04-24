@@ -154,7 +154,6 @@ agri-drone/
 │   └── dashboard.py            #   Web UI launcher
 ├── configs/                    # YAML configuration files
 ├── tests/                      # pytest unit & integration tests
-├── dashboard/                  # React + Vite + TailwindCSS frontend
 ├── models/                     # Model weights (see Data Availability)
 ├── data/                       # Dataset splits (see Data Availability)
 ├── notebooks/                  # Jupyter notebooks
@@ -223,8 +222,10 @@ models/
 
 ### Frontend Setup (Optional)
 
+The React frontend lives in a sibling folder, not inside the backend:
+
 ```bash
-cd dashboard
+cd ../agri-drone-frontend
 npm install
 npm run dev
 ```
@@ -247,7 +248,11 @@ python scripts/run_inference.py --image path/to/image.jpg --model models/india_a
 ### Launch Dashboard
 
 ```bash
+# Streamlit research dashboard (optional, in-repo)
 python scripts/dashboard.py
+
+# OR the production React frontend (sibling folder)
+cd ../agri-drone-frontend && npm run dev
 ```
 
 The React dashboard will be available at `http://localhost:5173` with the API at `http://localhost:8000`.

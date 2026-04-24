@@ -43,6 +43,9 @@ from loguru import logger
 from .. import __version__
 
 
+# ════════════════════════════════════════════════════════════════════════════
+# MODULE-LEVEL STATE (caches kept across requests, NOT per-request)
+# ════════════════════════════════════════════════════════════════════════════
 # ── Background LLaVA results cache (keyed by image hash) ──
 _LLAVA_RESULTS: dict[str, dict | None] = {}   # hash -> result
 _LLAVA_PENDING: set[str] = set()                # hashes currently being analyzed
@@ -50,6 +53,15 @@ _LLAVA_CONTEXT: dict[str, dict] = {}            # hash -> {scenario, our_diagnos
 
 MAX_IMAGE_DIM = 1280  # Downsize images larger than this before inference
 
+# ════════════════════════════════════════════════════════════════════════════
+# LAYER 1 — PHYSICS / SPECTRAL GATE (Plant-image gatekeeper)
+# ════════════════════════════════════════════════════════════════════════════
+# Rejects photos that are clearly NOT crop leaves (faces, paper, screens, etc.)
+# before we waste inference time on them. Uses:
+#   • Haar face detector
+#   • Skin-pixel ratio (YCrCb)
+#   • Green + brown vegetation ratio (HSV)
+#   • Spectral vegetation indices: GLI, ExG, RGRI, NGRDI, VARI
 # ── Plant image gatekeeper ──
 # Face detector (loaded once, reused)
 _FACE_CASCADE = None
@@ -347,6 +359,9 @@ def _is_plant_image(image_bgr: np.ndarray) -> dict:
     }
 
 
+# ════════════════════════════════════════════════════════════════════════════
+# IMAGE UTILITIES (size check, resize, perceptual hash for caching)
+# ════════════════════════════════════════════════════════════════════════════
 MIN_IMAGE_DIM = 32  # Minimum pixels on shortest side for meaningful classification
 
 
@@ -385,6 +400,12 @@ def _image_hash(image: np.ndarray) -> str:
     return hashlib.md5(small.tobytes()).hexdigest()
 
 
+# ════════════════════════════════════════════════════════════════════════════
+# LLaVA MULTIMODAL VALIDATOR (Ollama-hosted vision-language model)
+# ════════════════════════════════════════════════════════════════════════════
+# Acts as a second opinion alongside the YOLO classifier. Runs in the background
+# (polled via /api/llava-status/{hash}) so it doesn't block the main /detect call.
+# Contributes 60% of the ensemble weight when available.
 # ── LLaVA Configuration ──
 _OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
 _LLAVA_MODEL = os.environ.get("LLAVA_MODEL", "llava")
@@ -592,6 +613,10 @@ async def _llava_analyze_background(image_bgr: np.ndarray, img_hash: str, prompt
         _LLAVA_PENDING.discard(img_hash)
 
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# LAYER 3 — DISEASE CLASSIFIER (YOLOv8n-cls, 21 classes: 15 wheat + 6 rice)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Primary trained model. Class metadata below drives severity scoring and UI labels.
 # ── Trained Classifier (india_agri_cls.pt) ──
 _CLASSIFIER_MODEL = None
 _CLASSIFIER_NAMES = None
@@ -763,6 +788,11 @@ def _classify_image(image_bgr: np.ndarray) -> dict | None:
         return None
 
 
+# ════════════════════════════════════════════════════════════════════════════
+# LAYER 2 — CROP-TYPE GATE (wheat vs rice routing, OOD rejection)
+# ════════════════════════════════════════════════════════════════════════════
+# Consumes the raw softmax from Layer 3 and sums the 15 wheat probs vs the 6 rice
+# probs. Flags the image as OOD (out-of-distribution) if neither group dominates.
 def _run_crop_type_gate(classifier_result: dict | None) -> dict | None:
     """Layer 2 — Crop-Type Gate.
 
@@ -803,6 +833,10 @@ def _run_crop_type_gate(classifier_result: dict | None) -> dict | None:
 # Supports 3 models: rice_disease.pt, wheat_disease.pt, crop_disease.pt
 _DETECTOR_MODELS: dict = {}  # crop_type -> YOLO model
 
+# ════════════════════════════════════════════════════════════════════════════
+# YOLO OBJECT DETECTOR (draws bounding boxes — optional, secondary signal)
+# ════════════════════════════════════════════════════════════════════════════
+# Separate from the classifier: localizes lesions visually for the Detection Canvas
 # Model file lookup: crop_type -> list of filenames to try (in priority order)
 _DETECTOR_FILES = {
     "rice":     ["rice_disease.pt", "crop_disease.pt", "yolo_crop_disease.pt"],
@@ -881,6 +915,10 @@ def _yolo_detect(image_bgr: np.ndarray, conf: float, draw_boxes: bool, crop_type
         return [], None
 
 
+# ════════════════════════════════════════════════════════════════════════════
+# ENSEMBLE VOTING (60% LLaVA + 40% Classifier, rule engine monitor-only)
+# ════════════════════════════════════════════════════════════════════════════
+# Combines evidence from LLaVA + classifier into the final disease prediction.
 # Known severe diseases — if ANY model detects these, lower the score
 _SEVERE_DISEASES = {
     "fusarium", "fhb", "scab", "head blight",
@@ -1004,6 +1042,31 @@ def _compute_ensemble(llava_result: dict | None, cls_result: dict | None) -> dic
         }
 
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# FASTAPI APPLICATION FACTORY + ROUTE DEFINITIONS
+# ═══════════════════════════════════════════════════════════════════════════════
+# Everything below is inside create_app(). Layout (by line number inside the
+# function body, look for "# ===" or "@app." markers):
+#
+#   lifespan()                 Startup/shutdown hooks
+#   CORS middleware            (env-driven, see AGRIDRONE_CORS_* vars)
+#   Router includes            /api/* routes from ./routes/* (optional)
+#   GET  /                     Root
+#   GET  /health               Liveness check
+#   GET  /system/info          Build info, config snapshot
+#   GET  /config               Current runtime config (safe subset)
+#   Detection history helpers  _load_history / _save_history / _log_activity
+#   POST /detect               MAIN detection endpoint (image upload -> diagnosis)
+#   GET  /api/llava-status/{h} Poll background LLaVA result
+#   GET/DELETE /history        Detection history
+#   POST /feedback + CRUD      User feedback on predictions
+#   POST /kb/update, /kb/...   Knowledge-base admin
+#   GET  /activity             Recent activity feed
+#   ... plus dataset-stats, ML-metrics, voice, chat, live-stream, etc.
+#
+# This is intentionally kept as ONE factory so route handlers can share the
+# closure-scoped `app`, `_HISTORY_FILE`, and `_log_activity` helpers without
+# threading them through function signatures.
 def create_app() -> FastAPI:
     """
     Create and configure FastAPI application.
@@ -1031,12 +1094,38 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-    # Add CORS middleware
+    # ── CORS middleware ──
+    # SECURITY: Never combine allow_origins=["*"] with allow_credentials=True.
+    # That combination is silently rejected by browsers and is a known footgun.
+    #
+    # Configure via env vars:
+    #   AGRIDRONE_CORS_ORIGINS  — comma-separated list of allowed origins
+    #                             (e.g. "http://localhost:5173,https://my-app.vercel.app")
+    #                             Default: localhost dev origins only.
+    #   AGRIDRONE_CORS_ALLOW_CREDENTIALS — "true"/"false" (default: false)
+    _default_dev_origins = (
+        "http://localhost:5173,http://127.0.0.1:5173,"
+        "http://localhost:3000,http://127.0.0.1:3000"
+    )
+    _origins_raw = os.environ.get("AGRIDRONE_CORS_ORIGINS", _default_dev_origins)
+    _allow_origins = [o.strip() for o in _origins_raw.split(",") if o.strip()]
+    _allow_credentials = os.environ.get(
+        "AGRIDRONE_CORS_ALLOW_CREDENTIALS", "false"
+    ).lower() in ("1", "true", "yes")
+
+    # Refuse the insecure wildcard+credentials combination.
+    if "*" in _allow_origins and _allow_credentials:
+        logger.warning(
+            "CORS: allow_origins=['*'] with allow_credentials=True is unsafe; "
+            "disabling credentials."
+        )
+        _allow_credentials = False
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
+        allow_origins=_allow_origins,
+        allow_credentials=_allow_credentials,
+        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allow_headers=["*"],
     )
 
