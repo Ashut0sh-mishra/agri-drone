@@ -1,18 +1,27 @@
 """Download AgriDrone datasets from HuggingFace.
 
 Pulls from https://huggingface.co/datasets/ashu010/agridrone-data into
-the local `data/` directory. Safe to re-run — already-present files are
-skipped by content hash.
+the local `agridrone-data/` directory. Safe to re-run — already-present
+files are skipped by content hash.
 
 Usage:
-    # Everything (~25 GB)
+    # Everything (~25 GB, 75k files)
     python scripts/fetch_data.py
 
-    # Only the training splits (~5 GB — enough to reproduce the model)
-    python scripts/fetch_data.py --only training
+    # Only the training splits (enough to reproduce the 21-class model)
+    python scripts/fetch_data.py --preset training
 
-    # Multiple subsets
-    python scripts/fetch_data.py --only training --only raw/wheat
+    # Only wheat disease classes
+    python scripts/fetch_data.py --preset wheat
+
+    # Only rice datasets
+    python scripts/fetch_data.py --preset rice
+
+    # External benchmarks (PlantDoc + PDT)
+    python scripts/fetch_data.py --preset external
+
+    # Specific folders by exact name (repeatable):
+    python scripts/fetch_data.py --only train --only val --only test
 """
 from __future__ import annotations
 import argparse
@@ -25,16 +34,33 @@ REPO_ID = "ashu010/agridrone-data"
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_TARGET = ROOT / "agridrone-data"
 
+# Presets map friendly names -> list of top-level folders on HF.
+PRESETS: dict[str, list[str]] = {
+    "training": ["train", "val", "test", "train_orig", "val_orig"],
+    "wheat": [
+        "wheat_aphid", "wheat_blast", "wheat_healthy", "wheat_leaf_rust",
+        "wheat_smut", "wheat_yellow_rust", "fusarium_head_blight",
+        "leaf_blight", "powdery_mildew", "septoria", "tan_spot",
+    ],
+    "rice": ["Rice_Leaf_AUG", "rice-diseases-v2", "rice-diseases-zoa8l"],
+    "external": ["PDT dataset", "plantdoc", "plantdoc-v3"],
+    "raw": ["data"],
+}
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
+        "--preset",
+        choices=sorted(PRESETS.keys()),
+        help="Download a named group of folders (training/wheat/rice/external/raw)",
+    )
+    parser.add_argument(
         "--only",
         action="append",
         default=None,
-        metavar="SUBFOLDER",
-        help="Limit download to this subfolder (repeatable). "
-             "Examples: training, raw/wheat, externals/PDT_datasets",
+        metavar="FOLDER",
+        help="Exact folder name on HF (repeatable). Examples: train, wheat_aphid, 'PDT dataset'",
     )
     parser.add_argument(
         "--target",
@@ -45,8 +71,7 @@ def main() -> None:
     parser.add_argument(
         "--token",
         default=os.environ.get("HF_TOKEN"),
-        help="HuggingFace token (public repo works without one; "
-             "set HF_TOKEN env var or use this flag for private/rate-limited pulls)",
+        help="HuggingFace token (public repo works without one)",
     )
     args = parser.parse_args()
 
@@ -59,12 +84,19 @@ def main() -> None:
 
     args.target.mkdir(parents=True, exist_ok=True)
 
-    allow_patterns = None
+    folders: list[str] = []
+    if args.preset:
+        folders.extend(PRESETS[args.preset])
     if args.only:
-        allow_patterns = [f"{p.rstrip('/')}/**" for p in args.only]
-        print(f"Downloading subsets: {args.only}")
+        folders.extend(args.only)
+    folders = sorted(set(folders))
+
+    if folders:
+        allow_patterns = [f"{f}/**" for f in folders]
+        print(f"Downloading folders: {folders}")
     else:
-        print("Downloading ALL datasets (~25 GB) — this will take a while.")
+        allow_patterns = None
+        print("Downloading ALL datasets (~25 GB, 75k files) — will take a while.")
 
     path = snapshot_download(
         repo_id=REPO_ID,
