@@ -1,3 +1,188 @@
+# AgriDrone — Architecture
+
+> Snapshot of the AgriDrone monorepo layout and how its layers connect.
+> Current as of the `main` branch. Last refreshed: April 2026.
+
+---
+
+## 1. Top-level repository layout
+
+```
+agri-drone/
+├── src/                # Python backend (agridrone package)
+│   └── agridrone/
+├── frontend/           # React + Vite + TailwindCSS dashboard (superset)
+├── dashboard/          # Older minimal React dashboard (retained for compatibility)
+├── evaluate/           # Offline evaluation scripts + results/
+├── scripts/            # One-off ops scripts (training, dataset prep, fixes)
+├── notebooks/          # Colab / Jupyter notebooks (training, exploration)
+├── models/             # Trained model weights (.pt)
+├── data/               # Input datasets
+├── datasets/           # External datasets (e.g. PDT)
+├── outputs/            # Training + inference outputs (logs, weights)
+├── runs/               # Ultralytics / MLflow run artifacts
+├── configs/            # YAML config files
+├── deploy/             # HuggingFace Space Dockerfile + readme
+├── tests/              # Regression tests
+├── docs/               # ← you are here
+├── paper/              # LaTeX manuscript + supplementary
+├── Dockerfile          # CPU-only backend image
+├── docker-compose.yml
+├── pyproject.toml      # Python packaging config (src-layout)
+├── requirements.txt    # Pip deps (superset of runtime needs)
+├── requirements.lock.txt
+└── README.md
+```
+
+The companion repository [`agri-drone-frontend`](https://github.com/Ashut0sh-mishra/agri-drone-frontend)
+hosts the Vercel-deployed fork of `frontend/`. Both frontends talk to the
+same backend API surface.
+
+---
+
+## 2. Backend package layout (`src/agridrone/`)
+
+```
+agridrone/
+├── __init__.py         # Package version
+├── config.py           # Settings loader
+├── logging.py          # Loguru setup
+│
+├── api/                # ★ HTTP/WebSocket surface (FastAPI)
+│   ├── app.py              # Factory + all routes (create_app, get_app)
+│   └── structured_output.py  # Flat → structured response builder
+│
+├── vision/             # ★ Image-level ML
+│   ├── gradcam.py          # Grad-CAM heatmap generator
+│   ├── infer.py            # YOLO detection pipeline
+│   ├── rule_engine.py      # Rule-based post-processor
+│   ├── feature_extractor.py
+│   ├── ensemble_voter.py
+│   ├── llm_validator.py    # LLaVA second-opinion
+│   ├── disease_reasoning.py
+│   ├── postprocess.py
+│   ├── rules_learned.py
+│   └── rules_llm.py
+│
+├── core/               # ★ Decision logic + MC-Dropout
+│   ├── detector.py         # Uncertainty-aware classifier wrapper
+│   ├── crop_type_gate.py   # Layer-2 crop-type routing
+│   ├── spectral_features.py
+│   ├── temporal_tracker.py
+│   └── yield_estimator.py
+│
+├── knowledge/          # Knowledge base + RAG
+│   └── research_rag.py     # Paper retrieval for diagnoses
+│
+├── prescription/       # Treatment / economics advice generators
+├── geo/                # Geospatial utilities (field polygons, zones)
+├── environment/        # Weather / crop-stage adjusters
+├── io/                 # File + image utilities
+├── feedback/           # User-feedback persistence + KB updates
+├── services/           # Thin wrappers for external APIs
+├── actuation/          # Drone / sprayer control stubs
+├── runtime/            # Runtime orchestration
+├── sim/                # Simulation helpers
+├── types/              # Shared TypedDict / dataclass definitions
+└── ui/                 # Server-side UI helpers
+```
+
+`★` marks the modules touched on every `/detect` request.
+
+---
+
+## 3. Request lifecycle (`POST /detect`)
+
+```
+   Browser (frontend/src/components/UploadBox.jsx)
+           │  multipart image + crop + acres + growth_stage
+           ▼
+   ┌───────────────────────────────────────────────────────────┐
+   │  api/app.py :: detect_image  (route handler)              │
+   │                                                           │
+   │  1. Plant gatekeeper        - reject faces / non-plant    │
+   │  2. Crop-type gate (L2)     - core/crop_type_gate         │
+   │  3. YOLO classifier         - vision/infer +              │
+   │                               core/detector (MC-Dropout)  │
+   │  4. Rule engine             - vision/rule_engine          │
+   │  5. LLaVA validator (async) - vision/llm_validator        │
+   │  6. Grad-CAM                - vision/gradcam              │
+   │  7. RAG research papers     - knowledge/research_rag      │
+   │  8. Ensemble voting         - vision/ensemble_voter       │
+   │  9. Structured output       - api/structured_output       │
+   └───────────────────────────────────────────────────────────┘
+           │  JSON { result, structured: { diagnosis, gradcam,
+           │                               research_papers, … } }
+           ▼
+   Browser (frontend/src/components/ResultViewer.jsx)
+           ├─ tabs: Original / Grad-CAM / Healthy Ref
+           ├─ diagnosis card, confidence breakdown, differential
+           ├─ ChatPanel (grounded on this result)
+           └─ CostBenefitCard, UncertaintyMeter, ...
+```
+
+### Layer boundaries
+
+| Layer           | Module(s)                            | Responsibility                                      |
+|-----------------|--------------------------------------|-----------------------------------------------------|
+| HTTP / WS       | `agridrone.api.*`                    | Request validation, streaming, CORS, WS sessions    |
+| Vision pipeline | `agridrone.vision.*`                 | Everything pixels -> pixel-level outputs            |
+| Core reasoning  | `agridrone.core.*`                   | Confidence, routing, temporal trends                |
+| Knowledge / RAG | `agridrone.knowledge.*`              | Paper retrieval, domain facts                       |
+| Economics       | `agridrone.prescription.*`           | Cost-benefit, dose recommendations                  |
+| Persistence     | `agridrone.feedback.*`, `reports/`   | History, feedback loop, KB updates                  |
+
+The `api` layer is the **only** layer allowed to import from every
+other layer. Layers below must not import from `api`.
+
+---
+
+## 4. Frontend -> backend contract
+
+- The frontend expects the backend to return a `structured` field
+  containing: `diagnosis`, `confidence_breakdown`, `ai_validation`,
+  `ensemble_voting`, `temporal`, `research_papers`, `gradcam`,
+  `ensemble`, `metadata`.
+- The `gradcam` object has shape `{ heatmap_image: <data-URL>,
+  target_class, confidence, regions, cam_coverage }` and is rendered
+  conditionally in `ResultViewer.jsx` (Grad-CAM tab).
+- The frontend falls back gracefully to flat legacy fields if
+  `structured` is missing.
+
+---
+
+## 5. Deployment targets
+
+| Target                 | Entry point                                       | Config                   |
+|------------------------|---------------------------------------------------|--------------------------|
+| Local dev              | `uvicorn agridrone.api.app:get_app --factory`     | `.env.example`           |
+| Docker (CPU)           | `Dockerfile` + `docker-compose.yml`               | same                     |
+| HuggingFace Space      | `deploy/Dockerfile.hf`                            | HF Secrets               |
+| Vercel (frontend only) | `agri-drone-frontend` repo + `vercel.json`        | `VITE_API_URL` env var   |
+
+---
+
+## 6. Evaluation & research artifacts
+
+- `evaluate/data_split_manifest.json` - canonical 4364 / 935 / 935 split
+- `evaluate/results/*.json` + `*.csv` - bootstrap CIs, McNemar,
+  Holm-Bonferroni, cross-dataset PDT accuracy, EfficientNet baselines.
+- `paper/` - LaTeX manuscript referencing those artifacts.
+
+Do not move or rename files under `evaluate/` without updating every
+script in `scripts/` and every path in `paper/main.tex`.
+
+---
+
+## 7. Legacy / aspirational design
+
+The sections below describe the original research-prototype design
+centred on site-specific spraying (drone + sprayer). That vision
+remains the long-term goal; the current main branch is the
+web-delivered disease-detection pipeline described above.
+
+---
+
 """
 AgriDrone System Architecture
 ==============================
