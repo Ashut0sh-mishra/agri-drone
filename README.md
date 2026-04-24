@@ -180,6 +180,25 @@ agri-drone/
 
 > Real-time wheat and rice disease detection with Grad-CAM explainability, field health score, confidence breakdown, AI reasoning chain, and treatment recommendations.
 
+## Monorepo Layout
+
+This repository contains the full AgriDrone stack:
+
+```
+agri-drone/
+├── src/agridrone/        # FastAPI backend (production API)
+├── web/                  # React + Vite frontend SPA
+├── training/             # Model training scripts + Colab notebook
+├── scripts/fetch_data.py # Download datasets from HuggingFace
+├── models/               # Model weight files (gitignored; fetch separately)
+├── configs/              # YAML configs for matrix runs + model hyperparams
+├── evaluate/             # Ablation, stats, EML, sensitivity scripts + results
+├── tests/                # Unit + integration tests
+└── docs/                 # Research paper, changelogs, implementation notes
+```
+
+Datasets (25 GB) live on HuggingFace: [`ashu010/agridrone-data`](https://huggingface.co/datasets/ashu010/agridrone-data) — see [Data Availability](#data-availability).
+
 ## Installation
 
 ### Prerequisites
@@ -315,15 +334,31 @@ Stratified 70/15/15 split with seed = 42.
 
 ## Data Availability
 
-| Resource | Location | DOI |
-|:---|:---|:---|
-| Source code | This repository | — |
-| Model weights | [Zenodo](https://zenodo.org/records/pending) | [DOI pending — upload to Zenodo to activate] |
-| Primary dataset | [Zenodo](https://zenodo.org/records/pending) | [DOI pending — upload to Zenodo to activate] |
-| PDT dataset | [GitHub (original source)](https://github.com/pratikkayal/PlantDoc-Dataset) | See original paper |
-| Evaluation results | `evaluate/results/` in this repo | — |
+All raw and processed datasets (~25 GB) are hosted on HuggingFace Datasets:
 
-> **To activate DOIs:** upload `models/india_agri_cls_21class_backup.pt` and the dataset split zip to [zenodo.org](https://zenodo.org), then replace the links above.
+**https://huggingface.co/datasets/ashu010/agridrone-data**
+
+| Resource | Location |
+|:---|:---|
+| Source code | This repository |
+| Datasets (25 GB) | `ashu010/agridrone-data` on HuggingFace |
+| Evaluation results | `evaluate/results/` in this repo |
+| PDT external benchmark | `externals/` on the same HF dataset (mirrored from [PlantDoc](https://github.com/pratikkayal/PlantDoc-Dataset)) |
+
+### Fetching the data
+
+```bash
+# Essentials only (~5 GB, enough to reproduce the 21-class model)
+python scripts/fetch_data.py --only training
+
+# Raw wheat images (~6.3 GB)
+python scripts/fetch_data.py --only raw/wheat
+
+# Everything (~25 GB)
+python scripts/fetch_data.py
+```
+
+Files land under `data/` (gitignored). See [scripts/fetch_data.py](scripts/fetch_data.py).
 
 ## Citation
 
