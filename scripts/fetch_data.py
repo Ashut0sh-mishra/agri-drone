@@ -23,7 +23,7 @@ os.environ.setdefault("HF_HUB_ENABLE_HF_TRANSFER", "1")
 
 REPO_ID = "ashu010/agridrone-data"
 ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_TARGET = ROOT / "data"
+DEFAULT_TARGET = ROOT / "agridrone-data"
 
 
 def main() -> None:

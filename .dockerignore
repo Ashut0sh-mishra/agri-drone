@@ -5,6 +5,10 @@ __pycache__
 *.pyc
 node_modules
 frontend/node_modules
+agri-drone-frontend/node_modules
+agri-drone-frontend/dist
+agridrone-data
+agridrone-models
 dashboard/node_modules
 runs/
 outputs/
