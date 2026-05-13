@@ -23,7 +23,7 @@ ultralytics==8.3.214
 
 # FastAPI backend
 fastapi==0.136.0
-uvicorn==0.44.0
+uvicorn==0.46.0
 
 # Tests + lint (Step 1 safety net)
 pytest==9.0.2
