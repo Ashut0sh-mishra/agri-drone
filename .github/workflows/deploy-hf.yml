@@ -10,6 +10,7 @@ on:
       - 'Dockerfile'
       - 'pyproject.toml'
       - 'requirements.lock.txt'
+  workflow_dispatch:
 
 # Least-privilege — only needs to read code and push to external HF repo
 permissions:
