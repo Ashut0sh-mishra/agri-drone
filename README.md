@@ -11,7 +11,7 @@
 [![Status: Research Prototype](https://img.shields.io/badge/status-research%20prototype-orange.svg)](CHANGELOG_RESEARCH_UPGRADE.md)
 [![Paper](https://img.shields.io/badge/Paper-Manuscript-red.svg)](MANUSCRIPT_SUBMISSION_VERSION.md)
 
-**Live Demo:** [agri-drone-frontend.vercel.app](https://agri-drone-frontend.vercel.app) | **API:** [ashu010-agri-drone-api.hf.space](https://ashu010-agri-drone-api.hf.space)
+**Live Demo:** [agrianalyze-frontend.vercel.app](https://agrianalyze-frontend.vercel.app) | **API:** [ashu010-agrianalyze-api.hf.space](https://ashu010-agrianalyze-api.hf.space)
 
 </div>
 
@@ -268,7 +268,6 @@ python scripts/run_inference.py --image path/to/image.jpg --model models/india_a
 ### Launch Dashboard
 
 ```bash
-# Streamlit research dashboard (optional, in-repo)
 python scripts/dashboard.py
 
 # OR the production React frontend (sibling folder)
@@ -276,6 +275,13 @@ cd ../agri-analyze-frontend && npm run dev
 ```
 
 The React dashboard will be available at `http://localhost:5173` with the API at `http://localhost:8000`.
+
+---
+
+**Note:** The project was renamed from AgriDrone/agri-drone to AgriAnalyze/agri-analyze. Update your deployment scripts, dashboard links, and bookmarks accordingly. The live demo and API URLs have changed:
+
+- Frontend: https://agrianalyze-frontend.vercel.app
+- API: https://ashu010-agrianalyze-api.hf.space
 
 ## Reproducing the Ablation Study
 
