@@ -39,26 +39,32 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git config user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          # Global credential helper for HF
+          git config --global credential.helper "!f() { echo username=ashu010; echo password=${HF_TOKEN}; }; f"
 
-          # Create an orphan deploy branch (no history) so HF doesn't see large blobs from past commits
-          git checkout --orphan hf-deploy
-          git rm -rf --cached . > /dev/null 2>&1 || true
+          GH_DIR=$(pwd)
 
-          # Stage only the dirs/files HF needs (each path is optional — ignore missing)
-          for p in src configs models pyproject.toml requirements.lock.txt deploy LICENSE CHANGELOG.md CITATION.cff; do
-            [ -e "$p" ] && git add "$p" || true
+          # Clone existing HF Space (preserves model weights already uploaded there)
+          cd /tmp
+          git clone https://huggingface.co/spaces/ashu010/agri-drone-api hf-space
+          cd hf-space
+
+          # Wipe code-only dirs (keep models/ and any other binary assets HF holds)
+          for p in src configs deploy pyproject.toml requirements.lock.txt LICENSE CHANGELOG.md CITATION.cff README.md Dockerfile; do
+            rm -rf "$p"
           done
 
-          # Swap README and Dockerfile with HF-specific versions
-          cp deploy/hf-readme.md README.md
-          cp deploy/Dockerfile.hf Dockerfile
-          git add README.md Dockerfile
+          # Copy fresh code from GH checkout
+          for p in src configs deploy pyproject.toml requirements.lock.txt LICENSE CHANGELOG.md CITATION.cff; do
+            [ -e "$GH_DIR/$p" ] && cp -r "$GH_DIR/$p" ./ || true
+          done
 
-          git commit -m "deploy: HF Spaces snapshot from $(git -C . log -1 --format=%h main)"
+          # Swap README + Dockerfile with HF-specific versions
+          cp "$GH_DIR/deploy/hf-readme.md" README.md
+          cp "$GH_DIR/deploy/Dockerfile.hf" Dockerfile
 
-          # Push to HuggingFace Spaces (use credential helper to avoid URL parsing issues with token chars)
-          git remote remove hf 2>/dev/null || true
-          git remote add hf https://huggingface.co/spaces/ashu010/agri-drone-api
-          git -c credential.helper= -c credential.helper="!f() { echo username=ashu010; echo password=${HF_TOKEN}; }; f" push hf hf-deploy:main --force
+          git add -A
+          git commit -m "deploy: sync code from GH commit $(git -C "$GH_DIR" log -1 --format=%h main)" --allow-empty
+          git push origin main
