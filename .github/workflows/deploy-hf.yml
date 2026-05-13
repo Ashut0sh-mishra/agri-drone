@@ -51,5 +51,6 @@ jobs:
           git commit -m "deploy: swap README + Dockerfile for HF Spaces" --allow-empty
 
           # Push to HuggingFace Spaces
+          git remote remove hf 2>/dev/null || true
           git remote add hf https://ashu010:${HF_TOKEN}@huggingface.co/spaces/ashu010/agri-drone-api
           git push hf hf-deploy:main --force
