@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software or its companion paper, please cite as below."
-title: "agri-drone: when do hand-crafted rules help modern CNNs for agricultural disease classification?"
+title: "agri-analyze: when do hand-crafted rules help modern CNNs for agricultural disease classification?"
 abstract: >
   Research codebase for a multi-architecture evaluation of hand-crafted rule
   engines, learned decision-tree rules, and LLM-generated rule baselines
@@ -13,8 +13,8 @@ abstract: >
 type: software
 version: "0.3.0-mega-dataset"
 license: MIT
-url: "https://github.com/Ashut0sh-mishra/agri-drone"
-repository-code: "https://github.com/Ashut0sh-mishra/agri-drone"
+url: "https://github.com/Ashut0sh-mishra/agri-analyze"
+repository-code: "https://github.com/Ashut0sh-mishra/agri-analyze"
 authors:
   - family-names: "Mishra"
     given-names: "Ashutosh"

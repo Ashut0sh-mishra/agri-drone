@@ -34,7 +34,7 @@ Abstract base class defining the detector interface.
 
 **Usage:**
 ```python
-from agridrone.vision import HotspotDetector
+from agrianalyze.vision import HotspotDetector
 
 # Implement subclass for specific model
 class CustomDetector(HotspotDetector):
@@ -67,7 +67,7 @@ Full implementation for YOLOv8 architecture.
 
 **Usage:**
 ```python
-from agridrone.vision import YOLOv8Detector
+from agrianalyze.vision import YOLOv8Detector
 import cv2
 
 # Initialize detector
@@ -130,7 +130,7 @@ Cleans and filters detection results.
 
 **Usage:**
 ```python
-from agridrone.vision import DetectionPostProcessor
+from agrianalyze.vision import DetectionPostProcessor
 
 # Filter detections
 filtered = DetectionPostProcessor.filter_batch(
@@ -229,7 +229,7 @@ Polygon segmentation mask.
 ### Example 1: Single Image Inference
 
 ```python
-from agridrone.vision import YOLOv8Detector, DetectionPostProcessor
+from agrianalyze.vision import YOLOv8Detector, DetectionPostProcessor
 import cv2
 
 # Load detector
@@ -256,8 +256,8 @@ print(f"Final detections: {detections.num_detections}")
 
 ```python
 from pathlib import Path
-from agridrone.io.image_loader import ImageLoader
-from agridrone.vision import YOLOv8Detector
+from agrianalyze.io.image_loader import ImageLoader
+from agrianalyze.vision import YOLOv8Detector
 
 # Load images
 loader = ImageLoader("data/raw_images", recursive=True)
@@ -275,7 +275,7 @@ for result in batch_results:
 ### Example 3: Export Results
 
 ```python
-from agridrone.io.exporters import DetectionExporter
+from agrianalyze.io.exporters import DetectionExporter
 
 # Export to different formats
 DetectionExporter.to_json(detections, "detections.json")

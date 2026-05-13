@@ -4,7 +4,7 @@ test_api.py - Test the detection API endpoint.
 
 Usage:
     # Start the server in one terminal:
-    uvicorn agridrone.api.app:app --reload --host 127.0.0.1 --port 8000
+    uvicorn agrianalyze.api.app:app --reload --host 127.0.0.1 --port 8000
 
     # In another terminal, run this test:
     python scripts/test_api.py
@@ -115,7 +115,7 @@ def test_detect_with_synthetic_image():
 def main():
     """Run all tests."""
     logger.info("=" * 60)
-    logger.info("AgriDrone Detection API Tests")
+    logger.info("AgriAnalyze Detection API Tests")
     logger.info("=" * 60)
 
     tests = [

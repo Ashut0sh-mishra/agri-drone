@@ -1,8 +1,8 @@
-﻿# Do Hand-Authored Rules Still Help Modern Crop-Disease CNNs? A Pre-Registered Negative Result on 21-Class Rice and Wheat Triage
+# Do Hand-Authored Rules Still Help Modern Crop-Disease CNNs? A Pre-Registered Negative Result on 21-Class Rice and Wheat Triage
 
 **Ashutosh Mishra**Â¹
 Â¹ Independent Researcher â€” *ashutosh.mishra@example.org*
-Repository: `github.com/Ashut0sh-mishra/agri-drone` (git `71220ed`, April 2026)
+Repository: `github.com/Ashut0sh-mishra/agri-analyze` (git `71220ed`, April 2026)
 
 ---
 
@@ -201,14 +201,14 @@ None of these threats are resolved *in this paper*. Three of the five are resolv
 
 ## 6. System
 
-The training notebooks (`notebooks/colab/01_run_matrix.ipynb`, `notebooks/kaggle/01_run_matrix_kaggle.ipynb`) clone the repository, install only `ultralytics`, `omegaconf`, `pyyaml` on top of the platform base image, and stream live subprocess output with a 6-retry outer loop. The **FastAPI** backend (`src/agridrone/api/app.py`) exposes:
+The training notebooks (`notebooks/colab/01_run_matrix.ipynb`, `notebooks/kaggle/01_run_matrix_kaggle.ipynb`) clone the repository, install only `ultralytics`, `omegaconf`, `pyyaml` on top of the platform base image, and stream live subprocess output with a 6-retry outer loop. The **FastAPI** backend (`src/agrianalyze/api/app.py`) exposes:
 
 - `GET /api/ml/matrix` â€” merges `per_run.jsonl` from local disk *and* from common Google Drive for-desktop mount points, so the React dashboard can display training progress **as the Colab / Kaggle run writes it**, without any explicit sync step;
 - `GET /api/ml/logs` â€” tails a classical `training.log` for legacy runs;
 - `GET /api/training/artifacts` â€” exposes saved checkpoints;
 - `POST /analyse` â€” the in-field triage endpoint that returns (top-1 label, confidence, rule audit, EML-weighted alert tier).
 
-The **React dashboard** ([agri-drone-frontend]) hosts a *Live Colab Matrix Run* card that renders `run_id`, progress bar (out of 54), per-status counters, and the last 50 cells with top-1 accuracy, directly from the endpoint above.
+The **React dashboard** ([agri-analyze-frontend]) hosts a *Live Colab Matrix Run* card that renders `run_id`, progress bar (out of 54), per-status counters, and the last 50 cells with top-1 accuracy, directly from the endpoint above.
 
 Capture uses a standard smartphone browser session opened via a one-shot **QR-Connect** page; no drone hardware is used in this submission (drone deployment is deferred to a follow-up; see Section 8).
 
@@ -241,8 +241,8 @@ Capture uses a standard smartphone browser session opened via a one-shot **QR-Co
 Everything needed to regenerate Table 5.1, Table 5.2, the EML bar chart and every CSV in `evaluate/results/` is public:
 
 ```bash
-git clone https://github.com/Ashut0sh-mishra/agri-drone.git
-cd agri-drone
+git clone https://github.com/Ashut0sh-mishra/agri-analyze.git
+cd agri-analyze
 pip install -r requirements.txt
 # 15-minute smoke test (6 cells, CPU-OK):
 python evaluate/matrix/run_matrix.py --config configs/matrix/smoke.yaml --dry-run

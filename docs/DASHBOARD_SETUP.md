@@ -1,30 +1,30 @@
 # Dashboard Setup & Integration Guide
 
-Complete guide for setting up and running the AgriDrone premium AI dashboard with the FastAPI backend.
+Complete guide for setting up and running the AgriAnalyze premium AI dashboard with the FastAPI backend.
 
 ## Quick Start (5 minutes)
 
 ### Prerequisites
 - Node.js 16+ and npm installed
-- Python 3.11+ with AgriDrone backend installed
+- Python 3.11+ with AgriAnalyze backend installed
 - Two terminal windows
 
 ### Setup
 
 **Terminal 1: Start FastAPI Backend**
 ```bash
-cd d:/Projects/agri-drone
+cd d:/Projects/agri-analyze
 python -m venv venv
 venv\Scripts\activate  # On macOS/Linux: source venv/bin/activate
 pip install -e .
 
 # Start the API server
-uvicorn src.agridrone.api.app:app --reload --port 8000
+uvicorn src.agrianalyze.api.app:app --reload --port 8000
 ```
 
 **Terminal 2: Start React Dashboard**
 ```bash
-cd d:/Projects/agri-drone/dashboard
+cd d:/Projects/agri-analyze/dashboard
 npm install
 npm run dev
 ```
@@ -36,7 +36,7 @@ Open your browser to `http://localhost:5173`
 ### Step 1: Install Backend Dependencies
 
 ```bash
-cd d:/Projects/agri-drone
+cd d:/Projects/agri-analyze
 
 # Create Python virtual environment
 python -m venv venv
@@ -47,7 +47,7 @@ venv\Scripts\activate
 # macOS/Linux:
 source venv/bin/activate
 
-# Install AgriDrone and dependencies
+# Install AgriAnalyze and dependencies
 pip install -e .
 ```
 
@@ -64,10 +64,10 @@ cp .env.example .env
 
 ```bash
 # With auto-reload for development
-uvicorn src.agridrone.api.app:app --reload --port 8000
+uvicorn src.agrianalyze.api.app:app --reload --port 8000
 
 # Or for production
-uvicorn src.agridrone.api.app:app --host 0.0.0.0 --port 8000 --workers 4
+uvicorn src.agrianalyze.api.app:app --host 0.0.0.0 --port 8000 --workers 4
 ```
 
 You should see output like:
@@ -275,7 +275,7 @@ npm run dev
 **Backend Changes (Python)**
 ```bash
 # API auto-reloads with --reload flag
-# Edit files in src/agridrone/
+# Edit files in src/agrianalyze/
 
 # Just save and refresh dashboard
 ```
@@ -297,7 +297,7 @@ npm run build
 pip install gunicorn
 
 # Run with gunicorn
-gunicorn src.agridrone.api.app:app \
+gunicorn src.agrianalyze.api.app:app \
   --workers 4 \
   --worker-class uvicorn.workers.UvicornWorker \
   --bind 0.0.0.0:8000
@@ -444,7 +444,7 @@ img.save('test_image.jpg')
 ### Local Development
 ```bash
 # Terminal 1: Backend
-uvicorn src.agridrone.api.app:app --reload --port 8000
+uvicorn src.agrianalyze.api.app:app --reload --port 8000
 
 # Terminal 2: Frontend
 cd dashboard && npm run dev
@@ -453,7 +453,7 @@ cd dashboard && npm run dev
 ### Single Machine (Production-like)
 ```bash
 # Backend in screen session
-screen -S api uvicorn src.agridrone.api.app:app --port 8000
+screen -S api uvicorn src.agrianalyze.api.app:app --port 8000
 
 # Frontend in screen session
 screen -S web bash -c "cd dashboard && npm run build && npm run preview"
@@ -467,7 +467,7 @@ WORKDIR /app
 COPY . .
 RUN pip install -e .
 EXPOSE 8000
-CMD ["uvicorn", "src.agridrone.api.app:app", "--host", "0.0.0.0"]
+CMD ["uvicorn", "src.agrianalyze.api.app:app", "--host", "0.0.0.0"]
 
 # Frontend Dockerfile
 FROM node:18-alpine as build
@@ -490,13 +490,13 @@ CMD ["serve", "-s", "dist", "-l", "5173"]
 python -c "import torch; print(torch.cuda.is_available())"
 
 # Update config to use GPU
-# In src/agridrone/config.py or .env:
+# In src/agrianalyze/config.py or .env:
 # MODEL_DEVICE=cuda
 ```
 
 ### Change Model
 ```bash
-# Edit src/agridrone/config.py
+# Edit src/agrianalyze/config.py
 # MODEL_CHECKPOINT=models/yolov8m-seg.pt  # larger model
 # MODEL_BACKBONE=yolov8m-seg
 ```
@@ -504,7 +504,7 @@ python -c "import torch; print(torch.cuda.is_available())"
 ### Change API Port
 ```bash
 # Terminal 1
-uvicorn src.agridrone.api.app:app --port 9000
+uvicorn src.agrianalyze.api.app:app --port 9000
 
 # Terminal 2 - Update dashboard .env
 # VITE_API_URL=http://localhost:9000
@@ -514,7 +514,7 @@ uvicorn src.agridrone.api.app:app --port 9000
 ```bash
 # Backend debug
 export LOG_LEVEL=DEBUG
-uvicorn src.agridrone.api.app:app --reload
+uvicorn src.agrianalyze.api.app:app --reload
 
 # Frontend debug
 # Open DevTools: F12 → Console

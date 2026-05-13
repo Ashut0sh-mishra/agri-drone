@@ -1,3 +1,3 @@
 """
-Unit tests for agridrone package.
+Unit tests for agrianalyze package.
 """

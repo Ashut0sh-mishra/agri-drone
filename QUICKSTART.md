@@ -1,5 +1,5 @@
 """
-QUICKSTART.md - Getting Started with AgriDrone
+QUICKSTART.md - Getting Started with AgriAnalyze
 ==============================================
 
 ## Installation
@@ -8,7 +8,7 @@ QUICKSTART.md - Getting Started with AgriDrone
 
 ```bash
 git clone <repository-url>
-cd agri-drone
+cd agri-analyze
 
 # Create virtual environment
 python -m venv venv
@@ -69,7 +69,7 @@ python scripts/build_prescription_map.py \
 
 ```bash
 # Terminal 1: Start server
-uvicorn src.agridrone.api.app:app --reload --port 8000
+uvicorn src.agrianalyze.api.app:app --reload --port 8000
 
 # Terminal 2: Test endpoint
 curl http://localhost:8000/health
@@ -91,20 +91,20 @@ pytest tests/
 pytest tests/unit/test_prescription.py -v
 
 # With coverage
-pytest tests/ --cov=src/agridrone --cov-report=html
+pytest tests/ --cov=src/agrianalyze --cov-report=html
 ```
 
 ## Project Structure
 
 ```
-agri-drone/
+agri-analyze/
 ├── configs/              ← YAML configuration files
 ├── data/                 ← Input/output data
 │   ├── raw/             ← Original images
 │   ├── processed/       ← Prepared datasets
 │   └── sample/          ← Example data
 ├── docs/                ← Documentation
-├── src/agridrone/       ← Main package
+├── src/agrianalyze/       ← Main package
 │   ├── vision/          ← Detection inference
 │   ├── geo/             ← Georeferencing & grid
 │   ├── prescription/    ← Prescription engine
@@ -121,9 +121,9 @@ agri-drone/
 ### Offline Image Processing Pipeline
 
 ```python
-from agridrone import init_config, setup_logging
-from agridrone.io.image_loader import ImageLoader
-from agridrone.vision.infer import YOLOv8Detector
+from agrianalyze import init_config, setup_logging
+from agrianalyze.io.image_loader import ImageLoader
+from agrianalyze.vision.infer import YOLOv8Detector
 
 # Setup
 config = init_config()
@@ -144,9 +144,9 @@ for image_path in images:
 ### Generate Prescription Map
 
 ```python
-from agridrone.geo.grid import FieldGridGenerator
-from agridrone.prescription.rules import PrescriptionEngine
-from agridrone.types import PrescriptionMap, GeoCoordinate
+from agrianalyze.geo.grid import FieldGridGenerator
+from agrianalyze.prescription.rules import PrescriptionEngine
+from agrianalyze.types import PrescriptionMap, GeoCoordinate
 
 # Create grid
 grid_gen = FieldGridGenerator(cell_size_m=10.0)
@@ -160,7 +160,7 @@ engine = PrescriptionEngine()
 engine.prescribe(prescription_map)
 
 # Export
-from agridrone.io.exporters import MapExporter
+from agrianalyze.io.exporters import MapExporter
 MapExporter.to_csv(prescription_map, "output.csv")
 MapExporter.to_geojson(prescription_map, "output.geojson")
 ```
@@ -178,8 +178,8 @@ SAFE_TEST_FLUID_ONLY=true      # Never disable this
 ### Check Safety Status
 
 ```python
-from agridrone.actuation.safety import SafetyChecker
-from agridrone.types import ActuationPlan
+from agrianalyze.actuation.safety import SafetyChecker
+from agrianalyze.types import ActuationPlan
 
 checker = SafetyChecker()
 report = checker.check_actuation_safety(plan)
@@ -196,8 +196,8 @@ else:
 ### Load Environmental Sensor Data
 
 ```python
-from agridrone.io.sensor_loader import SensorLoader
-from agridrone.environment.features import EnvironmentalFeatureAttacher
+from agrianalyze.io.sensor_loader import SensorLoader
+from agrianalyze.environment.features import EnvironmentalFeatureAttacher
 
 loader = SensorLoader()
 sensor_data = loader.load_csv_sensor_data("sensor_log.csv")
@@ -209,7 +209,7 @@ attacher.attach_sensor_data(prescription_map, sensor_data)
 ### Generate Synthetic Field for Testing
 
 ```python
-from agridrone.sim.field_generator import SyntheticFieldGenerator
+from agrianalyze.sim.field_generator import SyntheticFieldGenerator
 
 gen = SyntheticFieldGenerator(seed=42)
 hotspots = gen.generate_hotspots(
@@ -222,7 +222,7 @@ hotspots = gen.generate_hotspots(
 ### Export Results
 
 ```python
-from agridrone.io.exporters import MapExporter, DetectionExporter
+from agrianalyze.io.exporters import MapExporter, DetectionExporter
 
 # Map exports
 MapExporter.to_geojson(map, "field_prescription.geojson")
@@ -263,7 +263,7 @@ DEVICE=cpu python scripts/run_inference.py ...
 pip install -e . --force-reinstall
 
 # Check installation
-python -c "import agridrone; print(agridrone.__version__)"
+python -c "import agrianalyze; print(agrianalyze.__version__)"
 ```
 
 ## Next Steps

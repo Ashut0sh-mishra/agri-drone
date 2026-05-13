@@ -3,16 +3,16 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "agridrone"
+name = "agrianalyze"
 version = "0.1.0"
-description = "Low-cost research prototype for site-specific weed/pest/disease hotspot detection and prescription-map generation using a small drone"
+description = "Research prototype for crop disease detection and analysis using computer vision and machine learning"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [
-    {name = "AgriDrone Team", email = "research@agridrone.local"}
+    {name = "AgriAnalyze Team", email = "research@agrianalyze.local"}
 ]
-keywords = ["agriculture", "drone", "precision-spraying", "computer-vision", "geospatial"]
+keywords = ["agriculture", "disease-detection", "computer-vision", "machine-learning", "crop-analysis"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
@@ -82,13 +82,13 @@ ros = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/research-org/agridrone"
-Documentation = "https://github.com/research-org/agridrone/docs"
-Repository = "https://github.com/research-org/agridrone"
-Issues = "https://github.com/research-org/agridrone/issues"
+Homepage = "https://github.com/research-org/agrianalyze"
+Documentation = "https://github.com/research-org/agrianalyze/docs"
+Repository = "https://github.com/research-org/agrianalyze"
+Issues = "https://github.com/research-org/agrianalyze/issues"
 
 [tool.setuptools]
-packages = ["agridrone"]
+packages = ["agrianalyze"]
 package-dir = {"" = "src"}
 
 [tool.black]
@@ -101,7 +101,7 @@ exclude = '''/(\.git|\.hg|\.mypy_cache|\.tox|\.venv|_build|buck-out|build|dist)/
 profile = "black"
 line_length = 100
 skip_gitignore = true
-known_first_party = ["agridrone"]
+known_first_party = ["agrianalyze"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

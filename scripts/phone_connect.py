@@ -45,7 +45,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 # Globals initialised in main()
 # ---------------------------------------------------------------------------
 console = Console()
-app = FastAPI(title="Agri-Drone Phone Connect")
+app = FastAPI(title="Agri-Analyze Phone Connect")
 
 # Allow dashboard frontend to call session APIs
 app.add_middleware(
@@ -646,7 +646,7 @@ _MOBILE_HTML = """\
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-<title>AgriDrone Field Connect</title>
+<title>AgriAnalyze Field Connect</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
@@ -696,7 +696,7 @@ input[type=file]{display:none}
 </style>
 </head>
 <body>
-<h1>🌾 AgriDrone Field Connect</h1>
+<h1>🌾 AgriAnalyze Field Connect</h1>
 <p class="subtitle">Take crop photos for instant health analysis</p>
 
 <!-- Step 1: Connect form -->
@@ -949,9 +949,9 @@ function shareViaWhatsApp(index){
   const disease=data.disease||'None';
   const treatment=data.treatment||'';
   const risk=(data.risk||'low').toUpperCase();
-  let text='[AgriDrone Report] Disease: '+disease+' Health: '+score+'/100 Risk: '+risk;
+  let text='[AgriAnalyze Report] Disease: '+disease+' Health: '+score+'/100 Risk: '+risk;
   if(treatment) text+=' Treatment: '+treatment;
-  text+=' Scanned via AgriDrone AI';
+  text+=' Scanned via AgriAnalyze AI';
   window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
 }
 </script>
@@ -1153,7 +1153,7 @@ def _local_fallback_analysis(image_bgr: np.ndarray, filename: str) -> dict:
     try:
         import sys
         sys.path.insert(0, str(_PROJECT_ROOT / "src"))
-        from agridrone.vision.disease_reasoning import run_full_pipeline, diagnosis_to_dict
+        from agrianalyze.vision.disease_reasoning import run_full_pipeline, diagnosis_to_dict
         # Downscale for faster feature extraction (phone images are huge ~4000px)
         h, w = image_bgr.shape[:2]
         max_dim = 800
@@ -1771,7 +1771,7 @@ def main():
     _crop_type = args.crop
     _server_port = args.port
 
-    # Add src to path for agridrone imports
+    # Add src to path for agrianalyze imports
     import sys
     sys.path.insert(0, str(_PROJECT_ROOT / "src"))
 
@@ -1780,7 +1780,7 @@ def main():
     console.print(f"[dim]Loaded {len(_sessions)} previous sessions from disk[/dim]")
 
     console.print(Panel(
-        "[bold cyan]Agri-Drone Phone Connect[/bold cyan]\n"
+        "[bold cyan]Agri-Analyze Phone Connect[/bold cyan]\n"
         f"Crop: [green]{_crop_type}[/green]  •  Device: [green]{args.device}[/green]  •  "
         f"Port: [green]{args.port}[/green]",
         border_style="cyan",

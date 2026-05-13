@@ -215,7 +215,7 @@ def train_with_tracking(args):
 
 def main():
     parser = argparse.ArgumentParser(description="Train YOLO with MLflow tracking")
-    parser.add_argument("--experiment", default="agri-drone-detection",
+    parser.add_argument("--experiment", default="agri-analyze-detection",
                         help="MLflow experiment name")
     parser.add_argument("--model", default=DEFAULT_MODEL, help="Base YOLO model")
     parser.add_argument("--data", default=DEFAULT_DATA, help="data.yaml path")

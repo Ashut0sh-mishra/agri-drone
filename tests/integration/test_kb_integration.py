@@ -1,9 +1,9 @@
 """Quick test: verify full pipeline — feature_extractor → rule_engine → disease_reasoning."""
 import numpy as np
-from agridrone.knowledge import kb_loader
-from agridrone.vision.feature_extractor import extract_features, ImageFeatures
-from agridrone.vision.rule_engine import evaluate, result_to_dict, RuleEngineResult
-from agridrone.vision.disease_reasoning import reason_diagnosis, diagnosis_to_dict
+from agrianalyze.knowledge import kb_loader
+from agrianalyze.vision.feature_extractor import extract_features, ImageFeatures
+from agrianalyze.vision.rule_engine import evaluate, result_to_dict, RuleEngineResult
+from agrianalyze.vision.disease_reasoning import reason_diagnosis, diagnosis_to_dict
 
 # ── Setup ──
 kb_loader.load()

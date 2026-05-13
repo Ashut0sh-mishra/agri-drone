@@ -367,7 +367,7 @@ def main() -> None:
     labels_saved = 0
     session_crop = "unknown"
 
-    win = "AgriDrone — Field Data Collector"
+    win = "AgriAnalyze — Field Data Collector"
     cv2.namedWindow(win, cv2.WINDOW_NORMAL)
 
     print(f"\n  {len(images)} images in {input_folder}")

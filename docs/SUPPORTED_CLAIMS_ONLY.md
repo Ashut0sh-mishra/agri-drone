@@ -31,7 +31,7 @@ Every claim retained in `MANUSCRIPT_SUBMISSION_VERSION.md` is listed here with i
 | 18 | YOLOv8n-cls 1.4M params | Model architecture (public Ultralytics spec) | Verifiable |
 | 19 | Seed 42, 70/15/15 split | `scripts/make_splits.py`, `evaluate/data_split_manifest.json` | Committed code + manifest |
 | 20 | No train/test leakage from aug files | `LEAKAGE_INVESTIGATION_REPORT.md`, `tools/research_validation/deep_leakage_analysis.py` | Verified: 0 overlapping base IDs |
-| 21 | Rule engine has ≥5 rule families (color, texture, spatial, conflict) | `src/agridrone/vision/rule_engine.py` | Code inspection |
+| 21 | Rule engine has ≥5 rule families (color, texture, spatial, conflict) | `src/agrianalyze/vision/rule_engine.py` | Code inspection |
 | 22 | Per-class F1 deltas: tan_spot −0.038, yellow_rust −0.022, black_rust −0.019 | `evaluate/results/ablation_summary.json` | Committed artefact |
 | 23 | Cross-dataset PDT accuracy 84.4% | `evaluate/results/cross_dataset_PDT.json` (acc: 0.8438) | Committed artefact |
 | 24 | Config C = 10× random chance on 21 classes | 1/21 = 4.76%, Config C = 13.4% | Arithmetic: 13.4/4.76 ≈ 2.8×. **CORRECTED:** C is ~2.8× random, not 10× | 

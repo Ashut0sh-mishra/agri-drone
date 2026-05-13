@@ -48,13 +48,13 @@ is preserved byte-identical.
   ``evaluate/results/v2/pdt/``.
 
 ### Step 7 — Learned / neuro-symbolic rule baselines
-- ``src/agridrone/vision/rule_engine_base.py`` — ``RuleEngine`` Protocol +
+- ``src/agrianalyze/vision/rule_engine_base.py`` — ``RuleEngine`` Protocol +
   registry.
-- ``src/agridrone/vision/rules_learned.py`` — decision-tree rule engine.
-- ``src/agridrone/vision/rules_llm.py`` — LLM-generated rule engine
+- ``src/agrianalyze/vision/rules_learned.py`` — decision-tree rule engine.
+- ``src/agrianalyze/vision/rules_llm.py`` — LLM-generated rule engine
   (offline fixture by default; online mode guarded by
   ``ENABLE_LLM_RULES=1``).
-- ``src/agridrone/vision/rules_llm_fixtures/cached_rules.json`` — seed
+- ``src/agrianalyze/vision/rules_llm_fixtures/cached_rules.json`` — seed
   fixture so tests and dry runs are fully offline.
 - Default remains the existing handcrafted engine in ``rule_engine.py``
   (unchanged).
@@ -96,7 +96,7 @@ is preserved byte-identical.
 
 - ``RESEARCH_PAPER_FINAL_v3.md`` — byte-identical (54,104 bytes, 638 lines).
 - All files under ``evaluate/results/*.json`` — frozen for regression tests.
-- All existing public function signatures in ``src/agridrone/``.
+- All existing public function signatures in ``src/agrianalyze/``.
 - All model weights in ``models/``.
 
 ## What still needs a GPU host to fully materialise

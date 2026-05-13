@@ -29,8 +29,8 @@
 - [ ] `evaluate/ablation_study.py` — main experiment script
 - [ ] `evaluate/statistical_tests.py` — bootstrap + McNemar
 - [ ] `evaluate/eml_analysis.py` — EML computation
-- [ ] `src/agridrone/vision/rule_engine.py` — substantive rule engine
-- [ ] `src/agridrone/knowledge/diseases.json` — disease profiles
+- [ ] `src/agrianalyze/vision/rule_engine.py` — substantive rule engine
+- [ ] `src/agrianalyze/knowledge/diseases.json` — disease profiles
 - [ ] `scripts/make_splits.py` — deterministic splitter
 - [ ] `tools/research_validation/validate_ablation.py` — claim validation
 

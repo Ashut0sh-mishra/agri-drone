@@ -176,7 +176,7 @@ IMPLEMENTATION CHECKLIST: YOLOv8 Detection System
   ✓ Exports DetectionPostProcessor
   ✓ Module docstring with component list
 
-✓ src/agridrone/vision/
+✓ src/agrianalyze/vision/
   ✓ infer.py (320 lines)
   ✓ postprocess.py (280 lines)
   ✓ __init__.py with exports
@@ -321,8 +321,8 @@ IMPLEMENTATION CHECKLIST: YOLOv8 Detection System
 ## File Inventory
 
 ✓ Source Code (2 files, ~600 lines)
-  src/agridrone/vision/infer.py (320 lines)
-  src/agridrone/vision/postprocess.py (280 lines)
+  src/agrianalyze/vision/infer.py (320 lines)
+  src/agrianalyze/vision/postprocess.py (280 lines)
 
 ✓ Tests (1 file, 330 lines)
   tests/unit/test_vision.py
@@ -336,7 +336,7 @@ IMPLEMENTATION CHECKLIST: YOLOv8 Detection System
   IMPLEMENTATION_SUMMARY_VISION.md
 
 ✓ Updates (1 file)
-  src/agridrone/vision/__init__.py
+  src/agrianalyze/vision/__init__.py
 
 ## Compliance Checklist ✓
 

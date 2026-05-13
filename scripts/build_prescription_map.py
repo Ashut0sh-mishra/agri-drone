@@ -10,11 +10,11 @@ import argparse
 import json
 from pathlib import Path
 
-from agridrone import init_config, setup_logging, get_logger
-from agridrone.geo.grid import FieldGridGenerator
-from agridrone.prescription.rules import PrescriptionEngine
-from agridrone.io.exporters import MapExporter
-from agridrone.types import (
+from agrianalyze import init_config, setup_logging, get_logger
+from agrianalyze.geo.grid import FieldGridGenerator
+from agrianalyze.prescription.rules import PrescriptionEngine
+from agrianalyze.io.exporters import MapExporter
+from agrianalyze.types import (
     BoundingBox,
     Detection,
     DetectionBatch,

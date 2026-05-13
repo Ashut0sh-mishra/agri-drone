@@ -7,7 +7,7 @@ Implements real training for the six backbones documented in
 Design goals (unchanged from the scaffolding commit):
 * **One recipe, all backbones.** Optimizer, LR schedule, augmentation,
   label smoothing come from ``cfg["training_recipe"]``.
-* **Non-breaking.** Does not import from ``src/agridrone`` and cannot
+* **Non-breaking.** Does not import from ``src/agrianalyze`` and cannot
   mutate v1 frozen results.
 * **CPU-safe imports.** torch/torchvision/ultralytics load inside the
   call path so ``--dry-run`` never pulls them in.

@@ -1,5 +1,5 @@
 """
-FINAL FIX - Run from D:\Projects\agri-drone\
+FINAL FIX - Run from D:\Projects\agri-analyze\
 Command: python fix_unicode_final.py
 """
 import os, re

@@ -91,7 +91,7 @@ def test_detection_api():
                 
         except requests.exceptions.ConnectionError:
             print(f"❌ Connection Error: API not reachable at {API_BASE}")
-            print(f"   Make sure uvicorn is running: uvicorn src.agridrone.api.app:app --host 0.0.0.0 --port 8080")
+            print(f"   Make sure uvicorn is running: uvicorn src.agrianalyze.api.app:app --host 0.0.0.0 --port 8080")
             return False
         except Exception as e:
             print(f"❌ Error: {e}")
@@ -120,14 +120,14 @@ def test_health():
 
 if __name__ == "__main__":
     print("\n" + "=" * 60)
-    print("  AGRIDRONE API TEST SUITE")
+    print("  AGRIANALYZE API TEST SUITE")
     print("=" * 60)
     
     # Test health first
     if not test_health():
         print("\n⚠️  API is not running. Start it with:")
-        print("   cd d:\\Projects\\agri-drone")
-        print("   python -m uvicorn agridrone.api.app:app --host 127.0.0.1 --port 9000")
+        print("   cd d:\\Projects\\agri-analyze")
+        print("   python -m uvicorn agrianalyze.api.app:app --host 127.0.0.1 --port 9000")
         exit(1)
     
     # Test detection API

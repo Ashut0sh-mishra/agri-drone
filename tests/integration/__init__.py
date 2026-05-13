@@ -1,3 +1,3 @@
 """
-Integration tests for agridrone package.
+Integration tests for agrianalyze package.
 """

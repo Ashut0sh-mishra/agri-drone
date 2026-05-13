@@ -3,7 +3,7 @@
 LLaVA Ensemble Evaluation — Config B vs Config C
 
 Evaluates whether LLaVA (via Ollama) adds value as a third voter in the
-AgriDrone ensemble pipeline.
+AgriAnalyze ensemble pipeline.
 
 Setup:
   - 200 stratified samples (equal per class, seed=42)
@@ -40,10 +40,10 @@ import requests
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
-# Suppress verbose loguru output from agridrone modules
+# Suppress verbose loguru output from agrianalyze modules
 try:
     from loguru import logger
-    logger.disable("agridrone")
+    logger.disable("agrianalyze")
 except ImportError:
     pass
 
@@ -133,8 +133,8 @@ def stratified_sample(images: list[dict], n: int, seed: int) -> list[dict]:
 
 def run_config_b(model, image_bgr: np.ndarray, crop_type: str) -> dict:
     """YOLO + Rule Engine + 2-model Ensemble (same as ablation Config B)."""
-    from agridrone.vision.disease_reasoning import run_full_pipeline, diagnosis_to_dict
-    from agridrone.vision.ensemble_voter import ensemble_vote
+    from agrianalyze.vision.disease_reasoning import run_full_pipeline, diagnosis_to_dict
+    from agrianalyze.vision.ensemble_voter import ensemble_vote
 
     results = model(image_bgr, verbose=False)
     if not results or results[0].probs is None:
@@ -241,8 +241,8 @@ def run_config_c(model, image_bgr: np.ndarray, crop_type: str,
     Reuses Config B's pipeline output to avoid duplicate YOLO+rules inference.
     Only adds the LLaVA call and re-runs ensemble voting with 3 models.
     """
-    from agridrone.vision.llm_validator import build_validation_prompt, parse_validation_response
-    from agridrone.vision.ensemble_voter import ensemble_vote
+    from agrianalyze.vision.llm_validator import build_validation_prompt, parse_validation_response
+    from agrianalyze.vision.ensemble_voter import ensemble_vote
 
     classifier_result = config_b_result.get("classifier_result")
     reasoning_result = config_b_result.get("reasoning_result")

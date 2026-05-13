@@ -3,9 +3,9 @@
 import sys, cv2, glob
 sys.path.insert(0, "src")
 
-from agridrone.knowledge import kb_loader
-from agridrone.vision.feature_extractor import extract_features
-from agridrone.vision.rule_engine import evaluate as rule_evaluate
+from agrianalyze.knowledge import kb_loader
+from agrianalyze.vision.feature_extractor import extract_features
+from agrianalyze.vision.rule_engine import evaluate as rule_evaluate
 
 kb_loader.load()
 kb = kb_loader.get_all_profiles()

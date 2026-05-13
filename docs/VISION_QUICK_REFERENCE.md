@@ -15,7 +15,7 @@ python -c "from ultralytics import YOLO; YOLO('yolov8n-seg')"
 ## 1-Minute Quick Start
 
 ```python
-from agridrone.vision import YOLOv8Detector
+from agrianalyze.vision import YOLOv8Detector
 import cv2
 
 # Initialize detector
@@ -36,8 +36,8 @@ for det in detections.detections:
 ## Full Pipeline with Post-Processing
 
 ```python
-from agridrone.vision import YOLOv8Detector, DetectionPostProcessor
-from agridrone.io.exporters import DetectionExporter
+from agrianalyze.vision import YOLOv8Detector, DetectionPostProcessor
+from agrianalyze.io.exporters import DetectionExporter
 import cv2
 
 # 1. Initialize
@@ -196,7 +196,7 @@ inference:
 ```python
 # Ensure package is installed
 pip install -e .
-python -c "from agridrone.vision import YOLOv8Detector"
+python -c "from agrianalyze.vision import YOLOv8Detector"
 ```
 
 ### Model Not Found
@@ -265,7 +265,7 @@ detector = YOLOv8Detector(..., device=device)
 ## Export Formats
 
 ```python
-from agridrone.io.exporters import DetectionExporter
+from agrianalyze.io.exporters import DetectionExporter
 
 # JSON (detailed)
 DetectionExporter.to_json(batch, "out.json")
@@ -291,7 +291,7 @@ filtered = DetectionPostProcessor.filter_batch(detections, min_confidence=0.4)
 
 ### Workflow 2: Batch Image Processing
 ```python
-from agridrone.io.image_loader import ImageLoader
+from agrianalyze.io.image_loader import ImageLoader
 
 loader = ImageLoader("data/raw")
 detector = YOLOv8Detector(...)
@@ -327,10 +327,10 @@ Module docs: `docs/vision_module.md`
 ## Version Info
 
 ```python
-from agridrone import __version__
-from agridrone.vision import YOLOv8Detector
+from agrianalyze import __version__
+from agrianalyze.vision import YOLOv8Detector
 
-print(f"agridrone: {__version__}")
+print(f"agrianalyze: {__version__}")
 print(f"YOLOv8 version: {detector._get_model_version()}")
 ```
 

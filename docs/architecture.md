@@ -1,6 +1,6 @@
-# AgriDrone — Architecture
+# AgriAnalyze — Architecture
 
-> Snapshot of the AgriDrone monorepo layout and how its layers connect.
+> Snapshot of the AgriAnalyze monorepo layout and how its layers connect.
 > Current as of the `main` branch. Last refreshed: April 2026.
 
 ---
@@ -8,9 +8,9 @@
 ## 1. Top-level repository layout
 
 ```
-agri-drone/
-├── src/                # Python backend (agridrone package)
-│   └── agridrone/
+agri-analyze/
+├── src/                # Python backend (agrianalyze package)
+│   └── agrianalyze/
 ├── frontend/           # React + Vite + TailwindCSS dashboard (superset)
 ├── dashboard/          # Older minimal React dashboard (retained for compatibility)
 ├── evaluate/           # Offline evaluation scripts + results/
@@ -34,16 +34,16 @@ agri-drone/
 └── README.md
 ```
 
-The companion repository [`agri-drone-frontend`](https://github.com/Ashut0sh-mishra/agri-drone-frontend)
+The companion repository [`agri-analyze-frontend`](https://github.com/Ashut0sh-mishra/agri-analyze-frontend)
 hosts the Vercel-deployed fork of `frontend/`. Both frontends talk to the
 same backend API surface.
 
 ---
 
-## 2. Backend package layout (`src/agridrone/`)
+## 2. Backend package layout (`src/agrianalyze/`)
 
 ```
-agridrone/
+agrianalyze/
 ├── __init__.py         # Package version
 ├── config.py           # Settings loader
 ├── logging.py          # Loguru setup
@@ -125,12 +125,12 @@ agridrone/
 
 | Layer           | Module(s)                            | Responsibility                                      |
 |-----------------|--------------------------------------|-----------------------------------------------------|
-| HTTP / WS       | `agridrone.api.*`                    | Request validation, streaming, CORS, WS sessions    |
-| Vision pipeline | `agridrone.vision.*`                 | Everything pixels -> pixel-level outputs            |
-| Core reasoning  | `agridrone.core.*`                   | Confidence, routing, temporal trends                |
-| Knowledge / RAG | `agridrone.knowledge.*`              | Paper retrieval, domain facts                       |
-| Economics       | `agridrone.prescription.*`           | Cost-benefit, dose recommendations                  |
-| Persistence     | `agridrone.feedback.*`, `reports/`   | History, feedback loop, KB updates                  |
+| HTTP / WS       | `agrianalyze.api.*`                    | Request validation, streaming, CORS, WS sessions    |
+| Vision pipeline | `agrianalyze.vision.*`                 | Everything pixels -> pixel-level outputs            |
+| Core reasoning  | `agrianalyze.core.*`                   | Confidence, routing, temporal trends                |
+| Knowledge / RAG | `agrianalyze.knowledge.*`              | Paper retrieval, domain facts                       |
+| Economics       | `agrianalyze.prescription.*`           | Cost-benefit, dose recommendations                  |
+| Persistence     | `agrianalyze.feedback.*`, `reports/`   | History, feedback loop, KB updates                  |
 
 The `api` layer is the **only** layer allowed to import from every
 other layer. Layers below must not import from `api`.
@@ -155,10 +155,10 @@ other layer. Layers below must not import from `api`.
 
 | Target                 | Entry point                                       | Config                   |
 |------------------------|---------------------------------------------------|--------------------------|
-| Local dev              | `uvicorn agridrone.api.app:get_app --factory`     | `.env.example`           |
+| Local dev              | `uvicorn agrianalyze.api.app:get_app --factory`     | `.env.example`           |
 | Docker (CPU)           | `Dockerfile` + `docker-compose.yml`               | same                     |
 | HuggingFace Space      | `deploy/Dockerfile.hf`                            | HF Secrets               |
-| Vercel (frontend only) | `agri-drone-frontend` repo + `vercel.json`        | `VITE_API_URL` env var   |
+| Vercel (frontend only) | `agri-analyze-frontend` repo + `vercel.json`        | `VITE_API_URL` env var   |
 
 ---
 
@@ -184,12 +184,12 @@ web-delivered disease-detection pipeline described above.
 ---
 
 """
-AgriDrone System Architecture
+AgriAnalyze System Architecture
 ==============================
 
 ## Overview
 
-AgriDrone is a research prototype for site-specific crop protection using aerial imagery,
+AgriAnalyze is a research prototype for site-specific crop protection using aerial imagery,
 environmental sensing, and controlled selective spraying.
 
 ## System Architecture
@@ -214,7 +214,7 @@ Image Input
 
 ## Core Modules
 
-### 1. Vision Module (`src/agridrone/vision/`)
+### 1. Vision Module (`src/agrianalyze/vision/`)
 
 Detects hotspot classes using YOLO or similar deep learning models.
 
@@ -231,7 +231,7 @@ Detects hotspot classes using YOLO or similar deep learning models.
 **Configuration:**
 - `configs/model.yaml` - Model architecture and inference parameters
 
-### 2. Geospatial Module (`src/agridrone/geo/`)
+### 2. Geospatial Module (`src/agrianalyze/geo/`)
 
 Links image detections to field coordinates and generates tiled grids.
 
@@ -247,7 +247,7 @@ Links image detections to field coordinates and generates tiled grids.
 **Configuration:**
 - `configs/base.yaml` - CRS and grid parameters
 
-### 3. Prescription Engine (`src/agridrone/prescription/`)
+### 3. Prescription Engine (`src/agrianalyze/prescription/`)
 
 Converts detections into actionable spray recommendations using deterministic rules.
 
@@ -263,7 +263,7 @@ Converts detections into actionable spray recommendations using deterministic ru
 **Configuration:**
 - `configs/prescription.yaml` - Thresholds and spray rates
 
-### 4. Environmental Fusion (`src/agridrone/environment/`)
+### 4. Environmental Fusion (`src/agrianalyze/environment/`)
 
 Attaches environmental context and modifies prescriptions.
 
@@ -275,7 +275,7 @@ Attaches environmental context and modifies prescriptions.
 - Input: Temperature, humidity, wind speed, etc.
 - Output: GridCell with env_features attached
 
-### 5. Actuation Module (`src/agridrone/actuation/`)
+### 5. Actuation Module (`src/agrianalyze/actuation/`)
 
 Controls sprayer hardware with mandatory safety interlocks.
 
@@ -292,7 +292,7 @@ Controls sprayer hardware with mandatory safety interlocks.
 **Configuration:**
 - `configs/actuation.yaml` - Hardware pins, safety settings
 
-### 6. Simulation Module (`src/agridrone/sim/`)
+### 6. Simulation Module (`src/agrianalyze/sim/`)
 
 Generates synthetic fields and enables closed-loop testing.
 
@@ -302,7 +302,7 @@ Generates synthetic fields and enables closed-loop testing.
 - `spraying.py` - Spray outcome simulation
 - `metrics.py` - Evaluation metrics
 
-### 7. Runtime Module (`src/agridrone/runtime/`)
+### 7. Runtime Module (`src/agrianalyze/runtime/`)
 
 Orchestrates end-to-end pipeline execution.
 
@@ -311,7 +311,7 @@ Orchestrates end-to-end pipeline execution.
 - `mission_state.py` - Mission state tracking
 - `decision_engine.py` - Decision logic
 
-### 8. API Module (`src/agridrone/api/`)
+### 8. API Module (`src/agrianalyze/api/`)
 
 FastAPI-based REST API for mission control and monitoring.
 
@@ -398,7 +398,7 @@ Settings loaded from (in order):
 
 Use `ConfigManager` to access:
 ```python
-from agridrone import get_config
+from agrianalyze import get_config
 config = get_config()
 severity_threshold = config.get("prescription.thresholds.high_severity")
 ```

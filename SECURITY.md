@@ -14,7 +14,7 @@
 Instead, please report them responsibly via one of:
 
 1. **GitHub Security Advisories** (preferred):
-   Go to [Security → Advisories → New draft](https://github.com/Ashut0sh-mishra/agri-drone/security/advisories/new)
+   Go to [Security → Advisories → New draft](https://github.com/Ashut0sh-mishra/agri-analyze/security/advisories/new)
 
 2. **Email**: Send details to the maintainer via GitHub profile contact.
 

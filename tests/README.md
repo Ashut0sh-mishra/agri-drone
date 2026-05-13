@@ -41,14 +41,14 @@ pytest tests/unit/
 pytest tests/integration/test_detection_api.py -v
 
 # Run with coverage report
-pytest --cov=agridrone --cov-report=html
+pytest --cov=agrianalyze --cov-report=html
 ```
 
 ## Requirements
 
-- Unit tests: Python + the agridrone package installed (`pip install -e .`)
+- Unit tests: Python + the agrianalyze package installed (`pip install -e .`)
 - Integration tests: API server running on port 9000 + Ollama on port 11434
-  - Start the API: `uvicorn agridrone.api.app:app --port 9000`
+  - Start the API: `uvicorn agrianalyze.api.app:app --port 9000`
   - Start Ollama: `ollama serve`
 
 ## CI

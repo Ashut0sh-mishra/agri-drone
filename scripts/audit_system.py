@@ -135,7 +135,7 @@ def build_report() -> dict:
 
 def _print_summary(r: dict) -> None:
     print("=" * 60)
-    print(f"  agri-drone system audit  -  {r['generated_at']}")
+    print(f"  agri-analyze system audit  -  {r['generated_at']}")
     print("=" * 60)
     print(f"  OS         : {r['os']['platform']}")
     print(f"  Python     : {r['python']['version']}  venv={r['python']['venv']}")

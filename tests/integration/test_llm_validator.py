@@ -9,10 +9,10 @@ Tests:
 """
 
 import numpy as np
-from agridrone.knowledge import kb_loader
-from agridrone.vision.feature_extractor import extract_features, ImageFeatures
-from agridrone.vision.rule_engine import evaluate as rule_evaluate, RuleEngineResult
-from agridrone.vision.llm_validator import (
+from agrianalyze.knowledge import kb_loader
+from agrianalyze.vision.feature_extractor import extract_features, ImageFeatures
+from agrianalyze.vision.rule_engine import evaluate as rule_evaluate, RuleEngineResult
+from agrianalyze.vision.llm_validator import (
     build_validation_prompt,
     parse_validation_response,
     fuse_confidence,

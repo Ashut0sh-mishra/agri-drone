@@ -80,9 +80,9 @@ All three configs are evaluated on the same images in the same order.
 
 ### 4.2 Rule Engine
 
-The rule engine (`src/agridrone/vision/rule_engine.py`) is a substantive multi-stage system, not a toy:
+The rule engine (`src/agrianalyze/vision/rule_engine.py`) is a substantive multi-stage system, not a toy:
 
-- **Color rules:** HSV-signature matching against per-disease profiles loaded from `src/agridrone/knowledge/diseases.json`
+- **Color rules:** HSV-signature matching against per-disease profiles loaded from `src/agrianalyze/knowledge/diseases.json`
 - **Texture rules:** Bleaching-ratio detection, spot/pustule scoring conditioned on disease symptom profiles
 - **Spatial rules:** Stripe-vs-spot penalization using Hough-line directionality; stripe-contradicts-head-disease penalties
 - **Conflict resolution:** `CandidateScore` aggregation with `ConflictReport` when CNN top-1 ≠ rule top-1
@@ -199,7 +199,7 @@ This paper establishes a single datapoint: rules do not help YOLOv8n-cls on this
 
 3. **Field-condition imagery** — the current evaluation uses lab-quality photos, not real drone/field images.
 
-4. **Learned rules** — `src/agridrone/vision/rules_learned.py` and `rules_llm.py` implement alternative rule generation strategies that have not been evaluated against the test set.
+4. **Learned rules** — `src/agrianalyze/vision/rules_learned.py` and `rules_llm.py` implement alternative rule generation strategies that have not been evaluated against the test set.
 
 ---
 

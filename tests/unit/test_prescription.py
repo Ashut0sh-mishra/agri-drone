@@ -2,8 +2,8 @@
 Unit tests for prescription engine logic.
 """
 import pytest
-from agridrone.prescription.rules import PrescriptionEngine
-from agridrone.types import GridCell, GeoCoordinate, PrescriptionMap
+from agrianalyze.prescription.rules import PrescriptionEngine
+from agrianalyze.types import GridCell, GeoCoordinate, PrescriptionMap
 
 
 @pytest.mark.unit

@@ -219,7 +219,7 @@ def _load_train_and_eval():
     train_py = PROJECT_ROOT / "evaluate" / "matrix" / "train.py"
     if not train_py.exists():
         raise ImportError(f"cannot locate {train_py}")
-    spec = importlib.util.spec_from_file_location("_agridrone_matrix_train", train_py)
+    spec = importlib.util.spec_from_file_location("_agrianalyze_matrix_train", train_py)
     if spec is None or spec.loader is None:
         raise ImportError(f"cannot build spec for {train_py}")
     mod = importlib.util.module_from_spec(spec)
@@ -263,7 +263,7 @@ def _real_run_record(cell: Cell, cfg: dict) -> dict:
 # ---------------------------------------------------------------------------
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="AgriDrone experimental matrix runner")
+    parser = argparse.ArgumentParser(description="AgriAnalyze experimental matrix runner")
     parser.add_argument("--config", required=True, type=Path)
     parser.add_argument("--dry-run", action="store_true",
                         help="plan-only: write skeleton artifacts, do not train")

@@ -35,7 +35,7 @@ for label, path in tests:
 
 print()
 print('--- Plant Gatekeeper Test ---')
-from agridrone.api.app import _is_plant_image
+from agrianalyze.api.app import _is_plant_image
 for label, path in tests:
     if not os.path.isdir(path):
         continue

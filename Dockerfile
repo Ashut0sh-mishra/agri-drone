@@ -29,7 +29,7 @@ RUN pip install --upgrade pip \
       pytest==9.0.2 ruff==0.14.4 scipy==1.16.0 \
       ultralytics==8.3.214
 
-# Copy the project and install it in editable mode so `src/agridrone/` is
+# Copy the project and install it in editable mode so `src/agrianalyze/` is
 # importable just like on the host.
 COPY pyproject.toml ./
 COPY src ./src
@@ -44,4 +44,4 @@ RUN pip install -e .
 EXPOSE 7860
 
 # Default: run the API server. Platform sets $PORT automatically.
-CMD ["sh", "-c", "python -m uvicorn agridrone.api.app:get_app --factory --host 0.0.0.0 --port ${PORT:-7860}"]
+CMD ["sh", "-c", "python -m uvicorn agrianalyze.api.app:get_app --factory --host 0.0.0.0 --port ${PORT:-7860}"]

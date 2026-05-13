@@ -10,7 +10,7 @@ Produces two new result files:
 4. holm_bonferroni_extended.json       — McNemar on combined test+val (n~1868)
 
 Usage:
-    cd d:\Projects\agri-drone
+    cd d:\Projects\agri-analyze
     python evaluate/expand_evaluation.py
 """
 import csv
@@ -126,8 +126,8 @@ def run_yolo_val(data_dir: Path, out_csv_a: Path, out_csv_b: Path):
     from ultralytics import YOLO
     import sys
     sys.path.insert(0, str(ROOT / "src"))
-    import agridrone.vision.rule_engine as rule_engine_mod
-    import agridrone.vision.feature_extractor as feat_ext
+    import agrianalyze.vision.rule_engine as rule_engine_mod
+    import agrianalyze.vision.feature_extractor as feat_ext
 
     model = YOLO(str(MODEL_YOLO))
 

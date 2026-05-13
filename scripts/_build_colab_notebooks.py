@@ -39,23 +39,23 @@ def write(path: Path, cells: list[dict], name: str) -> None:
 
 # ------------------------------------------------------------------ NB 1
 nb1 = [
-    _md("# agri-drone — Notebook 1: full experimental matrix",
+    _md("# agri-analyze — Notebook 1: full experimental matrix",
         "",
         "[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]"
-        "(https://colab.research.google.com/github/Ashut0sh-mishra/agri-drone/"
+        "(https://colab.research.google.com/github/Ashut0sh-mishra/agri-analyze/"
         "blob/main/notebooks/colab/01_run_matrix.ipynb)",
         "",
         "Runs the research-upgrade evaluation matrix end-to-end on Colab.",
         "- **Quick mode** (default, T4, ~2 h) = 8 cells",
         "- **Full mode** (A100, ~12 h) = 2400 cells",
         "",
-        "Outputs land under `MyDrive/agri-drone/results_v2/`."),
+        "Outputs land under `MyDrive/agri-analyze/results_v2/`."),
     _md("## 1. Mount Drive + clone repo"),
     _code("from google.colab import drive",
           "drive.mount('/content/drive')"),
     _code("%cd /content",
-          "!test -d agri-drone || git clone https://github.com/Ashut0sh-mishra/agri-drone.git",
-          "%cd /content/agri-drone",
+          "!test -d agri-analyze || git clone https://github.com/Ashut0sh-mishra/agri-analyze.git",
+          "%cd /content/agri-analyze",
           "!git fetch --all && git checkout main && git pull",
           "!pip install -q -r requirements.txt"),
     _md("## 2. GPU sanity check"),
@@ -69,13 +69,13 @@ nb1 = [
         "When prompted, upload your `kaggle.json` (from Kaggle -> Settings -> Create Legacy API Key).",
         "",
         "Alternatives:",
-        "- `gdrive` — put data under `MyDrive/agri-drone/data/plantvillage/`",
+        "- `gdrive` — put data under `MyDrive/agri-analyze/data/plantvillage/`",
         "- `zenodo` — edit URL below once you have a DOI"),
     _code("#@title Data source",
           "DATA_SOURCE   = 'kaggle' #@param ['kaggle','gdrive','zenodo']",
           "KAGGLE_SLUG   = 'abdallahalidev/plantvillage-dataset' #@param {type:'string'}",
-          "DRIVE_DATA    = '/content/drive/MyDrive/agri-drone/data'",
-          "DRIVE_OUT     = '/content/drive/MyDrive/agri-drone/results_v2'",
+          "DRIVE_DATA    = '/content/drive/MyDrive/agri-analyze/data'",
+          "DRIVE_OUT     = '/content/drive/MyDrive/agri-analyze/results_v2'",
           "import os, pathlib, json",
           "pathlib.Path(DRIVE_OUT).mkdir(parents=True, exist_ok=True)",
           "pathlib.Path('datasets/externals').mkdir(parents=True, exist_ok=True)",
@@ -136,7 +136,7 @@ nb1 = [
     _md("## 8. Zip artifacts + print PR-comment command"),
     _code("import shutil, time",
           "stamp = time.strftime('%Y%m%d_%H%M%S')",
-          "archive = f'/content/drive/MyDrive/agri-drone/results_v2_{stamp}'",
+          "archive = f'/content/drive/MyDrive/agri-analyze/results_v2_{stamp}'",
           "shutil.make_archive(archive, 'zip', DRIVE_OUT)",
           "print('Saved:', archive + '.zip')",
           "print('\\nPost summary back to PR locally with:')",
@@ -147,23 +147,23 @@ write(OUT / "01_run_matrix.ipynb", nb1, "01_run_matrix")
 
 # ------------------------------------------------------------------ NB 2
 nb2 = [
-    _md("# agri-drone — Notebook 2: PDT calibration + few-shot",
+    _md("# agri-analyze — Notebook 2: PDT calibration + few-shot",
         "",
         "[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]"
-        "(https://colab.research.google.com/github/Ashut0sh-mishra/agri-drone/"
+        "(https://colab.research.google.com/github/Ashut0sh-mishra/agri-analyze/"
         "blob/main/notebooks/colab/02_pdt_calibration.ipynb)",
         "",
         "Rescues the degenerate v3 PDT result. Writes `results_v2/pdt/PDT_SECTION.md` for v4 §5.4."),
     _code("from google.colab import drive",
           "drive.mount('/content/drive')",
           "%cd /content",
-          "!test -d agri-drone || git clone https://github.com/Ashut0sh-mishra/agri-drone.git",
-          "%cd /content/agri-drone",
+          "!test -d agri-analyze || git clone https://github.com/Ashut0sh-mishra/agri-analyze.git",
+          "%cd /content/agri-analyze",
           "!git fetch --all && git checkout main && git pull",
           "!pip install -q -r requirements.txt scikit-learn matplotlib"),
     _code("import torch",
           "assert torch.cuda.is_available(), 'Need GPU runtime'",
-          "DRIVE = '/content/drive/MyDrive/agri-drone'",
+          "DRIVE = '/content/drive/MyDrive/agri-analyze'",
           "WEIGHTS = f'{DRIVE}/models/wheat_4cls.pt'",
           "PDT_DIR = f'{DRIVE}/data/PDT_datasets'",
           "OUT = f'{DRIVE}/results_v2/pdt'",
@@ -209,24 +209,24 @@ write(OUT / "02_pdt_calibration.ipynb", nb2, "02_pdt_calibration")
 
 # ------------------------------------------------------------------ NB 3
 nb3 = [
-    _md("# agri-drone — Notebook 3: fair multi-backbone baseline re-audit",
+    _md("# agri-analyze — Notebook 3: fair multi-backbone baseline re-audit",
         "",
         "[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]"
-        "(https://colab.research.google.com/github/Ashut0sh-mishra/agri-drone/"
+        "(https://colab.research.google.com/github/Ashut0sh-mishra/agri-analyze/"
         "blob/main/notebooks/colab/03_baseline_reaudit.ipynb)",
         "",
         "Trains EfficientNet-B0, ConvNeXt-Tiny, MobileNetV3-Small under the shared recipe in `docs/training_recipe.md@v1`.",
-        "Weights save to `MyDrive/agri-drone/models_v2/` (NEVER committed)."),
+        "Weights save to `MyDrive/agri-analyze/models_v2/` (NEVER committed)."),
     _code("from google.colab import drive",
           "drive.mount('/content/drive')",
           "%cd /content",
-          "!test -d agri-drone || git clone https://github.com/Ashut0sh-mishra/agri-drone.git",
-          "%cd /content/agri-drone",
+          "!test -d agri-analyze || git clone https://github.com/Ashut0sh-mishra/agri-analyze.git",
+          "%cd /content/agri-analyze",
           "!git fetch --all && git checkout main && git pull",
           "!pip install -q -r requirements.txt timm"),
     _code("import torch",
           "assert torch.cuda.is_available(), 'Need GPU runtime'",
-          "DRIVE = '/content/drive/MyDrive/agri-drone'",
+          "DRIVE = '/content/drive/MyDrive/agri-analyze'",
           "DATA  = f'{DRIVE}/data/plantvillage'",
           "OUT_MODELS = f'{DRIVE}/models_v2'",
           "OUT_RESULTS = f'{DRIVE}/results_v2/baselines'",

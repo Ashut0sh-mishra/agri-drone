@@ -13,12 +13,12 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from agridrone import init_config, setup_logging, get_logger
-from agridrone.io.image_loader import ImageLoader
-from agridrone.io.exporters import DetectionExporter
-from agridrone.vision.infer import YOLOv8Detector
-from agridrone.vision.postprocess import DetectionPostProcessor
-from agridrone.types import DetectionBatch
+from agrianalyze import init_config, setup_logging, get_logger
+from agrianalyze.io.image_loader import ImageLoader
+from agrianalyze.io.exporters import DetectionExporter
+from agrianalyze.vision.infer import YOLOv8Detector
+from agrianalyze.vision.postprocess import DetectionPostProcessor
+from agrianalyze.types import DetectionBatch
 
 
 # BGR color palette matching the 12 precision agriculture classes

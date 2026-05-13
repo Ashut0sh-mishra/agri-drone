@@ -1,7 +1,7 @@
 # configs/ — Configuration Files (YAML)
 
 All runtime configuration is stored here as YAML files.
-The Python code loads these via `src/agridrone/config.py`.
+The Python code loads these via `src/agrianalyze/config.py`.
 
 ## Files
 
@@ -26,7 +26,7 @@ The Python code loads these via `src/agridrone/config.py`.
 
 Most scripts accept `--config path/to/override.yaml` or environment variables.
 
-For the API, edit `src/agridrone/config.py` to change active config paths.
+For the API, edit `src/agrianalyze/config.py` to change active config paths.
 For training, pass the yaml file directly to the training script:
 
 ```bash

@@ -92,10 +92,10 @@ def _gen_synthetic_predictions_csv(out_path: Path) -> int:
 def _check_imports(verbose: bool) -> list[str]:
     failures: list[str] = []
     to_check = [
-        "agridrone",
-        "agridrone.knowledge.kb_loader",
-        "agridrone.vision.feature_extractor",
-        "agridrone.vision.rule_engine",
+        "agrianalyze",
+        "agrianalyze.knowledge.kb_loader",
+        "agrianalyze.vision.feature_extractor",
+        "agrianalyze.vision.rule_engine",
     ]
     for mod in to_check:
         try:
@@ -127,18 +127,18 @@ def _check_eml_scoring(csv_path: Path, verbose: bool) -> list[str]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="AgriDrone smoke test (< 60s, CPU only)")
+    parser = argparse.ArgumentParser(description="AgriAnalyze smoke test (< 60s, CPU only)")
     parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()
 
     t0 = time.perf_counter()
     print("=" * 60)
-    print("  AgriDrone smoke test (offline, CPU)")
+    print("  AgriAnalyze smoke test (offline, CPU)")
     print("=" * 60)
 
     all_failures: list[str] = []
 
-    with tempfile.TemporaryDirectory(prefix="agridrone_smoke_") as tmp:
+    with tempfile.TemporaryDirectory(prefix="agrianalyze_smoke_") as tmp:
         tmp_root = Path(tmp)
         img_dir = tmp_root / "synthetic_dataset"
         n_imgs = _gen_synthetic_images(img_dir)

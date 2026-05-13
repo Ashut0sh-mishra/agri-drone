@@ -2,7 +2,7 @@
 Unit tests for data models.
 """
 import pytest
-from agridrone.types import (
+from agrianalyze.types import (
     Detection, BoundingBox, DetectionBatch,
     GridCell, PrescriptionMap, GeoCoordinate,
 )

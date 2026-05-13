@@ -231,7 +231,7 @@ actuation_log.add_event(event)
 
 1. **Immediately activate Emergency Stop** (GPIO pin 22 or manual button)
 2. Record the time and mission ID
-3. Check logs: `tail -f outputs/logs/agridrone.log`
+3. Check logs: `tail -f outputs/logs/agrianalyze.log`
 4. Look for safety flag status
 5. Review what decision was made
 6. Report to safety supervisor
@@ -239,7 +239,7 @@ actuation_log.add_event(event)
 
 ### If Hardware Malfunction
 
-1. Kill the process: `pkill -f agridrone`
+1. Kill the process: `pkill -f agrianalyze`
 2. Manually verify sprayer is OFF
 3. Check GPIO states: `gpio readall` (Raspberry Pi)
 4. Review recent events log

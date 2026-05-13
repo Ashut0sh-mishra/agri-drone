@@ -6,7 +6,7 @@ os.chdir(os.path.join(os.path.dirname(__file__), '..'))
 
 import cv2
 from ultralytics import YOLO
-from agridrone.vision.disease_reasoning import run_full_pipeline, diagnosis_to_dict
+from agrianalyze.vision.disease_reasoning import run_full_pipeline, diagnosis_to_dict
 
 model = YOLO('models/india_agri_cls_21class_backup.pt', task='classify')
 

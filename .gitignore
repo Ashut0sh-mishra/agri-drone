@@ -1,10 +1,11 @@
 # ==============================================================================
-# AgriDrone .gitignore
+# AgriAnalyze .gitignore
 # Python + Node.js + ML/Data Science project
 # ==============================================================================
 
 # Runtime artifacts
 .api_port
+datasets/.hf_cache.json
 
 # ──────────────────────────── Python ──────────────────────────────────────────
 __pycache__/
@@ -48,8 +49,8 @@ yarn-error.log*
 # ──────────────────────────── Frontend Build ──────────────────────────────────
 frontend/node_modules/
 frontend/dist/
-agri-drone-frontend/node_modules/
-agri-drone-frontend/dist/
+agri-analyze-frontend/node_modules/
+agri-analyze-frontend/dist/
 
 # ──────────────────────────── IDE / Editor ────────────────────────────────────
 .vscode/
@@ -82,14 +83,14 @@ Desktop.ini
 *.tflite
 *.pb
 models/
-agridrone-models/*
-!agridrone-models/README.md
+agrianalyze-models/*
+!agrianalyze-models/README.md
 
 # ──────────────────────────── Datasets (large) ────────────────────────────────
 data/
 datasets/
-agridrone-data/*
-!agridrone-data/README.md
+agrianalyze-data/*
+!agrianalyze-data/README.md
 *.zip
 *.tar.gz
 *.tar
@@ -110,7 +111,7 @@ evaluate/noisy_dataset/
 # ...except the Colab walkthrough notebooks for Phase 2
 !notebooks/colab/*.ipynb
 # ...and the model training notebook
-!agridrone-training/*.ipynb
+!agrianalyze-training/*.ipynb
 
 # ──────────────────────────── Testing / Coverage ──────────────────────────────
 .pytest_cache/

@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to AgriDrone are documented in this file.
+All notable changes to AgriAnalyze are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project aims to adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -10,7 +10,7 @@ and this project aims to adhere to [Semantic Versioning](https://semver.org/spec
 ## [Unreleased]
 
 ### Added
-- Comprehensive Google-style module docstring for `src/agridrone/api/app.py`
+- Comprehensive Google-style module docstring for `src/agrianalyze/api/app.py`
   documenting the full backend surface (gatekeeper, crop-type gate,
   classifier, LLaVA, Grad-CAM, RAG, structured output).
 - Docstrings for `get_app()` and module-level `__getattr__` in `app.py`.
@@ -53,7 +53,7 @@ Publication-ready snapshot accompanying the manuscript submission.
 - Bootstrap confidence intervals (n_boot = 10,000) for all
   pipeline variants A/B/C (`statistical_tests.json`).
 - Mega-dataset classification training Colab notebook
-  (`notebooks/AgriDrone_Mega_Dataset_CLS_Training.ipynb`).
+  (`notebooks/AgriAnalyze_Mega_Dataset_CLS_Training.ipynb`).
 - Hugging Face Spaces auto-deploy GitHub Action + `deploy/Dockerfile.hf`.
 - Render blueprint (`render.yaml`) for one-click backend deploy.
 - CITATION.cff, CODE_OF_CONDUCT.md, CONTRIBUTING.md, SECURITY.md.
@@ -71,7 +71,7 @@ Publication-ready snapshot accompanying the manuscript submission.
 
 ### Fixed
 - README clone URL and DOI placeholders reflect canonical
-  `Ashut0sh-mishra/agri-drone`.
+  `Ashut0sh-mishra/agri-analyze`.
 - CITATION.cff repository URLs point to canonical upstream.
 
 ---
@@ -95,11 +95,11 @@ Publication-ready snapshot accompanying the manuscript submission.
 
 ### Added
 - Rule engine, ensemble voter, LLaVA second-opinion validator,
-  disease-reasoning and Grad-CAM modules in `src/agridrone/vision/`.
+  disease-reasoning and Grad-CAM modules in `src/agrianalyze/vision/`.
 - Frontend `ResultViewer` with Original / Grad-CAM / Healthy Ref
   tabs, confidence breakdown, reasoning chain, AI validation card,
   ensemble voting, temporal tracker and research-paper references.
-- MC-Dropout uncertainty wrapper (`src/agridrone/core/detector.py`)
+- MC-Dropout uncertainty wrapper (`src/agrianalyze/core/detector.py`)
   with active-learning sink for low-confidence cases.
 - Dataset Collector dashboard with drag-and-drop upload and
   per-class deletion.
@@ -111,14 +111,14 @@ Publication-ready snapshot accompanying the manuscript submission.
 Initial prototype: YOLOv8 classifier + FastAPI backend + React dashboard.
 
 ### Added
-- Core `agridrone` Python package with `src/` layout and
+- Core `agrianalyze` Python package with `src/` layout and
   `pyproject.toml`.
-- FastAPI application factory (`agridrone.api.app:create_app`).
+- FastAPI application factory (`agrianalyze.api.app:create_app`).
 - Tailwind + Vite + React dashboard scaffolding.
 - Dockerfile, docker-compose.yml for CPU-only local deployment.
 
-[Unreleased]: https://github.com/Ashut0sh-mishra/agri-drone/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/Ashut0sh-mishra/agri-drone/releases/tag/v1.0.0
-[0.9.0]: https://github.com/Ashut0sh-mishra/agri-drone/releases/tag/v0.9.0
-[0.8.0]: https://github.com/Ashut0sh-mishra/agri-drone/releases/tag/v0.8.0
-[0.1.0]: https://github.com/Ashut0sh-mishra/agri-drone/releases/tag/v0.1.0
+[Unreleased]: https://github.com/Ashut0sh-mishra/agri-analyze/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/Ashut0sh-mishra/agri-analyze/releases/tag/v1.0.0
+[0.9.0]: https://github.com/Ashut0sh-mishra/agri-analyze/releases/tag/v0.9.0
+[0.8.0]: https://github.com/Ashut0sh-mishra/agri-analyze/releases/tag/v0.8.0
+[0.1.0]: https://github.com/Ashut0sh-mishra/agri-analyze/releases/tag/v0.1.0

@@ -11,7 +11,7 @@ Usage:
     python scripts/sync_colab_results.py  path/to/downloaded_artifacts
 
     # From the auto-generated zip:
-    python scripts/sync_colab_results.py  path/to/agridrone_training_results.zip
+    python scripts/sync_colab_results.py  path/to/agrianalyze_training_results.zip
 
     # Auto-reload the running backend after sync:
     python scripts/sync_colab_results.py  path/to/artifacts  --reload
@@ -231,7 +231,7 @@ def reload_backend(host="127.0.0.1", port=9000):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Sync Colab training artifacts into the local AgriDrone project"
+        description="Sync Colab training artifacts into the local AgriAnalyze project"
     )
     parser.add_argument(
         "source",
@@ -265,7 +265,7 @@ def main():
     # Handle zip files
     tmp_dir = None
     if source.is_file() and source.suffix == ".zip":
-        tmp_dir = tempfile.mkdtemp(prefix="agridrone_sync_")
+        tmp_dir = tempfile.mkdtemp(prefix="agrianalyze_sync_")
         log.info("Extracting zip to temp dir...")
         with zipfile.ZipFile(source, "r") as zf:
             zf.extractall(tmp_dir)

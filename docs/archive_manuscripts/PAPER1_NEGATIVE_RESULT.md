@@ -2,7 +2,7 @@
 
 **Ashutosh Mishra**¹
 ¹ Independent Researcher — *ashutosh.mishra@example.org*
-Code + data: `github.com/Ashut0sh-mishra/agri-drone`
+Code + data: `github.com/Ashut0sh-mishra/agri-analyze`
 
 **Target venue.** CV4A @ CVPR / AI4Ag @ NeurIPS / AgriFoodAI workshop track (short paper, negative result).
 
@@ -125,7 +125,7 @@ A careful, preregistered test of the folk claim "symbolic rules improve CNN crop
 ## Reproducibility
 
 ```bash
-git clone https://github.com/Ashut0sh-mishra/agri-drone.git && cd agri-drone
+git clone https://github.com/Ashut0sh-mishra/agri-analyze.git && cd agri-analyze
 pip install -r requirements.txt
 # Reproduce Table 3.1 + Table 3.2 + Figure 1 (≈ 2 min on CPU from cached predictions):
 python evaluate/make_tables.py --results evaluate/results/

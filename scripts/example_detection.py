@@ -15,11 +15,11 @@ import cv2
 import numpy as np
 from loguru import logger
 
-from agridrone import init_config, setup_logging, get_logger
-from agridrone.vision.infer import YOLOv8Detector
-from agridrone.vision.postprocess import DetectionPostProcessor
-from agridrone.types import Detection, DetectionBatch, BoundingBox
-from agridrone.io.exporters import DetectionExporter
+from agrianalyze import init_config, setup_logging, get_logger
+from agrianalyze.vision.infer import YOLOv8Detector
+from agrianalyze.vision.postprocess import DetectionPostProcessor
+from agrianalyze.types import Detection, DetectionBatch, BoundingBox
+from agrianalyze.io.exporters import DetectionExporter
 
 
 def create_synthetic_test_image(width: int = 640, height: int = 480) -> np.ndarray:
@@ -126,7 +126,7 @@ def main():
     logger_obj = get_logger()
 
     logger_obj.info("=" * 60)
-    logger_obj.info("AgriDrone Detection Example")
+    logger_obj.info("AgriAnalyze Detection Example")
     logger_obj.info("=" * 60)
 
     # Create output directory

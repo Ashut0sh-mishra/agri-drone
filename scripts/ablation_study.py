@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ablation_study.py — Rigorous ablation study for the AgriDrone disease detection pipeline.
+ablation_study.py — Rigorous ablation study for the AgriAnalyze disease detection pipeline.
 
 Experimental Configurations:
 
@@ -200,7 +200,7 @@ def run_yolo_only(images: list[Path], gt: dict[str, str], cls_model) -> list[Pre
 def run_yolo_plus_rules(images: list[Path], gt: dict[str, str], cls_model, crop_type: str) -> list[Prediction]:
     """YOLO classifier → feature extraction → rule engine."""
     import cv2
-    from agridrone.vision.disease_reasoning import run_full_pipeline
+    from agrianalyze.vision.disease_reasoning import run_full_pipeline
 
     predictions = []
     for img_path in images:
@@ -262,8 +262,8 @@ def run_full_pipeline_with_llm(
     import cv2
     import base64
     import requests
-    from agridrone.vision.disease_reasoning import run_full_pipeline
-    from agridrone.vision.llm_validator import (
+    from agrianalyze.vision.disease_reasoning import run_full_pipeline
+    from agrianalyze.vision.llm_validator import (
         build_validation_prompt, parse_validation_response, fuse_confidence,
     )
 

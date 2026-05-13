@@ -1,4 +1,4 @@
-# AgriDrone: A Systematic Ablation Study of Hybrid Deep-Learning Pipelines for Drone-Based Crop Disease Detection in Indian Wheat and Rice
+# AgriAnalyze: A Systematic Ablation Study of Hybrid Deep-Learning Pipelines for Drone-Based Crop Disease Detection in Indian Wheat and Rice
 
 **Authors:** Ashutosh Mishra
 **Affiliation:** Independent Researcher, India
@@ -9,7 +9,7 @@
 
 ## Abstract
 
-Hybrid pipelines that pair deep-learning classifiers with hand-crafted rule engines are widely used in drone-based crop disease detection, yet their individual components are rarely evaluated in isolation. We present AgriDrone, a precision agriculture system that combines a YOLOv8n-cls classifier (1.44 M parameters), a six-rule symptom reasoning engine, Bayesian ensemble voting (0.70/0.30 weighting), Grad-CAM explainability, and an expected monetary loss (EML) estimator for 21 Indian wheat and rice diseases. Through a three-configuration ablation on 935 test images we compared YOLO-only (Config A), YOLO + Rules (Config B), and Rules-only (Config C). Config A achieved 96.15% accuracy (macro-F1 = 0.962, MCC = 0.960) at 15 ms latency; Config B reached 95.72% (macro-F1 = 0.957, MCC = 0.955) at 444 ms. McNemar's test confirmed this gap was not significant (χ² = 2.25, *p* = 0.134; 4 discordant images out of 935, all favouring YOLO). Bootstrap 95% CIs (*B* = 10,000) overlapped for every metric. Config C managed only 13.41% accuracy (macro-F1 = 0.077). Cross-dataset evaluation on the external PDT dataset (672 images) yielded 84.4% accuracy, F1 = 0.915, and 100% disease recall. Sensitivity analysis across 125 weight configurations gave macro-F1 σ = 0.0087. The hybrid pipeline added 29× latency with no accuracy gain. For well-trained CNNs on curated datasets, rule-based augmentation adds complexity without measurable benefit. We urge the community to adopt component-level ablation before deploying hybrid architectures.
+Hybrid pipelines that pair deep-learning classifiers with hand-crafted rule engines are widely used in drone-based crop disease detection, yet their individual components are rarely evaluated in isolation. We present AgriAnalyze, a precision agriculture system that combines a YOLOv8n-cls classifier (1.44 M parameters), a six-rule symptom reasoning engine, Bayesian ensemble voting (0.70/0.30 weighting), Grad-CAM explainability, and an expected monetary loss (EML) estimator for 21 Indian wheat and rice diseases. Through a three-configuration ablation on 935 test images we compared YOLO-only (Config A), YOLO + Rules (Config B), and Rules-only (Config C). Config A achieved 96.15% accuracy (macro-F1 = 0.962, MCC = 0.960) at 15 ms latency; Config B reached 95.72% (macro-F1 = 0.957, MCC = 0.955) at 444 ms. McNemar's test confirmed this gap was not significant (χ² = 2.25, *p* = 0.134; 4 discordant images out of 935, all favouring YOLO). Bootstrap 95% CIs (*B* = 10,000) overlapped for every metric. Config C managed only 13.41% accuracy (macro-F1 = 0.077). Cross-dataset evaluation on the external PDT dataset (672 images) yielded 84.4% accuracy, F1 = 0.915, and 100% disease recall. Sensitivity analysis across 125 weight configurations gave macro-F1 σ = 0.0087. The hybrid pipeline added 29× latency with no accuracy gain. For well-trained CNNs on curated datasets, rule-based augmentation adds complexity without measurable benefit. We urge the community to adopt component-level ablation before deploying hybrid architectures.
 
 **Keywords:** crop disease detection; YOLOv8; ablation study; rule engine; precision agriculture; UAV; wheat; rice; expected monetary loss; Grad-CAM
 
@@ -25,7 +25,7 @@ Unmanned aerial vehicles (UAVs) equipped with RGB cameras have transformed field
 
 Deep learning has delivered impressive results on laboratory benchmarks. Mohanty et al. [5] reported 99.35% on PlantVillage with GoogLeNet; Ferentinos (2018) reached 99.53% with VGG. Yet these benchmarks use controlled conditions—uniform backgrounds, single lesions, consistent lighting—that diverge sharply from real-world fields, where mixed symptoms, variable light, soil backgrounds, and multi-pathogen co-infections are the norm. To bridge this gap, a popular architectural pattern has emerged: hybrid pipelines that bolt a hand-crafted rule engine onto a CNN backbone, on the assumption that expert agronomic knowledge can compensate for the model's field-condition weaknesses.
 
-The trouble is that almost no one checks whether the rule engine actually helps. Most published systems report only end-to-end accuracy, making it impossible to attribute performance to individual components. Pipeline complexity gets equated with quality, without evidence. This study addresses that gap head-on. We present AgriDrone, a complete drone-based disease detection system for Indian wheat and rice, and conduct a rigorous three-configuration ablation to isolate each component's contribution. Our principal contributions are:
+The trouble is that almost no one checks whether the rule engine actually helps. Most published systems report only end-to-end accuracy, making it impossible to attribute performance to individual components. Pipeline complexity gets equated with quality, without evidence. This study addresses that gap head-on. We present AgriAnalyze, a complete drone-based disease detection system for Indian wheat and rice, and conduct a rigorous three-configuration ablation to isolate each component's contribution. Our principal contributions are:
 
 1. **System architecture.** A six-layer system integrating YOLOv8n-cls (1.44 M parameters), a six-rule reasoning engine with spectral vegetation indices (VARI, RGRI, GLI), Bayesian ensemble voting, Grad-CAM explainability, EML estimation, and treatment recommendation—deployed as a FastAPI backend with a React dashboard.
 
@@ -69,7 +69,7 @@ Standard metrics treat all errors equally—an assumption that fails in agricult
 
 ## 3. Materials and Methods
 
-AgriDrone is a six-layer precision agriculture system deployed as a FastAPI (Python 3.11) web application with a React + Vite + TailwindCSS frontend. Drone-captured RGB images are classified by a YOLOv8n-cls model (1.44 M parameters, 224 × 224 input, ImageNet-pretrained, fine-tuned for 50 epochs with AdamW at lr = 0.00125 and early stopping at patience 10). In parallel, a feature extraction module computes 20+ low-level visual metrics (colour histograms, texture via LBP/GLCM, spatial patterns, and spectral indices including VARI, RGRI, and GLI), which feed a six-rule scoring engine that produces candidate disease scores. A hierarchical conflict resolution module arbitrates disagreements: YOLO predictions above 0.95 confidence win unconditionally; otherwise a Bayesian ensemble voter fuses outputs at fixed weights ($w_{\text{cls}} = 0.70$, $w_{\text{rule}} = 0.30$). Each diagnosis is accompanied by a Grad-CAM [7] heatmap, a five-step reasoning chain, differential diagnosis, treatment recommendation, and an expected monetary loss estimate. Full architecture details, rule definitions, scoring parameters, and implementation specifics are provided in **Supplementary Material S1**.
+AgriAnalyze is a six-layer precision agriculture system deployed as a FastAPI (Python 3.11) web application with a React + Vite + TailwindCSS frontend. Drone-captured RGB images are classified by a YOLOv8n-cls model (1.44 M parameters, 224 × 224 input, ImageNet-pretrained, fine-tuned for 50 epochs with AdamW at lr = 0.00125 and early stopping at patience 10). In parallel, a feature extraction module computes 20+ low-level visual metrics (colour histograms, texture via LBP/GLCM, spatial patterns, and spectral indices including VARI, RGRI, and GLI), which feed a six-rule scoring engine that produces candidate disease scores. A hierarchical conflict resolution module arbitrates disagreements: YOLO predictions above 0.95 confidence win unconditionally; otherwise a Bayesian ensemble voter fuses outputs at fixed weights ($w_{\text{cls}} = 0.70$, $w_{\text{rule}} = 0.30$). Each diagnosis is accompanied by a Grad-CAM [7] heatmap, a five-step reasoning chain, differential diagnosis, treatment recommendation, and an expected monetary loss estimate. Full architecture details, rule definitions, scoring parameters, and implementation specifics are provided in **Supplementary Material S1**.
 
 ---
 
@@ -325,7 +325,7 @@ Our results should not be read as a blanket rejection of hybrid systems. They ap
 2. **Geographic or seasonal priors matter**—knowledge like "wheat blast is absent from Punjab in December" cannot be learned from pixels alone.
 3. **Regulatory safety overrides are required**—quarantine-listed pathogens may need mandatory flagging regardless of model confidence.
 4. **Novel diseases emerge**—symptom-based rules provide interim classification until retraining data becomes available.
-5. **Explainability is paramount**—even at zero accuracy benefit, rules generate human-readable reasoning chains that build farmer trust and support regulatory audit. In AgriDrone the rule engine continues to serve this transparency function.
+5. **Explainability is paramount**—even at zero accuracy benefit, rules generate human-readable reasoning chains that build farmer trust and support regulatory audit. In AgriAnalyze the rule engine continues to serve this transparency function.
 
 ### 6.5 Design recommendations
 
@@ -395,7 +395,7 @@ We note a limitation of the present study: all training and test images were sou
 
 ## Data Availability
 
-The complete system—backend, frontend, model weights, evaluation scripts, and dataset splits—is available at [https://github.com/Ashut0sh-mishra/agri-drone](https://github.com/Ashut0sh-mishra/agri-drone). The PDT dataset is publicly available. All numerical results and confusion matrices are in `evaluate/results/`.
+The complete system—backend, frontend, model weights, evaluation scripts, and dataset splits—is available at [https://github.com/Ashut0sh-mishra/agri-analyze](https://github.com/Ashut0sh-mishra/agri-analyze). The PDT dataset is publicly available. All numerical results and confusion matrices are in `evaluate/results/`.
 
 **Reproducibility commands:**
 ```bash
@@ -475,7 +475,7 @@ python evaluate/test_4_images.py
 
 ### S1.1 Architecture overview
 
-AgriDrone is a six-layer precision agriculture system deployed as a web application with a FastAPI (Python 3.11) backend and a React + Vite + TailwindCSS frontend.
+AgriAnalyze is a six-layer precision agriculture system deployed as a web application with a FastAPI (Python 3.11) backend and a React + Vite + TailwindCSS frontend.
 
 ```
 ┌─────────────────────────────────────────────────────────┐

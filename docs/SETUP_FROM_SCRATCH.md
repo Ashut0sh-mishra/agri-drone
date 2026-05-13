@@ -1,4 +1,4 @@
-# AgriDrone — Setup From Scratch
+# AgriAnalyze — Setup From Scratch
 
 > Everything you need to clone the repo and run the full system on a fresh computer.
 
@@ -55,7 +55,7 @@ No secrets or API keys are needed. The system uses:
 Upload these files to a shared Google Drive folder:
 
 ```
-AgriDrone_Assets/
+AgriAnalyze_Assets/
 ├── models/
 │   ├── india_agri_cls.pt              (2.83 MB)  ← REQUIRED
 │   ├── india_agri_cls_21class_backup.pt (2.88 MB)  ← REQUIRED
@@ -78,8 +78,8 @@ AgriDrone_Assets/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/Ashut0sh-mishra/agri-drone.git
-cd agri-drone
+git clone https://github.com/Ashut0sh-mishra/agri-analyze.git
+cd agri-analyze
 ```
 
 ### 2. Set Up Python Environment
@@ -131,8 +131,8 @@ cp .env.example .env
 ### 6. Start the Backend API
 
 ```bash
-cd agri-drone
-python -m uvicorn src.agridrone.api.app:app --host 0.0.0.0 --port 8000 --reload
+cd agri-analyze
+python -m uvicorn src.agrianalyze.api.app:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 The API will be available at `http://localhost:8000`. API docs at `http://localhost:8000/docs`.
@@ -166,7 +166,7 @@ ollama list
 # Should show: llava:latest
 ```
 
-Ollama runs on `http://localhost:11434` by default. The AgriDrone API connects to it automatically.
+Ollama runs on `http://localhost:11434` by default. The AgriAnalyze API connects to it automatically.
 
 ### 9. (Optional) GPU Setup for Faster Inference
 
@@ -216,7 +216,7 @@ After setup, verify everything works:
 python -c "from ultralytics import YOLO; m = YOLO('models/india_agri_cls.pt', task='classify'); print('Model loaded:', m.model.names)"
 
 # 2. Check API starts
-python -m uvicorn src.agridrone.api.app:app --host 0.0.0.0 --port 8000 &
+python -m uvicorn src.agrianalyze.api.app:app --host 0.0.0.0 --port 8000 &
 curl http://localhost:8000/health
 
 # 3. Run the 4-image smoke test

@@ -202,7 +202,7 @@ def train_mega(device: str = "cpu", epochs: int = 50) -> object:
     if not MEGA_CLS_DIR.is_dir() or not (MEGA_CLS_DIR / "train").is_dir():
         raise FileNotFoundError(
             f"Mega dataset not found at {MEGA_CLS_DIR}\n"
-            "Run the Colab notebook notebooks/AgriDrone_Mega_Dataset_CLS_Training.ipynb "
+            "Run the Colab notebook notebooks/AgriAnalyze_Mega_Dataset_CLS_Training.ipynb "
             "first, then copy the cls_dataset/ output here as data/mega_cls/"
         )
 
@@ -331,7 +331,7 @@ def update_phone_connect():
 #  MAIN
 # =====================================================================
 def main():
-    parser = argparse.ArgumentParser(description="AgriDrone model trainer")
+    parser = argparse.ArgumentParser(description="AgriAnalyze model trainer")
     parser.add_argument(
         "--mega", action="store_true",
         help="Train on mega dataset (data/mega_cls/) instead of local data/raw/"
@@ -350,7 +350,7 @@ def main():
     random.seed(42)
 
     print("=" * 65)
-    print("  AGRI-DRONE MODEL TRAINER")
+    print("  AGRI-ANALYZE MODEL TRAINER")
     print("  YOLOv8n-cls - India Wheat-Rice Disease Classifier")
     if args.mega:
         print("  MODE: MEGA DATASET")

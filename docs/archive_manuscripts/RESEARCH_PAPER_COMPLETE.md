@@ -1,4 +1,4 @@
-# AgriDrone AI: A Multi-Modal Explainable Deep Learning Framework for Real-Time Crop Disease Detection and Advisory in Indian Agriculture
+# AgriAnalyze AI: A Multi-Modal Explainable Deep Learning Framework for Real-Time Crop Disease Detection and Advisory in Indian Agriculture
 
 ---
 
@@ -11,7 +11,7 @@
 
 ## Abstract
 
-Early and accurate detection of crop diseases remains a critical challenge in Indian agriculture, where over 58% of the workforce depends on farming, yet annual post-harvest and disease-related losses exceed 15–25% of total production. We present **AgriDrone AI**, an end-to-end multi-modal explainable deep learning framework that integrates (i) a YOLOv8-based trained classifier for 21 crop disease classes across wheat and rice, (ii) a Vision Large Language Model (LLaVA) for zero-shot visual reasoning, (iii) a rule-based vision engine grounded in a curated agricultural knowledge base, and (iv) a safety-first ensemble voter that resolves conflicts between models with transparent reasoning chains. The system supports real-time inference via webcam and mobile phone integration, generates PDF field reports, provides multi-lingual voice advisory (Hindi, Tamil, Telugu, Punjabi, English), and operates entirely offline without cloud dependencies. We introduce a novel conflict resolution algorithm that prioritizes false-negative avoidance (missing a disease is costlier than a false alarm), seasonal risk adjustment using crop phenological stages, and spectral pseudo-indices (VARI, NDVI approximations from RGB imagery) to compensate for the absence of multi-spectral hardware. Deployed as a FastAPI backend with a React-based dashboard, AgriDrone AI demonstrates that combining lightweight deep learning models with structured domain knowledge and large vision-language models can produce farm-ready diagnostic tools with full explainability — a requirement increasingly demanded by agricultural extension services and regulatory bodies.
+Early and accurate detection of crop diseases remains a critical challenge in Indian agriculture, where over 58% of the workforce depends on farming, yet annual post-harvest and disease-related losses exceed 15–25% of total production. We present **AgriAnalyze AI**, an end-to-end multi-modal explainable deep learning framework that integrates (i) a YOLOv8-based trained classifier for 21 crop disease classes across wheat and rice, (ii) a Vision Large Language Model (LLaVA) for zero-shot visual reasoning, (iii) a rule-based vision engine grounded in a curated agricultural knowledge base, and (iv) a safety-first ensemble voter that resolves conflicts between models with transparent reasoning chains. The system supports real-time inference via webcam and mobile phone integration, generates PDF field reports, provides multi-lingual voice advisory (Hindi, Tamil, Telugu, Punjabi, English), and operates entirely offline without cloud dependencies. We introduce a novel conflict resolution algorithm that prioritizes false-negative avoidance (missing a disease is costlier than a false alarm), seasonal risk adjustment using crop phenological stages, and spectral pseudo-indices (VARI, NDVI approximations from RGB imagery) to compensate for the absence of multi-spectral hardware. Deployed as a FastAPI backend with a React-based dashboard, AgriAnalyze AI demonstrates that combining lightweight deep learning models with structured domain knowledge and large vision-language models can produce farm-ready diagnostic tools with full explainability — a requirement increasingly demanded by agricultural extension services and regulatory bodies.
 
 ---
 
@@ -39,7 +39,7 @@ Recent deep learning approaches for crop disease detection have achieved impress
 
 ### 1.3 Our Contribution
 
-AgriDrone AI addresses these gaps through the following contributions:
+AgriAnalyze AI addresses these gaps through the following contributions:
 
 1. **Multi-modal ensemble architecture** combining a trained YOLOv8 classifier, a vision LLM (LLaVA), and a rule-based vision engine — each providing complementary diagnostic signals.
 2. **Explainable reasoning chains** that trace every diagnostic decision from pixel-level features through rule firing to final diagnosis, satisfying the transparency requirement of Explainable AI (XAI).
@@ -83,7 +83,7 @@ Our approach differs fundamentally: we construct explanations *during* inference
 
 ### 3.1 Overview
 
-AgriDrone AI follows a modular client-server architecture deployed as two services:
+AgriAnalyze AI follows a modular client-server architecture deployed as two services:
 
 - **Backend**: FastAPI (Python 3.11+) serving REST API endpoints over HTTP on port 9000, with WebSocket support for real-time streaming.
 - **Frontend**: React 18 + Vite 5 single-page application on port 5173, communicating with the backend via auto-discovered API endpoints.
@@ -123,7 +123,7 @@ The diagnostic pipeline processes an input image through three parallel paths, m
                     └────────────────────────┘
 ```
 
-**Figure 1.** AgriDrone AI multi-modal diagnostic pipeline.
+**Figure 1.** AgriAnalyze AI multi-modal diagnostic pipeline.
 
 ### 3.2 Backend Services
 
@@ -459,7 +459,7 @@ Nine seasonal risk stages are defined per crop, providing multipliers (0.5–1.2
 
 ### 7.1 Motivation
 
-While the primary focus of AgriDrone AI is crop disease detection, field conditions often present non-agricultural objects (equipment, documents, people) in the camera view. Rather than treating these as noise, we extended the system with a **Universal Object Analyzer** that leverages LLaVA to identify and describe any object.
+While the primary focus of AgriAnalyze AI is crop disease detection, field conditions often present non-agricultural objects (equipment, documents, people) in the camera view. Rather than treating these as noise, we extended the system with a **Universal Object Analyzer** that leverages LLaVA to identify and describe any object.
 
 ### 7.2 Auto-Routing Architecture
 
@@ -528,7 +528,7 @@ To minimize LLaVA inference latency on CPU:
 
 ### 9.1 Multi-Lingual Support
 
-AgriDrone AI integrates speech interfaces to serve farmers in their native language:
+AgriAnalyze AI integrates speech interfaces to serve farmers in their native language:
 
 | Language | Speech-to-Text | Text-to-Speech | Model |
 |---|---|---|---|
@@ -638,7 +638,7 @@ The system achieves real-time performance (<300ms) for YOLO-based detection and 
 
 ### 12.1 Strengths
 
-**Explainability as a First-Class Requirement.** Unlike black-box CNN classifiers, every diagnosis from AgriDrone AI is accompanied by a reasoning chain tracing the decision from pixel-level features through rule evaluation to final ensemble verdict. This transparency is essential for agricultural extension officers who must justify treatment recommendations to farmers and for regulatory bodies requiring audit trails.
+**Explainability as a First-Class Requirement.** Unlike black-box CNN classifiers, every diagnosis from AgriAnalyze AI is accompanied by a reasoning chain tracing the decision from pixel-level features through rule evaluation to final ensemble verdict. This transparency is essential for agricultural extension officers who must justify treatment recommendations to farmers and for regulatory bodies requiring audit trails.
 
 **Safety-First Design.** The asymmetric cost of errors in agriculture (missing a disease is far costlier than a false alarm) is explicitly encoded in the ensemble strategy. The min-score voting in disagreement cases, severe-disease health caps, and LLaVA's calibration prompt all bias the system toward sensitivity over specificity — a deliberate design choice grounded in agricultural risk economics.
 
@@ -669,11 +669,11 @@ The system achieves real-time performance (<300ms) for YOLO-based detection and 
 
 ## 13. Conclusion
 
-AgriDrone AI demonstrates that combining lightweight deep learning models with structured domain knowledge and vision-language models can produce an explainable, field-ready crop disease diagnostic system that operates entirely offline. The multi-modal ensemble architecture — with its safety-first voting strategy, knowledge-grounded rule engine, and transparent reasoning chains — addresses the key gaps in current agricultural AI: black-box predictions, single-model fragility, and cloud dependency.
+AgriAnalyze AI demonstrates that combining lightweight deep learning models with structured domain knowledge and vision-language models can produce an explainable, field-ready crop disease diagnostic system that operates entirely offline. The multi-modal ensemble architecture — with its safety-first voting strategy, knowledge-grounded rule engine, and transparent reasoning chains — addresses the key gaps in current agricultural AI: black-box predictions, single-model fragility, and cloud dependency.
 
 The system currently supports 21 disease classes across wheat and rice, provides treatment recommendations with Indian brand-name fungicides and dosages, and is accessible in 5 languages through voice interfaces. The universal object analyzer extends the platform beyond crop diseases to general-purpose field analysis.
 
-While challenges remain in detection model accuracy and VLM inference speed on commodity hardware, the architecture is designed for progressive enhancement — each model can be independently upgraded without affecting the ensemble framework. AgriDrone AI represents a step toward making precision agriculture accessible to smallholder farmers in developing nations, where the intersection of AI capability and practical deployment constraints demands thoughtful system design over raw benchmark performance.
+While challenges remain in detection model accuracy and VLM inference speed on commodity hardware, the architecture is designed for progressive enhancement — each model can be independently upgraded without affecting the ensemble framework. AgriAnalyze AI represents a step toward making precision agriculture accessible to smallholder farmers in developing nations, where the intersection of AI capability and practical deployment constraints demands thoughtful system design over raw benchmark performance.
 
 ---
 

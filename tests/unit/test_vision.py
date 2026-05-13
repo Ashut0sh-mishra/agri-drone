@@ -5,9 +5,9 @@ import pytest
 import numpy as np
 from pathlib import Path
 
-from agridrone.vision.infer import YOLOv8Detector, HotspotDetector
-from agridrone.vision.postprocess import DetectionPostProcessor
-from agridrone.types import BoundingBox, Detection, DetectionBatch
+from agrianalyze.vision.infer import YOLOv8Detector, HotspotDetector
+from agrianalyze.vision.postprocess import DetectionPostProcessor
+from agrianalyze.types import BoundingBox, Detection, DetectionBatch
 
 
 @pytest.mark.unit

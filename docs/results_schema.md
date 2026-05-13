@@ -1,4 +1,4 @@
-# AgriDrone v2 results schema
+# AgriAnalyze v2 results schema
 
 All artifacts written by the `evaluate/matrix/` runner and the v2 statistical-
 protocol scripts land under `evaluate/results/v2/`. The v1 artifacts in

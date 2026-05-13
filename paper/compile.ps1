@@ -3,7 +3,7 @@
 #   Install MiKTeX: https://miktex.org/download
 #   Or install TeX Live: https://tug.org/texlive/
 #
-# Usage (from d:\Projects\agri-drone\paper\):
+# Usage (from d:\Projects\agri-analyze\paper\):
 #   .\compile.ps1
 
 Set-Location $PSScriptRoot

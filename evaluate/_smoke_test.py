@@ -6,13 +6,13 @@ sys.path.insert(0, 'evaluate')
 from ultralytics import YOLO
 import cv2
 from pathlib import Path
-from agridrone.knowledge import kb_loader
+from agrianalyze.knowledge import kb_loader
 
 # Suppress debug logging
 try:
     from loguru import logger
-    logger.disable("agridrone.vision.feature_extractor")
-    logger.disable("agridrone.vision.rule_engine")
+    logger.disable("agrianalyze.vision.feature_extractor")
+    logger.disable("agrianalyze.vision.rule_engine")
 except ImportError:
     pass
 
