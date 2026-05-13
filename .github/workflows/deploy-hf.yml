@@ -46,10 +46,10 @@ jobs:
           git checkout --orphan hf-deploy
           git rm -rf --cached . > /dev/null 2>&1 || true
 
-          # Stage only the dirs/files HF needs
-          git add src configs models pyproject.toml requirements.lock.txt deploy LICENSE
-          # Optional small files if present
-          git add CHANGELOG.md CITATION.cff 2>/dev/null || true
+          # Stage only the dirs/files HF needs (each path is optional — ignore missing)
+          for p in src configs models pyproject.toml requirements.lock.txt deploy LICENSE CHANGELOG.md CITATION.cff; do
+            [ -e "$p" ] && git add "$p" || true
+          done
 
           # Swap README and Dockerfile with HF-specific versions
           cp deploy/hf-readme.md README.md
