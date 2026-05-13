@@ -2,7 +2,7 @@
 
 ## Overview
 
-Production-ready FastAPI backend for the AgriDrone hotspot detection system. Provides RESTful endpoints for image upload, real-time hotspot detection, and result export.
+Production-ready FastAPI backend for the AgriAnalyze hotspot detection system. Provides RESTful endpoints for image upload, real-time hotspot detection, and result export.
 
 **Base URL**: `http://localhost:8000`
 
@@ -14,7 +14,7 @@ Production-ready FastAPI backend for the AgriDrone hotspot detection system. Pro
 
 ```bash
 # From project root
-uvicorn agridrone.api.app:app --reload --host 127.0.0.1 --port 8000
+uvicorn agrianalyze.api.app:app --reload --host 127.0.0.1 --port 8000
 ```
 
 ### 2. Interactive API Documentation
@@ -199,7 +199,7 @@ Root endpoint providing basic health check.
 ```json
 {
   "status": "ok",
-  "app": "agridrone",
+  "app": "agrianalyze",
   "version": "0.1.0"
 }
 ```
@@ -222,7 +222,7 @@ Current configuration values.
 **Response:**
 ```json
 {
-  "app_name": "agridrone",
+  "app_name": "agrianalyze",
   "debug": false,
   "dry_run": true,
   "log_level": "INFO",

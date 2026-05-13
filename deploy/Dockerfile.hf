@@ -1,4 +1,4 @@
-# HF Spaces Docker – AgriDrone API
+# HF Spaces Docker – AgriAnalyze API
 FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -40,4 +40,4 @@ RUN pip install --no-deps -e .
 
 EXPOSE 7860
 
-CMD ["python", "-m", "uvicorn", "agridrone.api.app:get_app", "--factory", "--host", "0.0.0.0", "--port", "7860", "--ws", "websockets"]
+CMD ["python", "-m", "uvicorn", "agrianalyze.api.app:get_app", "--factory", "--host", "0.0.0.0", "--port", "7860", "--ws", "websockets"]

@@ -144,8 +144,8 @@ def run_config_b(model, image_bgr, crop_type: str) -> dict:
     votes into the ensemble voter, which uses Bayesian posterior combination
     with reliability weights (YOLO=0.65, Rules=0.75).
     """
-    from agridrone.vision.disease_reasoning import run_full_pipeline, diagnosis_to_dict
-    from agridrone.vision.ensemble_voter import ensemble_vote
+    from agrianalyze.vision.disease_reasoning import run_full_pipeline, diagnosis_to_dict
+    from agrianalyze.vision.ensemble_voter import ensemble_vote
 
     # Step 1: YOLO
     t0 = time.perf_counter()
@@ -232,7 +232,7 @@ def run_config_c(image_bgr, crop_type: str) -> dict:
     colour histograms, texture metrics, and hand-crafted symptom rules.
     This is the lower-bound baseline for the ablation.
     """
-    from agridrone.vision.disease_reasoning import run_full_pipeline, diagnosis_to_dict
+    from agrianalyze.vision.disease_reasoning import run_full_pipeline, diagnosis_to_dict
 
     # Empty classifier result — forces rule engine to rely solely on features
     dummy_classifier = {
@@ -429,7 +429,7 @@ def generate_latex_table(metrics_a, metrics_b, classes, output_path):
     lines = [
         r"\begin{table*}[t]",
         r"\centering",
-        r"\caption{Three-configuration ablation study on the 21-class AgriDrone test set "
+        r"\caption{Three-configuration ablation study on the 21-class AgriAnalyze test set "
         r"($n=" + str(metrics_a["n_samples"]) + r"$). "
         r"RWA = Risk-Weighted Accuracy with tier weights "
         r"$\tau_{\text{crit}}=10, \tau_{\text{high}}=5, \tau_{\text{mod}}=2, \tau_{\text{healthy}}=1$. "

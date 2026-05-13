@@ -1,12 +1,12 @@
 # Dashboard UI Feature Guide
 
-Visual reference and usage guide for the AgriDrone AI Dashboard.
+Visual reference and usage guide for the AgriAnalyze AI Dashboard.
 
 ## Dashboard Layout
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│  🚀 AgriDrone | AI Detection System                 🟢 API Connected│
+│  🚀 AgriAnalyze | AI Detection System                 🟢 API Connected│
 ├───────────────────────────────────┬─────────────────────────────────┤
 │                                   │                                   │
 │  SIDEBAR                          │  MAIN CONTENT                    │
@@ -41,7 +41,7 @@ Visual reference and usage guide for the AgriDrone AI Dashboard.
 ## Features Overview
 
 ### 1. Navbar (Top)
-- **Logo**: AgriDrone with version
+- **Logo**: AgriAnalyze with version
 - **Active Section Title**: Shows current page
 - **API Status Indicator**: Green (connected) or Red (disconnected)
   - Pulses gently when connected

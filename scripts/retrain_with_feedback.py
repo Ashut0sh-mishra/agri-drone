@@ -39,7 +39,7 @@ def export_feedback_images() -> dict[str, int]:
     Creates: data/feedback_export/{class_name}/ with JPEG images.
     Returns dict of {class_name: count}.
     """
-    from agridrone.feedback.feedback_store import get_all_feedback, get_feedback_images_for_disease, init_db
+    from agrianalyze.feedback.feedback_store import get_all_feedback, get_feedback_images_for_disease, init_db
 
     init_db()
     records = get_all_feedback(limit=10000)
@@ -246,7 +246,7 @@ def main():
     args = parser.parse_args()
 
     print("=" * 60)
-    print("  AgriDrone — Feedback-based Model Retraining Pipeline")
+    print("  AgriAnalyze — Feedback-based Model Retraining Pipeline")
     print("=" * 60)
 
     # Step 1: Export feedback images

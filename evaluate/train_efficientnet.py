@@ -248,8 +248,8 @@ SEVERITY_TIERS = {
 def run_config_b_efficientnet(effnet_model, image_bgr, class_names, device, crop_type):
     """Run EfficientNet prediction through rule engine + ensemble voter."""
     sys.path.insert(0, str(PROJECT_ROOT / "src"))
-    from agridrone.vision.disease_reasoning import run_full_pipeline, diagnosis_to_dict
-    from agridrone.vision.ensemble_voter import ensemble_vote
+    from agrianalyze.vision.disease_reasoning import run_full_pipeline, diagnosis_to_dict
+    from agrianalyze.vision.ensemble_voter import ensemble_vote
 
     # Step 1: EfficientNet inference
     val_tf = transforms.Compose([

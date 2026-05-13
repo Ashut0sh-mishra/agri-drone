@@ -1,15 +1,15 @@
 ---
-# Base Configuration for AgriDrone Research Prototype
+# Base Configuration for AgriAnalyze Research Prototype
 
 app:
-  name: agridrone
+  name: agrianalyze
   version: 0.1.0
   debug: false
 
 logging:
   level: INFO
   format: "{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} | {message}"
-  file: outputs/logs/agridrone.log
+  file: outputs/logs/agrianalyze.log
   rotation: "100 MB"
   retention: "7 days"
 

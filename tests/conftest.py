@@ -6,7 +6,7 @@ import pytest
 from pathlib import Path
 from datetime import datetime
 
-from agridrone.types import (
+from agrianalyze.types import (
     MissionMetadata, MissionLog, GNSSData, CameraFrame,
     Detection, DetectionBatch, BoundingBox,
     GridCell, PrescriptionMap, GeoCoordinate,

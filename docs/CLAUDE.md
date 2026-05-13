@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 ## Project
-**AgriDrone Selective Spraying Research Prototype**
+**AgriAnalyze Selective Spraying Research Prototype**
 
 Low-cost research prototype for site-specific weed/pest/disease hotspot detection and prescription-map generation using a small drone, RGB camera, environmental sensing, and controlled selective spraying.
 
@@ -111,7 +111,7 @@ This repository should support both:
 ## Suggested Repository Structure
 
 ```text
-agri-drone-selective-spray/
+agri-analyze-selective-spray/
 ├── CLAUDE.md
 ├── README.md
 ├── pyproject.toml
@@ -152,7 +152,7 @@ agri-drone-selective-spray/
 │   ├── simulate_field.py
 │   └── replay_mission.py
 ├── src/
-│   └── agridrone/
+│   └── agrianalyze/
 │       ├── __init__.py
 │       ├── config.py
 │       ├── logging.py

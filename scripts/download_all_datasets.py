@@ -271,7 +271,7 @@ def download_kaggle_datasets() -> tuple[int, int, set]:
 # ──────────────────────────────────────────────
 def main():
     print("=" * 60)
-    print("  AgriDrone — Dataset Downloader")
+    print("  AgriAnalyze — Dataset Downloader")
     print("  Wheat + Rice Disease Datasets")
     print("=" * 60)
 

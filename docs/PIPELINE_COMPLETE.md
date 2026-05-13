@@ -1,4 +1,4 @@
-# AgriDrone — Complete Pipeline Documentation
+# AgriAnalyze — Complete Pipeline Documentation
 
 > Everything that was built, how to train, how the system works, what the experiments found, and how to submit the paper.
 
@@ -18,7 +18,7 @@
 
 ## 1. What Was Built
 
-### Core Backend (`src/agridrone/`)
+### Core Backend (`src/agrianalyze/`)
 
 | File | Purpose |
 |------|---------|
@@ -113,7 +113,7 @@
 - **Split**: train=4,364 / val=935 / test=935 (stratified 70/15/15, seed=42)
 - ~45 images per class in test set
 
-### Dashboard (`dashboard/` and `agri-drone-frontend/`)
+### Dashboard (`dashboard/` and `agri-analyze-frontend/`)
 
 - Vite + React + TailwindCSS frontend
 - Real-time detection display, field maps, report viewer
@@ -413,15 +413,15 @@ After training on Colab and downloading `best.pt`:
 ### Step 1: Place the model
 
 ```bash
-# Copy the new wheat model into the AgriDrone models directory
-cp best.pt agri-drone/models/wheat_cls_v1.pt
+# Copy the new wheat model into the AgriAnalyze models directory
+cp best.pt agri-analyze/models/wheat_cls_v1.pt
 ```
 
 ### Step 2: Verify the model loads
 
 ```python
 from ultralytics import YOLO
-model = YOLO("agri-drone/models/wheat_cls_v1.pt")
+model = YOLO("agri-analyze/models/wheat_cls_v1.pt")
 print(model.names)  # Should show 4 classes
 # {0: 'crown_root_rot', 1: 'healthy_wheat', 2: 'leaf_rust', 3: 'wheat_loose_smut'}
 ```
@@ -459,7 +459,7 @@ class_names:
 ### Step 6: Rerun ablation on wheat data
 
 ```bash
-cd agri-drone
+cd agri-analyze
 python evaluate/ablation_study.py \
     --model models/wheat_cls_v1.pt \
     --data ../wheat-split \
@@ -566,11 +566,11 @@ Replace the 21-class numbers with 4-class wheat-specific results in:
                 │  (~6 MB model)  │────────────────┤
                 └────────┬────────┘                │
                          │                         │
-                    AGRIDRONE                       │
+                    AGRIANALYZE                       │
                     ════════                        │
                          ▼                         ▼
            ┌──────────────────────────────────────────┐
-           │            AgriDrone Backend             │
+           │            AgriAnalyze Backend             │
            │  ┌──────┐  ┌─────────┐  ┌───────────┐  │
            │  │ YOLO │─▶│ Feature │─▶│   Rule    │  │
            │  │ Infer│  │ Extract │  │  Engine   │  │

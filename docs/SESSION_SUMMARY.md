@@ -28,7 +28,7 @@ pip install ultralytics loguru omegaconf hydra-core torchvision \
             shapely python-dotenv matplotlib pytz rich geopandas \
             rasterio pyproj
 
-pip install -e .  # Install agridrone in development mode
+pip install -e .  # Install agrianalyze in development mode
 ```
 
 #### Results

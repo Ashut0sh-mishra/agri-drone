@@ -1,4 +1,4 @@
-# AgriDrone: An Ablation Study of Hybrid Deep-Learning Pipelines for Drone-Based Crop Disease Detection in Indian Agriculture
+# AgriAnalyze: An Ablation Study of Hybrid Deep-Learning Pipelines for Drone-Based Crop Disease Detection in Indian Agriculture
 
 **Authors:** [Author names]  
 **Affiliation:** [Institution]  
@@ -9,7 +9,7 @@
 
 ## Abstract
 
-Drone-based crop disease detection systems increasingly adopt hybrid architectures combining deep-learning classifiers with hand-crafted rule engines and ensemble voting. We present **AgriDrone**, a full-stack precision agriculture system integrating a YOLOv8n-cls classifier, a six-rule symptom reasoning engine, spectral vegetation indices, Grad-CAM explainability, and an economic yield-loss estimator for 21 wheat and rice diseases prevalent in Indian agriculture. Through a rigorous ablation study on 935 test images across 21 classes we evaluate three configurations: YOLO-only (**Config A**), YOLO + Rules ensemble (**Config B**), and Rules-only (**Config C**). Config A achieves **96.2% accuracy** (macro-F1 = 0.962, MCC = 0.960); Config B achieves **95.7% accuracy** (macro-F1 = 0.957, MCC = 0.955) — a statistically non-significant difference (McNemar χ² = 2.25, *p* = 0.134, 4 discordant pairs out of 935). Config C achieves only **13.4% accuracy** (macro-F1 = 0.077), confirming the rule engine lacks standalone discriminative power. Bootstrap 95% confidence intervals (*B* = 10,000) overlap for Configs A and B across all metrics, while Config C is significantly worse (*p* < 0.001). The hybrid pipeline increases inference latency by **29×** (15 ms → 444 ms) with no accuracy benefit. Cross-dataset evaluation on the external PDT wheat disease dataset (672 images) yields 84.4% accuracy and 100% disease recall, demonstrating robustness to domain shift. We argue that for well-trained CNN classifiers on curated agricultural datasets, rule-based augmentation adds pipeline complexity and latency without measurable accuracy gain, and that the field should prioritise classifier quality over ensemble complexity. The complete system — backend, frontend, models, and evaluation scripts — is released as open source.
+Drone-based crop disease detection systems increasingly adopt hybrid architectures combining deep-learning classifiers with hand-crafted rule engines and ensemble voting. We present **AgriAnalyze**, a full-stack precision agriculture system integrating a YOLOv8n-cls classifier, a six-rule symptom reasoning engine, spectral vegetation indices, Grad-CAM explainability, and an economic yield-loss estimator for 21 wheat and rice diseases prevalent in Indian agriculture. Through a rigorous ablation study on 935 test images across 21 classes we evaluate three configurations: YOLO-only (**Config A**), YOLO + Rules ensemble (**Config B**), and Rules-only (**Config C**). Config A achieves **96.2% accuracy** (macro-F1 = 0.962, MCC = 0.960); Config B achieves **95.7% accuracy** (macro-F1 = 0.957, MCC = 0.955) — a statistically non-significant difference (McNemar χ² = 2.25, *p* = 0.134, 4 discordant pairs out of 935). Config C achieves only **13.4% accuracy** (macro-F1 = 0.077), confirming the rule engine lacks standalone discriminative power. Bootstrap 95% confidence intervals (*B* = 10,000) overlap for Configs A and B across all metrics, while Config C is significantly worse (*p* < 0.001). The hybrid pipeline increases inference latency by **29×** (15 ms → 444 ms) with no accuracy benefit. Cross-dataset evaluation on the external PDT wheat disease dataset (672 images) yields 84.4% accuracy and 100% disease recall, demonstrating robustness to domain shift. We argue that for well-trained CNN classifiers on curated agricultural datasets, rule-based augmentation adds pipeline complexity and latency without measurable accuracy gain, and that the field should prioritise classifier quality over ensemble complexity. The complete system — backend, frontend, models, and evaluation scripts — is released as open source.
 
 **Keywords:** crop disease detection; YOLOv8; ablation study; rule engine; precision agriculture; UAV; wheat; rice; India; ensemble learning
 
@@ -33,7 +33,7 @@ This paradigm has been widely adopted but rarely evaluated rigorously. Most syst
 
 This paper makes the following contributions:
 
-1. **Architecture.** We present AgriDrone, a complete drone-based disease detection system with a YOLOv8n-cls classifier, six-rule reasoning engine, spectral vegetation indices, Grad-CAM explainability, yield-loss estimation, and treatment recommendation — deployed as a FastAPI backend with a React dashboard.
+1. **Architecture.** We present AgriAnalyze, a complete drone-based disease detection system with a YOLOv8n-cls classifier, six-rule reasoning engine, spectral vegetation indices, Grad-CAM explainability, yield-loss estimation, and treatment recommendation — deployed as a FastAPI backend with a React dashboard.
 
 2. **Ablation study.** We conduct a systematic three-configuration ablation comparing a standalone YOLO classifier (Config A), the full hybrid pipeline (Config B), and rule engine only (Config C) on a 21-class Indian crop disease dataset (935 images, 21 classes). Config A and Config B achieve near-identical accuracy (96.2% vs. 95.7%), while Config C achieves only 13.4%.
 
@@ -73,7 +73,7 @@ While classification accuracy is the standard metric, it treats all misclassific
 
 ## 3. System Architecture
 
-AgriDrone is a six-layer precision agriculture system deployed as a web application with a FastAPI backend and React + Vite + TailwindCSS frontend.
+AgriAnalyze is a six-layer precision agriculture system deployed as a web application with a FastAPI backend and React + Vite + TailwindCSS frontend.
 
 ### 3.1 Architecture overview
 
@@ -493,7 +493,7 @@ Based on our findings, we recommend:
 
 ## 8. Conclusion
 
-We presented AgriDrone, a complete drone-based crop disease detection system for Indian wheat and rice, and conducted a systematic ablation study comparing three pipeline configurations on 935 test images across 21 disease classes.
+We presented AgriAnalyze, a complete drone-based crop disease detection system for Indian wheat and rice, and conducted a systematic ablation study comparing three pipeline configurations on 935 test images across 21 disease classes.
 
 **Config A (YOLO-only)** achieves 96.2% accuracy, macro-F1 = 0.962, and MCC = 0.960 at 15 ms latency. **Config B (YOLO + Rules)** achieves 95.7% accuracy, macro-F1 = 0.957, and MCC = 0.955 at 444 ms latency. McNemar's test confirms this 0.4 percentage-point difference is **not statistically significant** (χ² = 2.25, *p* = 0.134), with only 4 discordant predictions out of 935 — all favouring YOLO. Bootstrap 95% confidence intervals (*B* = 10,000) overlap for all metrics.
 
@@ -661,13 +661,13 @@ Zhang, S., Wu, X., You, Z., & Zhang, L. (2015). Plant disease recognition based 
 | McNemar's test | Chi-squared with continuity correction |
 | Output formats | JSON, CSV, LaTeX tables, PNG confusion matrices |
 | Results directory | `evaluate/results/` |
-# AgriDrone: When Does a Rule Engine Help? An Ablation Study of Hybrid Deep Learning Pipelines for Drone-Based Crop Disease Detection in Indian Agriculture
+# AgriAnalyze: When Does a Rule Engine Help? An Ablation Study of Hybrid Deep Learning Pipelines for Drone-Based Crop Disease Detection in Indian Agriculture
 
 ---
 
 ## Abstract
 
-Drone-based crop disease detection systems increasingly adopt hybrid architectures that combine deep learning classifiers with hand-crafted rule engines and ensemble voting to improve diagnostic accuracy. We present AgriDrone, a full-stack precision agriculture system that integrates a YOLOv8n-cls classifier, a 15-rule symptom reasoning engine, Grad-CAM explainability, and an economic yield-loss estimator for 21 wheat and rice diseases prevalent in Indian agriculture. Through a rigorous ablation study on 934 test images across 21 classes, we evaluate three configurations: YOLO-only (Config A), YOLO+Rules ensemble (Config B), and Rules-only (Config C). Config A achieves 96.15% accuracy and 0.9618 macro-F1; Config B achieves 95.72% accuracy and 0.9574 macro-F1—a statistically non-significant difference (McNemar's χ² = 2.25, p = 0.134). Config C (rules-only) achieves only 12.53% accuracy and 0.065 macro-F1, demonstrating that the rule engine alone is ineffective but, when properly weighted (0.70 YOLO / 0.30 rules), is rendered harmless by the ensemble's YOLO dominance. The hybrid pipeline adds 36× latency (13.7 ms → 488.9 ms) with no accuracy benefit. Bootstrap 95% confidence intervals confirm that the CIs for Config A and B overlap across all metrics, while Config C is significantly worse than both (p < 0.001). We argue that for well-trained CNN classifiers on curated agricultural datasets, rule-based augmentation adds pipeline complexity and latency without measurable accuracy improvement, and that the field should prioritize classifier quality over ensemble complexity. The complete system, including dashboard, API, and evaluation scripts, is released as open source.
+Drone-based crop disease detection systems increasingly adopt hybrid architectures that combine deep learning classifiers with hand-crafted rule engines and ensemble voting to improve diagnostic accuracy. We present AgriAnalyze, a full-stack precision agriculture system that integrates a YOLOv8n-cls classifier, a 15-rule symptom reasoning engine, Grad-CAM explainability, and an economic yield-loss estimator for 21 wheat and rice diseases prevalent in Indian agriculture. Through a rigorous ablation study on 934 test images across 21 classes, we evaluate three configurations: YOLO-only (Config A), YOLO+Rules ensemble (Config B), and Rules-only (Config C). Config A achieves 96.15% accuracy and 0.9618 macro-F1; Config B achieves 95.72% accuracy and 0.9574 macro-F1—a statistically non-significant difference (McNemar's χ² = 2.25, p = 0.134). Config C (rules-only) achieves only 12.53% accuracy and 0.065 macro-F1, demonstrating that the rule engine alone is ineffective but, when properly weighted (0.70 YOLO / 0.30 rules), is rendered harmless by the ensemble's YOLO dominance. The hybrid pipeline adds 36× latency (13.7 ms → 488.9 ms) with no accuracy benefit. Bootstrap 95% confidence intervals confirm that the CIs for Config A and B overlap across all metrics, while Config C is significantly worse than both (p < 0.001). We argue that for well-trained CNN classifiers on curated agricultural datasets, rule-based augmentation adds pipeline complexity and latency without measurable accuracy improvement, and that the field should prioritize classifier quality over ensemble complexity. The complete system, including dashboard, API, and evaluation scripts, is released as open source.
 
 **Keywords:** crop disease detection, YOLOv8, ablation study, rule engine, precision agriculture, drone, wheat, rice, India, expected monetary loss
 
@@ -691,7 +691,7 @@ This paradigm has been widely adopted but rarely evaluated rigorously. Most syst
 
 This paper makes the following contributions:
 
-1. **Architecture**: We present AgriDrone, a complete drone-based disease detection system with a YOLOv8n-cls classifier, 15-rule reasoning engine, Bayesian ensemble voter, Grad-CAM explainability, yield-loss estimation, and treatment recommendation—deployed as a FastAPI backend with a React dashboard.
+1. **Architecture**: We present AgriAnalyze, a complete drone-based disease detection system with a YOLOv8n-cls classifier, 15-rule reasoning engine, Bayesian ensemble voter, Grad-CAM explainability, yield-loss estimation, and treatment recommendation—deployed as a FastAPI backend with a React dashboard.
 
 2. **Ablation study**: We conduct a systematic three-configuration ablation comparing a standalone YOLO classifier (Config A), the full hybrid pipeline (Config B), and rule engine only (Config C) on a 21-class Indian crop disease dataset. We find that Config A and Config B achieve near-identical accuracy (96.15% vs 95.72%, McNemar p = 0.134), while Config C achieves only 12.53%—demonstrating that the rule engine is ineffective alone and adds no value when combined with a strong classifier.
 
@@ -731,7 +731,7 @@ While classification accuracy is the standard metric, it treats all misclassific
 
 ## 3. System Architecture
 
-AgriDrone is a six-layer precision agriculture system deployed as a web application with FastAPI backend (port 9000) and React + Vite + TailwindCSS frontend.
+AgriAnalyze is a six-layer precision agriculture system deployed as a web application with FastAPI backend (port 9000) and React + Vite + TailwindCSS frontend.
 
 ### 3.1 Architecture Overview
 
@@ -1074,7 +1074,7 @@ The degradation under the old weights is severe on the wheat-specific dataset (�
 
 ### 6.6 End-to-End System Test
 
-Three test images were sent to the live AgriDrone API (`/detect` endpoint):
+Three test images were sent to the live AgriAnalyze API (`/detect` endpoint):
 
 | Image | YOLO Prediction | Confidence | Rule Engine Override |
 |-------|----------------|------------|---------------------|
@@ -1156,7 +1156,7 @@ Based on our findings, we recommend:
 
 ## 8. Conclusion
 
-We presented AgriDrone, a complete drone-based crop disease detection system for Indian wheat and rice, and conducted a systematic ablation study comparing three configurations: YOLO only (Config A), YOLO + rules ensemble (Config B), and rules only (Config C). Our results demonstrate that a well-trained YOLOv8n-cls classifier (96.15% accuracy, 0.9618 macro-F1, MCC 0.960, 13.7 ms latency) achieves near-identical performance to the full hybrid pipeline (95.72%, 0.9574, MCC 0.955, 488.9 ms). McNemar's chi-squared test confirms this 0.43 percentage-point difference is **not statistically significant** (p = 0.134), with only 4 discordant predictions out of 934. Bootstrap 95% confidence intervals overlap substantially for all metrics.
+We presented AgriAnalyze, a complete drone-based crop disease detection system for Indian wheat and rice, and conducted a systematic ablation study comparing three configurations: YOLO only (Config A), YOLO + rules ensemble (Config B), and rules only (Config C). Our results demonstrate that a well-trained YOLOv8n-cls classifier (96.15% accuracy, 0.9618 macro-F1, MCC 0.960, 13.7 ms latency) achieves near-identical performance to the full hybrid pipeline (95.72%, 0.9574, MCC 0.955, 488.9 ms). McNemar's chi-squared test confirms this 0.43 percentage-point difference is **not statistically significant** (p = 0.134), with only 4 discordant predictions out of 934. Bootstrap 95% confidence intervals overlap substantially for all metrics.
 
 Config C (rules-only) achieves just 12.53% accuracy and 0.065 macro-F1, predicting only 11 of 21 classes — confirming the rule engine lacks standalone discriminative power. When combined with YOLO in a properly weighted ensemble (0.70 YOLO / 0.30 rules), the rule engine is rendered harmless by YOLO dominance, but contributes nothing while adding 36× inference latency.
 
@@ -1229,8 +1229,8 @@ We do not claim that rule engines are universally harmful — only that they add
 
 All code, models, and data splits are available at the project repository:
 
-- **Backend**: `src/agridrone/` (FastAPI, Python 3.12)
-- **Frontend**: `agri-drone-frontend/` (React, Vite, TailwindCSS)
+- **Backend**: `src/agrianalyze/` (FastAPI, Python 3.12)
+- **Frontend**: `agri-analyze-frontend/` (React, Vite, TailwindCSS)
 - **Evaluation**: `evaluate/` (ablation, sensitivity, EML scripts)
 - **Models**: `models/india_agri_cls.pt` (21-class), `models/wheat_cls_v1.pt` (4-class)
 - **Configs**: `configs/*.yaml`

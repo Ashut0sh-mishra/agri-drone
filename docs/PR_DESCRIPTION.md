@@ -2,7 +2,7 @@
 
 ## Summary
 
-This PR turns the agri-drone repo from "engineering project with a
+This PR turns the agri-analyze repo from "engineering project with a
 paper-shaped wrapper" into a research-oriented, reproducible, peer-review
 ready codebase — without breaking any existing functionality.
 
@@ -24,7 +24,7 @@ ready codebase — without breaking any existing functionality.
 | 4 | Fair EfficientNet-B0 re-audit under shared recipe | ``docs/training_recipe.md``, ``evaluate/matrix/audit_baseline.py`` |
 | 5 | Proper statistical protocol (``--v2`` shim, bootstrap CI, Holm-Bonferroni, Dietterich, Friedman-Nemenyi) | ``evaluate/statistical_tests{,_v2}.py`` |
 | 6 | PDT rescue (threshold sweep, few-shot, calibration) | ``evaluate/pdt_v2.py`` |
-| 7 | ``RuleEngine`` protocol + learned / LLM rule baselines with offline fixture | ``src/agridrone/vision/rule_engine_base.py``, ``rules_learned.py``, ``rules_llm.py`` |
+| 7 | ``RuleEngine`` protocol + learned / LLM rule baselines with offline fixture | ``src/agrianalyze/vision/rule_engine_base.py``, ``rules_learned.py``, ``rules_llm.py`` |
 | 8 | Defensible EML: cited costs + ±25/50% tornado | ``configs/economics/india_2025.yaml``, ``evaluate/eml_sensitivity.py`` |
 | 9 | Reproducibility bundle: data loaders, splits, CITATION.cff, lockfile, Dockerfile, compose, data availability | ``scripts/download_data.py``, ``scripts/make_splits.py``, ``CITATION.cff``, ``requirements.lock.txt``, ``Dockerfile``, ``docker-compose.yml``, ``docs/data_availability.md`` |
 | 10 | Repo hygiene: README status/limitations/roadmap, dashboard tone, CHANGELOG | ``README.md``, ``dashboard/README.md``, ``CHANGELOG_RESEARCH_UPGRADE.md``, ``PR_DESCRIPTION.md`` |
@@ -97,7 +97,7 @@ further infrastructure work.
 * [ ] ``python evaluate/pdt_v2.py --variant threshold_sweep`` produces
       ``evaluate/results/v2/pdt/threshold_sweep.json``
 * [ ] ``python evaluate/eml_sensitivity.py`` reports headline + tornado JSON
-* [ ] ``python -c 'from agridrone.vision.rule_engine_base import available; print(available())'``
+* [ ] ``python -c 'from agrianalyze.vision.rule_engine_base import available; print(available())'``
       prints ``['handcrafted','learned_tree','llm_generated','none']``
 
 ---

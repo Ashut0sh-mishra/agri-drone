@@ -339,7 +339,7 @@ def main():
     """Main Streamlit app."""
     # Page configuration
     st.set_page_config(
-        page_title="AgriDrone Detection",
+        page_title="AgriAnalyze Detection",
         page_icon="🚜",
         layout="wide",
         initial_sidebar_state="expanded",
@@ -349,7 +349,7 @@ def main():
     initialize_session()
 
     # Title and description
-    st.title("🚜 AgriDrone Hotspot Detection")
+    st.title("🚜 AgriAnalyze Hotspot Detection")
     st.markdown(
         """
         **Research Prototype for Site-Specific Crop Protection**
@@ -370,7 +370,7 @@ def main():
             "⚠️ **API Unavailable**\n\n"
             "Make sure the FastAPI server is running:\n"
             "```bash\n"
-            "python -m uvicorn agridrone.api.app:app --port 9000\n"
+            "python -m uvicorn agrianalyze.api.app:app --port 9000\n"
             "```"
         )
 

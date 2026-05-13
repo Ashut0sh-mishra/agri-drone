@@ -1,4 +1,4 @@
-# Contributing to AgriDrone
+# Contributing to AgriAnalyze
 
 Thanks for your interest in contributing! This guide will help you get started.
 
@@ -6,8 +6,8 @@ Thanks for your interest in contributing! This guide will help you get started.
 
 ```bash
 # 1. Fork and clone
-git clone https://github.com/<your-username>/agri-drone.git
-cd agri-drone
+git clone https://github.com/<your-username>/agri-analyze.git
+cd agri-analyze
 
 # 2. Create a virtual environment
 python -m venv .venv
@@ -25,7 +25,7 @@ pytest -q tests/regression
 python scripts/smoke_test.py --verbose
 
 # 6. Start the API locally
-cd src && python -m uvicorn agridrone.api.app:get_app --factory --port 9000
+cd src && python -m uvicorn agrianalyze.api.app:get_app --factory --port 9000
 ```
 
 ## Development Workflow
@@ -54,7 +54,7 @@ cd src && python -m uvicorn agridrone.api.app:get_app --factory --port 9000
 
 ## What Can I Work On?
 
-- Check [Issues](https://github.com/Ashut0sh-mishra/agri-drone/issues) — look for `good first issue` and `help wanted` labels.
+- Check [Issues](https://github.com/Ashut0sh-mishra/agri-analyze/issues) — look for `good first issue` and `help wanted` labels.
 - Disease detection improvements (new crops, better rules)
 - Frontend UI/UX enhancements
 - Documentation and tutorials
@@ -76,8 +76,8 @@ cd src && python -m uvicorn agridrone.api.app:get_app --factory --port 9000
 ## Project Structure
 
 ```
-agri-drone/
-├── src/agridrone/          # Main Python package
+agri-analyze/
+├── src/agrianalyze/          # Main Python package
 │   ├── api/                # FastAPI endpoints
 │   ├── core/               # Detection, classification, spectral
 │   ├── vision/             # Disease reasoning, rules, Grad-CAM
@@ -88,7 +88,7 @@ agri-drone/
 ├── tests/                  # Test suite
 ├── scripts/                # Utility scripts
 ├── deploy/                 # HF Spaces deployment files
-└── frontend/               # (see agri-drone-frontend repo)
+└── frontend/               # (see agri-analyze-frontend repo)
 ```
 
 ## Pull Request Guidelines
@@ -107,4 +107,4 @@ agri-drone/
 
 ## Questions?
 
-Open a [Discussion](https://github.com/Ashut0sh-mishra/agri-drone/discussions) or reach out via Issues.
+Open a [Discussion](https://github.com/Ashut0sh-mishra/agri-analyze/discussions) or reach out via Issues.

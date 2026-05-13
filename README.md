@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🌾 AgriDrone
+# 🌾 AgriAnalyze
 
 ### A Negative Result on Hand-Authored Symbolic Rules for CNN-Based Crop-Disease Classification
 
@@ -23,7 +23,7 @@
 > See [Repository Status and Evidence Scope](#repository-status-and-evidence-scope) and
 > [Known Limitations](#known-limitations) below.
 
-AgriDrone is a research codebase that combines a YOLOv8n-cls classifier (1.44M parameters), a multi-stage symptom reasoning engine, and an expected monetary loss (EML) estimator for **21 Indian wheat and rice disease classes**. Through a three-configuration ablation study on **934** curated close-up leaf images, we show that the standalone YOLO classifier (96.15% accuracy, 15 ms) is statistically indistinguishable from the full hybrid pipeline (95.72%, 444 ms; McNemar p = 0.134) — the rule engine adds 29× latency with zero accuracy gain and inflates EML by 840%. The core message: **ablate before you complicate.**
+AgriAnalyze is a research codebase that combines a YOLOv8n-cls classifier (1.44M parameters), a multi-stage symptom reasoning engine, and an expected monetary loss (EML) estimator for **21 Indian wheat and rice disease classes**. Through a three-configuration ablation study on **934** curated close-up leaf images, we show that the standalone YOLO classifier (96.15% accuracy, 15 ms) is statistically indistinguishable from the full hybrid pipeline (95.72%, 444 ms; McNemar p = 0.134) — the rule engine adds 29× latency with zero accuracy gain and inflates EML by 840%. The core message: **ablate before you complicate.**
 
 ## Key Results
 
@@ -125,8 +125,8 @@ The repository also contains substantial infrastructure (matrix runner, cost mod
 ## Repository Structure
 
 ```
-agri-drone/
-├── src/agridrone/              # Core Python package
+agri-analyze/
+├── src/agrianalyze/              # Core Python package
 │   ├── api/                    #   FastAPI routes & schemas
 │   ├── vision/                 #   YOLO inference, rule engine, Grad-CAM, ensemble
 │   ├── core/                   #   Detector, spectral features, yield estimator
@@ -166,7 +166,7 @@ agri-drone/
 
 ## Screenshots
 
-### AgriDrone Dashboard — Live Disease Detection
+### AgriAnalyze Dashboard — Live Disease Detection
 
 <!-- <p align="center">
   <img src="docs/screenshots/dashboard_1.png" alt="Dashboard - Detection View 1" width="90%"/>
@@ -182,15 +182,15 @@ agri-drone/
 
 ## Monorepo Layout
 
-This repository contains the full AgriDrone stack:
+This repository contains the full AgriAnalyze stack:
 
 ```
-agri-drone/
-├── src/agridrone/           # FastAPI backend (production API)
-├── agri-drone-frontend/     # React + Vite frontend SPA
-├── agridrone-training/      # Model training scripts + Colab notebook
-├── agridrone-models/        # Model weights land here (gitignored; fetch separately)
-├── agridrone-data/          # Datasets land here (gitignored; see scripts/fetch_data.py)
+agri-analyze/
+├── src/agrianalyze/           # FastAPI backend (production API)
+├── agri-analyze-frontend/     # React + Vite frontend SPA
+├── agrianalyze-training/      # Model training scripts + Colab notebook
+├── agrianalyze-models/        # Model weights land here (gitignored; fetch separately)
+├── agrianalyze-data/          # Datasets land here (gitignored; see scripts/fetch_data.py)
 ├── scripts/fetch_data.py    # Download datasets from HuggingFace
 ├── configs/                 # YAML configs for matrix runs + model hyperparams
 ├── evaluate/                # Ablation, stats, EML, sensitivity scripts + results
@@ -198,7 +198,7 @@ agri-drone/
 └── docs/                    # Research paper, changelogs, implementation notes
 ```
 
-Datasets (25 GB) live on HuggingFace: [`ashu010/agridrone-data`](https://huggingface.co/datasets/ashu010/agridrone-data) — see [Data Availability](#data-availability).
+Datasets (25 GB) live on HuggingFace: [`ashu010/agrianalyze-data`](https://huggingface.co/datasets/ashu010/agrianalyze-data) — see [Data Availability](#data-availability).
 
 ## Installation
 
@@ -212,8 +212,8 @@ Datasets (25 GB) live on HuggingFace: [`ashu010/agridrone-data`](https://hugging
 
 ```bash
 # Clone the repository
-git clone https://github.com/Ashut0sh-mishra/agri-drone.git
-cd agri-drone
+git clone https://github.com/Ashut0sh-mishra/agri-analyze.git
+cd agri-analyze
 
 # Create virtual environment
 python -m venv .venv
@@ -245,7 +245,7 @@ models/
 The React frontend lives in a sibling folder, not inside the backend:
 
 ```bash
-cd ../agri-drone-frontend
+cd ../agri-analyze-frontend
 npm install
 npm run dev
 ```
@@ -256,7 +256,7 @@ npm run dev
 
 ```bash
 # From project root
-uvicorn src.agridrone.api.app:app --host 0.0.0.0 --port 8000 --reload
+uvicorn src.agrianalyze.api.app:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 ### Single Image Inference
@@ -272,7 +272,7 @@ python scripts/run_inference.py --image path/to/image.jpg --model models/india_a
 python scripts/dashboard.py
 
 # OR the production React frontend (sibling folder)
-cd ../agri-drone-frontend && npm run dev
+cd ../agri-analyze-frontend && npm run dev
 ```
 
 The React dashboard will be available at `http://localhost:5173` with the API at `http://localhost:8000`.
@@ -337,7 +337,7 @@ Stratified 70/15/15 split with seed = 42.
 
 All datasets (75,010 images, 23.6 GB) are hosted on HuggingFace Datasets:
 
-**https://huggingface.co/datasets/ashu010/agridrone-data**
+**https://huggingface.co/datasets/ashu010/agrianalyze-data**
 
 ### Folder groups on HuggingFace
 
@@ -366,21 +366,21 @@ python scripts/fetch_data.py --preset external
 python scripts/fetch_data.py
 ```
 
-Files land under `agridrone-data/` (gitignored). See [scripts/fetch_data.py](scripts/fetch_data.py).
+Files land under `agrianalyze-data/` (gitignored). See [scripts/fetch_data.py](scripts/fetch_data.py).
 
 ### Direct image URLs (for dashboards)
 
 Every image has a public URL — no auth:
 ```
-https://huggingface.co/datasets/ashu010/agridrone-data/resolve/main/<folder>/<filename>
+https://huggingface.co/datasets/ashu010/agrianalyze-data/resolve/main/<folder>/<filename>
 ```
 
 ## Citation
 
-If you use AgriDrone in your research, please cite:
+If you use AgriAnalyze in your research, please cite:
 
 ```bibtex
-@article{agridrone2026,
+@article{agrianalyze2026,
   title     = {A Negative Result on Hand-Authored Symbolic Rules for
                CNN-Based Crop-Disease Classification},
   author    = {Mishra, Ashutosh},

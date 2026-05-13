@@ -1,7 +1,7 @@
 services:
-  agri-drone:
+  agri-analyze:
     build: .
-    image: agri-drone:research-upgrade
+    image: agri-analyze:research-upgrade
     working_dir: /app
     volumes:
       - ./:/app

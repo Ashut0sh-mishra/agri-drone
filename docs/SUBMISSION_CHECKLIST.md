@@ -1,4 +1,4 @@
-# AgriDrone — Final Submission Checklist
+# AgriAnalyze — Final Submission Checklist
 
 > Generated: April 10, 2026
 
@@ -65,18 +65,18 @@
 
 ## Backend
 
-- [x] `src/agridrone/` — FastAPI backend (Python 3.12)
-- [x] `src/agridrone/api/app.py` — Main API with `/detect`, `/health`
-- [x] `src/agridrone/vision/classifier.py` — YOLO inference
-- [x] `src/agridrone/vision/ensemble_voter.py` — Bayesian voting
-- [x] `src/agridrone/vision/llm_validator.py` — LLaVA integration
+- [x] `src/agrianalyze/` — FastAPI backend (Python 3.12)
+- [x] `src/agrianalyze/api/app.py` — Main API with `/detect`, `/health`
+- [x] `src/agrianalyze/vision/classifier.py` — YOLO inference
+- [x] `src/agrianalyze/vision/ensemble_voter.py` — Bayesian voting
+- [x] `src/agrianalyze/vision/llm_validator.py` — LLaVA integration
 - [x] `configs/*.yaml` — All configuration files
 - [x] `requirements.txt` — Python dependencies
 
 ## Frontend
 
-- [x] `agri-drone-frontend/` — React + Vite + TailwindCSS
-- [x] `agri-drone-frontend/dist/` — Built production bundle
+- [x] `agri-analyze-frontend/` — React + Vite + TailwindCSS
+- [x] `agri-analyze-frontend/dist/` — Built production bundle
 - [x] Issue 1 ✓ — "New Scan" button moved to top of results
 - [x] Issue 2 ✓ — Multi-image upload with "Scan All" batch mode
 - [x] Issue 3 ✓ — Camera capture (CameraCapture.jsx, front/rear switch)

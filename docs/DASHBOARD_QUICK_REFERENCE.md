@@ -1,6 +1,6 @@
 # Dashboard Developer Quick Reference
 
-Cheat sheet for working with the AgriDrone AI Dashboard.
+Cheat sheet for working with the AgriAnalyze AI Dashboard.
 
 ## Installation (One-Time)
 
@@ -20,7 +20,7 @@ npm install
 ### Quick Start (2 Commands)
 ```bash
 # Terminal 1
-uvicorn src.agridrone.api.app:app --reload --port 8000
+uvicorn src.agrianalyze.api.app:app --reload --port 8000
 
 # Terminal 2
 cd dashboard && npm run dev
@@ -46,7 +46,7 @@ Then visit: `http://localhost:5173`
 ### Change Backend Port
 ```bash
 # Use different port
-uvicorn src.agridrone.api.app:app --reload --port 9000
+uvicorn src.agrianalyze.api.app:app --reload --port 9000
 
 # Update .env in dashboard/
 VITE_API_URL=http://localhost:9000
@@ -355,7 +355,7 @@ npm run preview
 # Or upload dist/ to web server
 
 # Run backend
-uvicorn src.agridrone.api.app:app --host 0.0.0.0 --port 8000 --workers 4
+uvicorn src.agrianalyze.api.app:app --host 0.0.0.0 --port 8000 --workers 4
 ```
 
 ## Environment Variables Checklist
@@ -432,7 +432,7 @@ npm install
 
 # Start both servers
 # Terminal 1:
-uvicorn src.agridrone.api.app:app --reload --port 8000
+uvicorn src.agrianalyze.api.app:app --reload --port 8000
 
 # Terminal 2:
 cd dashboard && npm run dev

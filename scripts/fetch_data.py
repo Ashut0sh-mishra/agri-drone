@@ -1,7 +1,7 @@
-"""Download AgriDrone datasets from HuggingFace.
+"""Download AgriAnalyze datasets from HuggingFace.
 
-Pulls from https://huggingface.co/datasets/ashu010/agridrone-data into
-the local `agridrone-data/` directory. Safe to re-run — already-present
+Pulls from https://huggingface.co/datasets/ashu010/agrianalyze-data into
+the local `agrianalyze-data/` directory. Safe to re-run — already-present
 files are skipped by content hash.
 
 Usage:
@@ -30,9 +30,9 @@ from pathlib import Path
 
 os.environ.setdefault("HF_HUB_ENABLE_HF_TRANSFER", "1")
 
-REPO_ID = "ashu010/agridrone-data"
+REPO_ID = "ashu010/agrianalyze-data"
 ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_TARGET = ROOT / "agridrone-data"
+DEFAULT_TARGET = ROOT / "agrianalyze-data"
 
 # Presets map friendly names -> list of top-level folders on HF.
 PRESETS: dict[str, list[str]] = {

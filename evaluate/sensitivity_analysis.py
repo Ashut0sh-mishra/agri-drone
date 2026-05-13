@@ -75,8 +75,8 @@ def get_tier_weight(class_key: str) -> int:
 def precompute_yolo_and_features(model, loaded_images: list[tuple]) -> list[dict]:
     """Run YOLO inference + feature extraction once per image.
     Returns list of dicts with classifier_result, features, color_ratios, crop_type, gt."""
-    import agridrone.vision.feature_extractor as fe_mod
-    from agridrone.knowledge import kb_loader
+    import agrianalyze.vision.feature_extractor as fe_mod
+    from agrianalyze.knowledge import kb_loader
 
     kb = kb_loader.get_all_profiles()
     if not kb:
@@ -143,7 +143,7 @@ def run_rule_engine_patched(
 ) -> str:
     """Run rule engine on pre-computed features with patched parameters.
     Returns predicted class key."""
-    import agridrone.vision.rule_engine as re_mod
+    import agrianalyze.vision.rule_engine as re_mod
 
     if cached_item["features"] is None or cached_item["classifier_result"] is None:
         return "unknown"
@@ -200,7 +200,7 @@ def _resolve_conflict_with_threshold(
     candidates, threshold,
 ):
     """Conflict resolution with configurable yolo override threshold."""
-    from agridrone.vision.rule_engine import ConflictReport
+    from agrianalyze.vision.rule_engine import ConflictReport
 
     if yolo_top_key == rule_top_key:
         return ConflictReport(
@@ -398,13 +398,13 @@ def main():
     args = parser.parse_args()
 
     # Suppress noisy debug logging from feature_extractor and rule_engine
-    logging.getLogger("agridrone.vision.feature_extractor").setLevel(logging.WARNING)
-    logging.getLogger("agridrone.vision.rule_engine").setLevel(logging.WARNING)
+    logging.getLogger("agrianalyze.vision.feature_extractor").setLevel(logging.WARNING)
+    logging.getLogger("agrianalyze.vision.rule_engine").setLevel(logging.WARNING)
     # Also suppress loguru if present
     try:
         from loguru import logger as loguru_logger
-        loguru_logger.disable("agridrone.vision.feature_extractor")
-        loguru_logger.disable("agridrone.vision.rule_engine")
+        loguru_logger.disable("agrianalyze.vision.feature_extractor")
+        loguru_logger.disable("agrianalyze.vision.rule_engine")
     except ImportError:
         pass
 
@@ -432,7 +432,7 @@ def main():
     print(f"  Classes: {len(classes)}")
 
     # ── Preload KB so it doesn't reload every iteration ──
-    from agridrone.knowledge import kb_loader
+    from agrianalyze.knowledge import kb_loader
     kb_loader.load()
     print("  Knowledge base loaded")
 

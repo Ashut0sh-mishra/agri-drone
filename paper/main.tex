@@ -1,5 +1,5 @@
 % ============================================================
-%  AgriDrone — Springer LNCS format
+%  AgriAnalyze — Springer LNCS format
 %  Target: CVPPA 2026 @ ECCV / PlantCLEF 2026 @ CLEF
 %  Compile: pdflatex main && bibtex main && pdflatex main && pdflatex main
 % ============================================================
@@ -17,7 +17,7 @@
 \renewcommand\UrlFont{\color{blue}\rmfamily}
 
 % ── FILL IN after Zenodo upload ──────────────────────────────
-\newcommand{\codeurl}{https://github.com/Ashut0sh-mishra/agri-drone}
+\newcommand{\codeurl}{https://github.com/Ashut0sh-mishra/agri-analyze}
 \newcommand{\zenododoi}{TODO: 10.5281/zenodo.XXXXXXX}   % <-- replace after upload
 % ─────────────────────────────────────────────────────────────
 
@@ -162,7 +162,7 @@ C & Off                        & On   & Rule scores only \\
 
 \subsection{Rule Engine}
 
-The rule engine (\texttt{src/agridrone/vision/rule\_engine.py}) is a
+The rule engine (\texttt{src/agrianalyze/vision/rule\_engine.py}) is a
 substantive multi-stage system:
 \begin{itemize}
   \item \textbf{Colour rules:} HSV-signature matching against per-disease profiles.

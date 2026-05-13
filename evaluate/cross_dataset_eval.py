@@ -10,7 +10,7 @@ Supported datasets (place in data/external/):
   - PlantDoc:      data/external/plantdoc/      (folder-per-class)
   - Custom:        any folder with class subfolders
 
-Class mapping: maps external dataset class names → AgriDrone 21-class labels
+Class mapping: maps external dataset class names → AgriAnalyze 21-class labels
 via a JSON mapping file. Unmapped classes are reported but excluded from
 accuracy computation.
 
@@ -37,7 +37,7 @@ sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
 
 # ════════════════════════════════════════════════════════════════
-# Default class mappings (external name → AgriDrone key)
+# Default class mappings (external name → AgriAnalyze key)
 # ════════════════════════════════════════════════════════════════
 
 PLANTVILLAGE_MAP = {
@@ -83,7 +83,7 @@ def load_class_mapping(mapping_path: Path | None, dataset_dir: Path) -> dict:
         print("  Using built-in PlantDoc mapping")
         return PLANTDOC_MAP
 
-    # Identity mapping: assume folder names match AgriDrone keys
+    # Identity mapping: assume folder names match AgriAnalyze keys
     print("  No mapping found — using identity mapping (folder name = class key)")
     classes = [d.name for d in dataset_dir.iterdir() if d.is_dir()]
     return {c: c for c in classes}
@@ -139,7 +139,7 @@ def generate_mapping_template(dataset_dir: Path, model_classes: list[str], outpu
 
     output_path.write_text(json.dumps(mapping, indent=2), encoding="utf-8")
     print(f"  Mapping template saved → {output_path}")
-    print(f"  Edit null values to map external classes → AgriDrone classes")
+    print(f"  Edit null values to map external classes → AgriAnalyze classes")
     return mapping
 
 
@@ -246,7 +246,7 @@ def main():
     parser = argparse.ArgumentParser(description="Experiment 3: Cross-dataset evaluation")
     parser.add_argument("--dataset-dir", required=True, help="Path to external dataset (folder-per-class)")
     parser.add_argument("--model-path", default=str(PROJECT_ROOT / "models" / "india_agri_cls.pt"))
-    parser.add_argument("--mapping", default=None, help="JSON file mapping external → AgriDrone class names")
+    parser.add_argument("--mapping", default=None, help="JSON file mapping external → AgriAnalyze class names")
     parser.add_argument("--output-dir", default=str(PROJECT_ROOT / "evaluate" / "results"))
     parser.add_argument("--generate-mapping", action="store_true", help="Generate mapping template and exit")
     args = parser.parse_args()

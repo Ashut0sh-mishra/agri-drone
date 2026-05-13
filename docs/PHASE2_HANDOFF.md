@@ -1,4 +1,4 @@
-# Phase 2 handoff — agri-drone research-upgrade
+# Phase 2 handoff — agri-analyze research-upgrade
 
 This document is the **only** thing you need to read to hand the
 `research-upgrade` branch off to the Colab runs and the eventual
@@ -30,7 +30,7 @@ commit `a6e98fc`:
 
 ```
 ============================================================
-  agri-drone system audit  -  2026-04-17T09:41:35Z
+  agri-analyze system audit  -  2026-04-17T09:41:35Z
 ============================================================
   OS         : Windows-10-10.0.26200-SP0
   Python     : 3.11.7   venv=False
@@ -53,7 +53,7 @@ host via `python scripts/audit_system.py` or `pwsh scripts/audit_system.ps1`.
 
 ### 3.1 Open the Phase 1 + Phase 2 PR
 
-<https://github.com/Ashut0sh-mishra/agri-drone/pull/new/research-upgrade>
+<https://github.com/Ashut0sh-mishra/agri-analyze/pull/new/research-upgrade>
 
 Paste the body from [`PR_DESCRIPTION.md`](../PR_DESCRIPTION.md).
 
@@ -97,7 +97,7 @@ Suggested sweep:
 Create this folder tree in your Drive:
 
 ```
-MyDrive/agri-drone/
+MyDrive/agri-analyze/
     data/
         plantvillage/
         PDT_datasets/
@@ -113,7 +113,7 @@ URLs + licences: [`docs/data_availability.md`](data_availability.md).
 
 1. Open [`notebooks/colab/01_run_matrix.ipynb`](../notebooks/colab/01_run_matrix.ipynb)
    → Runtime → GPU (T4) → Run all. ~2 h. Writes
-   `MyDrive/agri-drone/results_v2/matrix/` and
+   `MyDrive/agri-analyze/results_v2/matrix/` and
    `results_v2_<timestamp>.zip`.
 2. Open [`notebooks/colab/02_pdt_calibration.ipynb`](../notebooks/colab/02_pdt_calibration.ipynb)
    → Run all. ~45 min. Writes `results_v2/pdt/PDT_SECTION.md`.
@@ -130,7 +130,7 @@ URLs + licences: [`docs/data_availability.md`](data_availability.md).
 ### 3.6 Commit results back to the branch
 
 ```powershell
-cd D:\Projects\agri-drone
+cd D:\Projects\agri-analyze
 git checkout research-upgrade
 Expand-Archive -Path results_v2_<timestamp>.zip `
     -DestinationPath evaluate/results/v2/ -Force

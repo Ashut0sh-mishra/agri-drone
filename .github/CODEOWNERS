@@ -5,8 +5,8 @@
 *                           @Ashut0sh-mishra
 
 # Critical paths — require maintainer review (no bypass)
-src/agridrone/api/          @Ashut0sh-mishra
-src/agridrone/core/         @Ashut0sh-mishra
+src/agrianalyze/api/          @Ashut0sh-mishra
+src/agrianalyze/core/         @Ashut0sh-mishra
 .github/workflows/          @Ashut0sh-mishra
 deploy/                     @Ashut0sh-mishra
 Dockerfile                  @Ashut0sh-mishra

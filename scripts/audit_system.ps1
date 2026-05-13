@@ -10,7 +10,7 @@ $ErrorActionPreference = "Continue"
 $root = Split-Path -Parent $PSScriptRoot
 
 Write-Host "============================================================"
-Write-Host "  agri-drone system audit  (PowerShell)"
+Write-Host "  agri-analyze system audit  (PowerShell)"
 Write-Host "============================================================"
 Write-Host ("  Host       : " + $env:COMPUTERNAME + "  OS=" + [System.Environment]::OSVersion.VersionString)
 Write-Host ("  User       : " + $env:USERNAME)

@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Report a bug in AgriDrone
+about: Report a bug in AgriAnalyze
 title: "[Bug] "
 labels: bug
 assignees: ''

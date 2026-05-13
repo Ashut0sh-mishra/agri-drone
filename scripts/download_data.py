@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Download (or point to) the datasets used in the agri-drone paper.
+"""Download (or point to) the datasets used in the agri-analyze paper.
 
 Datasets are large (several GB) and distributed under heterogeneous licences.
 We therefore **do not bundle** them. This script is a single authoritative

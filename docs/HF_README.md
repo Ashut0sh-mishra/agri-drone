@@ -1,5 +1,5 @@
 ---
-title: AgriDrone API
+title: AgriAnalyze API
 emoji: 🌾
 colorFrom: green
 colorTo: yellow
@@ -8,6 +8,6 @@ app_port: 7860
 pinned: false
 ---
 
-# AgriDrone - Crop Disease Detection API
+# AgriAnalyze - Crop Disease Detection API
 
 FastAPI backend for AI-powered crop disease detection (21-class wheat + rice).

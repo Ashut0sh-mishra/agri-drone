@@ -4,7 +4,7 @@ import cv2, base64, requests, time, glob, os, sys
 sys.path.insert(0, "src")
 
 from loguru import logger
-logger.disable("agridrone")
+logger.disable("agrianalyze")
 
 # Find a test image
 imgs = glob.glob("data/training/test/**/*.jpg", recursive=True)
