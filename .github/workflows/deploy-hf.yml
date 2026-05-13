@@ -45,6 +45,15 @@ jobs:
           # Create a deploy branch with only the files HF Spaces needs
           git checkout -b hf-deploy
 
+          # Strip large/non-essential dirs (HF rejects binary files outside Xet/LFS)
+          git rm -rf --ignore-unmatch \
+            docs evaluate/results evaluate/results_wheat paper notebooks \
+            runs outputs data datasets agrianalyze-data agrianalyze-models \
+            agri-analyze-frontend agrianalyze-training tests tools \
+            AgriAnalyze_paper.pdf AgriAnalyze_paper_final.pdf \
+            yolov8n.pt yolov8n-seg.pt > /dev/null 2>&1 || true
+          git commit -m "deploy: strip non-essential dirs for HF Spaces" --allow-empty
+
           # Swap README and Dockerfile with HF-specific versions
           cp deploy/hf-readme.md README.md
           cp deploy/Dockerfile.hf Dockerfile
