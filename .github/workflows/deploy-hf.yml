@@ -42,23 +42,21 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
 
-          # Create a deploy branch with only the files HF Spaces needs
-          git checkout -b hf-deploy
+          # Create an orphan deploy branch (no history) so HF doesn't see large blobs from past commits
+          git checkout --orphan hf-deploy
+          git rm -rf --cached . > /dev/null 2>&1 || true
 
-          # Strip large/non-essential dirs (HF rejects binary files outside Xet/LFS)
-          git rm -rf --ignore-unmatch \
-            docs evaluate/results evaluate/results_wheat paper notebooks \
-            runs outputs data datasets agrianalyze-data agrianalyze-models \
-            agri-analyze-frontend agrianalyze-training tests tools \
-            AgriAnalyze_paper.pdf AgriAnalyze_paper_final.pdf \
-            yolov8n.pt yolov8n-seg.pt > /dev/null 2>&1 || true
-          git commit -m "deploy: strip non-essential dirs for HF Spaces" --allow-empty
+          # Stage only the dirs/files HF needs
+          git add src configs models pyproject.toml requirements.lock.txt deploy LICENSE
+          # Optional small files if present
+          git add CHANGELOG.md CITATION.cff 2>/dev/null || true
 
           # Swap README and Dockerfile with HF-specific versions
           cp deploy/hf-readme.md README.md
           cp deploy/Dockerfile.hf Dockerfile
           git add README.md Dockerfile
-          git commit -m "deploy: swap README + Dockerfile for HF Spaces" --allow-empty
+
+          git commit -m "deploy: HF Spaces snapshot from $(git -C . log -1 --format=%h main)"
 
           # Push to HuggingFace Spaces (use credential helper to avoid URL parsing issues with token chars)
           git remote remove hf 2>/dev/null || true
