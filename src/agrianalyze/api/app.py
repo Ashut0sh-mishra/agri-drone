@@ -196,6 +196,40 @@ def _is_plant_image(image_bgr: np.ndarray) -> dict:
     # - Farmer holding a leaf (hand + plant)
     # - Plant in an office/lab setting
     # - Field photo with people in background
+    # ══════════════════════════════════════════════════════════════
+    # PRIORITY 0 — HUMAN VETO. Always wins over any vegetation signal.
+    # Skin pixels overlap the "brown vegetation" hue range, so a selfie
+    # would otherwise pass D1b. We reject FIRST if a face is clearly
+    # present OR skin dominates without a real green leaf blob.
+    # ══════════════════════════════════════════════════════════════
+    if face_count > 0 and face_area_pct > 0.01 and not has_plant_region:
+        return {
+            "is_plant": False,
+            "reason": (
+                f"Human face detected ({face_count} face{'s' if face_count > 1 else ''}, "
+                f"covering {face_area_pct:.0%} of the image) without a visible crop leaf. "
+                "Please upload a close-up photo of a crop leaf, not a person."
+            ),
+            "face_count": face_count, "face_area_pct": face_area_pct,
+            "skin_ratio": skin_ratio, "green_ratio": green_ratio,
+            "brown_ratio": brown_ratio, "achromatic_ratio": achromatic_ratio,
+            "largest_green_blob_ratio": largest_green_blob_ratio,
+            "edge_density": edge_density,
+        }
+    if skin_ratio > 0.20 and largest_green_blob_ratio < 0.02:
+        return {
+            "is_plant": False,
+            "reason": (
+                f"Person/skin detected ({skin_ratio:.0%} skin pixels) without a crop leaf region. "
+                "Please upload a close-up photo of a crop leaf."
+            ),
+            "face_count": face_count, "face_area_pct": face_area_pct,
+            "skin_ratio": skin_ratio, "green_ratio": green_ratio,
+            "brown_ratio": brown_ratio, "achromatic_ratio": achromatic_ratio,
+            "largest_green_blob_ratio": largest_green_blob_ratio,
+            "edge_density": edge_density,
+        }
+
     if has_plant_region:
         is_plant = True
         reason = ""

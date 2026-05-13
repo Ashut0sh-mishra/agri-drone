@@ -92,8 +92,18 @@ def predict_with_uncertainty(
                 if not results or results[0].probs is None:
                     continue
                 probs = results[0].probs
-                top_idx = probs.top1
-                top_conf = float(probs.top1conf)
+                # In MC-Dropout (train mode) ultralytics may return un-normalized
+                # logits via .top1conf. Re-normalize via softmax over .data so
+                # confidences stay in [0, 1].
+                raw = probs.data
+                if hasattr(raw, "float"):
+                    raw = raw.float()
+                # softmax across the class dimension
+                soft = torch.softmax(raw, dim=-1)
+                top_idx = int(torch.argmax(soft).item())
+                top_conf = float(soft[top_idx].item())
+                # Hard clamp as a final safety net
+                top_conf = max(0.0, min(1.0, top_conf))
                 class_key = names[top_idx]
                 confidences.append(top_conf)
                 predictions.append(class_key)
