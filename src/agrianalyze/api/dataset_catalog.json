@@ -1,0 +1,148 @@
+{
+  "generated_at": "2026-05-13",
+  "source_root": "agrianalyze-data/",
+  "note": "Static catalog of training/eval datasets bundled with the model. Images are NOT shipped to the deployed server (free-tier disk limits). To obtain the raw images, see the 'source' link on each dataset.",
+  "datasets": [
+    {
+      "name": "agridrone_combined",
+      "title": "AgriDrone Combined Corpus",
+      "description": "Merged rice + wheat disease corpus used to train the production classifier (augmented).",
+      "total_images": 9854,
+      "splits": {"train": 7264, "val": 1295, "test": 1295},
+      "num_classes": 22,
+      "classes": [
+        {"name": "healthy_rice", "count": 300},
+        {"name": "healthy_wheat", "count": 300},
+        {"name": "rice_bacterial_blight", "count": 300},
+        {"name": "rice_blast", "count": 300},
+        {"name": "rice_brown_spot", "count": 300},
+        {"name": "rice_leaf_scald", "count": 300},
+        {"name": "rice_sheath_blight", "count": 300},
+        {"name": "wheat_aphid", "count": 300},
+        {"name": "wheat_black_rust", "count": 300},
+        {"name": "wheat_blast", "count": 300},
+        {"name": "wheat_brown_rust", "count": 300},
+        {"name": "wheat_fusarium_head_blight", "count": 300},
+        {"name": "wheat_leaf_blight", "count": 300},
+        {"name": "wheat_mite", "count": 300},
+        {"name": "wheat_powdery_mildew", "count": 300},
+        {"name": "wheat_root_rot", "count": 300},
+        {"name": "wheat_septoria", "count": 300},
+        {"name": "wheat_smut", "count": 300},
+        {"name": "wheat_stem_fly", "count": 244},
+        {"name": "wheat_tan_spot", "count": 300},
+        {"name": "wheat_yellow_rust", "count": 300},
+        {"name": "crown_root_rot", "count": 20}
+      ],
+      "source": "internal merge (see datasets below)",
+      "license": "research use; see individual sources"
+    },
+    {
+      "name": "agridrone_combined_original",
+      "title": "AgriDrone Original (pre-augmentation)",
+      "description": "Raw merged corpus before augmentation pipeline.",
+      "total_images": 6282,
+      "splits": {"train_orig": 4987, "val_orig": 1295},
+      "num_classes": 21,
+      "source": "internal merge"
+    },
+    {
+      "name": "pdt_dataset",
+      "title": "Plant Disease Trait (PDT) Dataset",
+      "description": "Large multi-crop disease classification dataset (open research).",
+      "total_images": 9163,
+      "num_classes": 1,
+      "source": "https://www.kaggle.com/datasets/plantdiseasetrait",
+      "license": "CC-BY"
+    },
+    {
+      "name": "plantdoc",
+      "title": "PlantDoc",
+      "description": "Real-world plant disease detection dataset (CVPR 2020).",
+      "total_images": 192,
+      "splits": {"test": 192},
+      "num_classes": 27,
+      "source": "https://github.com/pratikkayal/PlantDoc-Dataset",
+      "license": "CC-BY-SA-4.0"
+    },
+    {
+      "name": "plantdoc_v3",
+      "title": "PlantDoc v3 (Roboflow)",
+      "description": "Re-annotated PlantDoc detection set v3.",
+      "total_images": 1309,
+      "splits": {"train": 1070, "test": 239},
+      "num_classes": 27,
+      "source": "https://universe.roboflow.com/plant-disease/plantdoc",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "name": "rice_diseases_v2",
+      "title": "Rice Diseases v2 (Roboflow)",
+      "description": "Rice leaf disease detection (4 disease classes).",
+      "total_images": 5170,
+      "splits": {"train": 4522, "valid": 432, "test": 216},
+      "num_classes": 4,
+      "source": "https://universe.roboflow.com/rice-disease",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "name": "rice_diseases_zoa8l",
+      "title": "Rice Diseases (zoa8l)",
+      "description": "Supplementary rice disease set.",
+      "total_images": 1293,
+      "splits": {"train": 1131, "valid": 108, "test": 54},
+      "num_classes": 4,
+      "source": "https://universe.roboflow.com/rice-zoa8l",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "name": "rice_leaf_aug",
+      "title": "Rice Leaf (augmented)",
+      "description": "Augmented rice leaf disease classification corpus.",
+      "total_images": 3829,
+      "num_classes": 6,
+      "classes": [
+        {"name": "Bacterial Leaf Blight", "count": 636},
+        {"name": "Brown Spot", "count": 646},
+        {"name": "Healthy Rice Leaf", "count": 653},
+        {"name": "Leaf Blast", "count": 634},
+        {"name": "Leaf scald", "count": 628},
+        {"name": "Sheath Blight", "count": 632}
+      ],
+      "source": "Kaggle Rice Leaf Diseases (augmented)",
+      "license": "research use"
+    },
+    {
+      "name": "wheat_disease_atlas",
+      "title": "Wheat Disease Atlas",
+      "description": "Curated wheat-only disease atlas, 11 classes (300 images per class, 600 healthy).",
+      "total_images": 3900,
+      "num_classes": 11,
+      "classes": [
+        {"name": "fusarium_head_blight", "count": 300},
+        {"name": "leaf_blight", "count": 300},
+        {"name": "powdery_mildew", "count": 300},
+        {"name": "septoria", "count": 300},
+        {"name": "tan_spot", "count": 300},
+        {"name": "wheat_aphid", "count": 300},
+        {"name": "wheat_blast", "count": 300},
+        {"name": "wheat_healthy", "count": 600},
+        {"name": "wheat_leaf_rust", "count": 300},
+        {"name": "wheat_smut", "count": 300},
+        {"name": "wheat_yellow_rust", "count": 300}
+      ],
+      "source": "internal curation",
+      "license": "research use"
+    },
+    {
+      "name": "yolo_rice_composite",
+      "title": "YOLO Rice Composite",
+      "description": "Composite rice-disease detection set in YOLO format (data/ folder).",
+      "total_images": 14154,
+      "splits": {"train": 13104, "test": 750, "valid": 300},
+      "num_classes": 4,
+      "source": "internal merge of Roboflow rice sets",
+      "license": "CC-BY-4.0"
+    }
+  ]
+}

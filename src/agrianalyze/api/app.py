@@ -2332,6 +2332,50 @@ def create_app() -> FastAPI:
             **uploads,
         })
 
+        # ── Bundled static catalog (ships with the Docker image so the live
+        # deployment can advertise the full training corpus even though the
+        # raw images aren't on the server). ~10KB JSON, read-only.
+        try:
+            import json as _json
+            catalog_path = Path(__file__).resolve().parent / "dataset_catalog.json"
+            if catalog_path.is_file():
+                catalog = _json.loads(catalog_path.read_text(encoding="utf-8"))
+                for ds in catalog.get("datasets", []):
+                    cls_list = ds.get("classes") or []
+                    # Normalize to UI shape (n_images, size_mb)
+                    norm_classes = []
+                    if cls_list and isinstance(cls_list, list) and cls_list \
+                            and isinstance(cls_list[0], dict):
+                        for c in cls_list:
+                            norm_classes.append({
+                                "name": c.get("name", "?"),
+                                "n_images": c.get("count", 0),
+                                "size_mb": 0,
+                            })
+                    # If no per-class breakdown given, synthesize from splits
+                    if not norm_classes:
+                        for split, n in (ds.get("splits") or {}).items():
+                            norm_classes.append({
+                                "name": split, "n_images": n, "size_mb": 0,
+                            })
+                    datasets_info.append({
+                        "name": ds.get("name"),
+                        "path": f"agrianalyze-data/{ds.get('name')}",
+                        "writable": False,
+                        "source": "catalog",
+                        "title": ds.get("title"),
+                        "description": ds.get("description"),
+                        "url": ds.get("source"),
+                        "license": ds.get("license"),
+                        "num_classes": ds.get("num_classes"),
+                        "splits": ds.get("splits"),
+                        "total_images": ds.get("total_images", 0),
+                        "total_bytes": 0,
+                        "classes": norm_classes,
+                    })
+        except Exception as exc:  # pragma: no cover
+            logger.debug("Static dataset catalog skipped: %s", exc)
+
         externals = root / "externals"
         if externals.is_dir():
             for ds in sorted(externals.iterdir()):

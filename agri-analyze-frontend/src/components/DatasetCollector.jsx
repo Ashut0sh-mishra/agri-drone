@@ -226,9 +226,9 @@ export default function DatasetCollector() {
           <div key={ds.name} className="rounded-xl p-4"
                style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
             <div className="flex items-center justify-between mb-3">
-              <div>
+              <div className="min-w-0 pr-3">
                 <h3 className="text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
-                  {ds.name}
+                  {ds.title || ds.name}
                   {ds.writable && (
                     <span className="ml-2 text-[10px] px-2 py-0.5 rounded-full"
                           style={{ background: 'color-mix(in srgb, var(--accent) 20%, transparent)', color: 'var(--accent)' }}>
@@ -241,23 +241,41 @@ export default function DatasetCollector() {
                       🤗 HuggingFace
                     </span>
                   )}
+                  {ds.source === 'catalog' && (
+                    <span className="ml-2 text-[10px] px-2 py-0.5 rounded-full"
+                          style={{ background: 'color-mix(in srgb, #3b82f6 20%, transparent)', color: '#3b82f6' }}>
+                      training corpus
+                    </span>
+                  )}
                 </h3>
+                {ds.description && (
+                  <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{ds.description}</p>
+                )}
                 {ds.url ? (
                   <a href={ds.url} target="_blank" rel="noreferrer"
-                     className="text-[10px] underline" style={{ color: 'var(--text-faint)' }}>
-                    {ds.path}
+                     className="text-[10px] underline break-all" style={{ color: 'var(--text-faint)' }}>
+                    {ds.url.startsWith('http') ? ds.url : ds.path}
                   </a>
                 ) : (
                   <p className="text-[10px]" style={{ color: 'var(--text-faint)' }}>{ds.path}</p>
                 )}
+                {ds.splits && (
+                  <p className="text-[10px] mt-1" style={{ color: 'var(--text-faint)' }}>
+                    Splits: {Object.entries(ds.splits).map(([k, v]) => `${k}=${v.toLocaleString()}`).join(' · ')}
+                  </p>
+                )}
               </div>
-              <div className="text-right">
+              <div className="text-right shrink-0">
                 <p className="text-sm font-bold tabular-nums" style={{ color: 'var(--text-primary)' }}>
                   {(ds.total_images || 0).toLocaleString()} images
                 </p>
                 <p className="text-[10px]" style={{ color: 'var(--text-faint)' }}>
-                  {(ds.classes?.length || 0)} classes · {((ds.total_bytes || 0) / (1024 * 1024)).toFixed(1)} MB
+                  {(ds.num_classes || ds.classes?.length || 0)} classes
+                  {ds.total_bytes ? ` · ${((ds.total_bytes) / (1024 * 1024)).toFixed(1)} MB` : ''}
                 </p>
+                {ds.license && (
+                  <p className="text-[10px] italic" style={{ color: 'var(--text-faint)' }}>{ds.license}</p>
+                )}
               </div>
             </div>
             {(!ds.classes || ds.classes.length === 0) ? (
