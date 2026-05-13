@@ -11,7 +11,7 @@
 [![Status: Research Prototype](https://img.shields.io/badge/status-research%20prototype-orange.svg)](CHANGELOG_RESEARCH_UPGRADE.md)
 [![Paper](https://img.shields.io/badge/Paper-Manuscript-red.svg)](MANUSCRIPT_SUBMISSION_VERSION.md)
 
-**Live Demo:** [agrianalyze-frontend.vercel.app](https://agrianalyze-frontend.vercel.app) | **API:** [ashu010-agrianalyze-api.hf.space](https://ashu010-agrianalyze-api.hf.space)
+**Live Demo:** [agrianalyze-frontend.vercel.app](https://agri-drone-frontend.vercel.app) | **API:** [ashu010-agri-drone-api.hf.space](https://ashu010-agri-drone-api.hf.space)
 
 </div>
 
