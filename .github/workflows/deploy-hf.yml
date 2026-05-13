@@ -51,7 +51,7 @@ jobs:
           git add README.md Dockerfile
           git commit -m "deploy: swap README + Dockerfile for HF Spaces" --allow-empty
 
-          # Push to HuggingFace Spaces
+          # Push to HuggingFace Spaces (use credential helper to avoid URL parsing issues with token chars)
           git remote remove hf 2>/dev/null || true
-          git remote add hf https://ashu010:${HF_TOKEN}@huggingface.co/spaces/ashu010/agri-drone-api
-          git push hf hf-deploy:main --force
+          git remote add hf https://huggingface.co/spaces/ashu010/agri-drone-api
+          git -c credential.helper= -c credential.helper="!f() { echo username=ashu010; echo password=${HF_TOKEN}; }; f" push hf hf-deploy:main --force
