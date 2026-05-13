@@ -65,6 +65,10 @@ jobs:
           cp "$GH_DIR/deploy/hf-readme.md" README.md
           cp "$GH_DIR/deploy/Dockerfile.hf" Dockerfile
 
+          # Ensure models/ exists so Dockerfile COPY doesn't fail
+          mkdir -p models
+          [ -f models/.gitkeep ] || touch models/.gitkeep
+
           git add -A
           git commit -m "deploy: sync code from GH commit $(git -C "$GH_DIR" log -1 --format=%h main)" --allow-empty
           git push origin main
